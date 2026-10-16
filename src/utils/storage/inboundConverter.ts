@@ -14,7 +14,7 @@ import {TEdge} from "../../model/TEdge.ts";
 import {ControlPointData} from "../../pages/editor/components/ControlPoint.tsx";
 import {v4 as uuidv4} from "uuid";
 import {EAlgorithm} from "../../model/EAlgorithm.ts";
-import {InputCommunicationTypeEnum, OutputCommunicationTypeEnum} from "@webis/proof-orchestrator-client";
+import {InputCommunicationTypeEnum, OutputCommunicationTypeEnum} from "@kit-iai-proof/proof-orchestrator-client";
 
 export const convertBlocks: (blocks: RBlock[], workflowId: string) => TBlock[] = (blocks: RBlock[], workflowId: string): TBlock[] => {
     return blocks.map((block: RBlock): TBlock => {
