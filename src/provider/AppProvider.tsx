@@ -1,4 +1,4 @@
-import {ReactNode, useCallback, useMemo, useRef, useState} from "react";
+import {ReactNode, useCallback, useMemo, useState} from "react";
 import {usePersistedState} from "../hooks/usePersistedState.ts";
 import {v4 as uuidv4} from "uuid";
 import {DEFAULT_PALETTE} from "../utils/palette.ts";
@@ -8,7 +8,6 @@ import {Updater} from "../types/updater.ts";
 import {useNavigationProtection} from "../hooks/useNavigationProtection.ts";
 import {AppContext} from "./AppContext.tsx";
 import {useWebSocket} from "../hooks/useWebSocket.ts";
-import {IStatusUpdate, useStatusWebsocket} from "../hooks/useStatusWebSocket.ts";
 import {DEFAULT_SETTINGS} from "../utils/settings.ts";
 
 interface IProps {
@@ -37,9 +36,6 @@ export interface IAppContext {
     lastUsedWorkflowId: string | undefined;
     updateLastUsedWorkflowId: (value: string) => void;
     publishEntityMessage: (id: string, entity: string) => void;
-    currentExecutionId: string | undefined;
-    updateCurrentExecutionId: (executionId: string | undefined) => void;
-    registerStatusUpdateCallback: (callback: (update: IStatusUpdate) => void) => void;
 }
 
 const AppProvider: Provider<IProps> = ({children}: IProps): ReactNode => {
@@ -53,8 +49,6 @@ const AppProvider: Provider<IProps> = ({children}: IProps): ReactNode => {
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
     const [allowNavigation, setAllowNavigation] = useState<boolean>(false);
     const [lastUsedWorkflowId, setLastUsedWorkflowId] = usePersistedState<string>("", "lastUsedWorkflowId");
-    const [currentExecutionId, setCurrentExecutionId] = useState<string | undefined>(undefined);
-    const statusUpdateCallbackRef = useRef<((update: IStatusUpdate) => void) | undefined>(undefined);
 
     const [palette, setPalette] = usePersistedState<IPalette[]>(DEFAULT_PALETTE, "palette");
     const [primaryPaletteIndex, setPrimaryPalette] = usePersistedState<number>(2, "primaryPalette");
@@ -88,18 +82,6 @@ const AppProvider: Provider<IProps> = ({children}: IProps): ReactNode => {
         setLastUsedWorkflowId(value);
     }, [setLastUsedWorkflowId]);
 
-    const updateCurrentExecutionId: (executionId: string | undefined) => void = useCallback((executionId: string | undefined): void => {
-        setCurrentExecutionId(executionId);
-    }, []);
-
-    const registerStatusUpdateCallback: (callback: (update: IStatusUpdate) => void) => void = useCallback((callback: (update: IStatusUpdate) => void): void => {
-        statusUpdateCallbackRef.current = callback;
-    }, []);
-
-    const handleStatusUpdate = useCallback((update: IStatusUpdate): void => {
-        statusUpdateCallbackRef.current?.(update);
-    }, []);
-
     useNavigationProtection({
         hasUnsavedChanges,
         clearUnsavedChanges: () => updateHasUnsavedChanges(false),
@@ -117,13 +99,10 @@ const AppProvider: Provider<IProps> = ({children}: IProps): ReactNode => {
 
     const publishEntityMessage = useWebSocket({updateInfo: updateInfo, settings: DEFAULT_SETTINGS, sessionKey: sessionKey});
 
-    useStatusWebsocket({executionId: currentExecutionId ?? "", onStatusUpdate: handleStatusUpdate, settings: DEFAULT_SETTINGS});
-
     return (
         <AppContext.Provider
             value={{
                 lastUsedWorkflowId: lastUsedWorkflowId,
-
                 dialog: dialog,
                 dialogData: dialogData,
                 primaryPaletteIndex: primaryPaletteIndex,
@@ -134,7 +113,6 @@ const AppProvider: Provider<IProps> = ({children}: IProps): ReactNode => {
                 info: info,
                 sessionKey: sessionKey,
                 hasUnsavedChanges: hasUnsavedChanges,
-                currentExecutionId: currentExecutionId,
                 publishEntityMessage: publishEntityMessage,
                 updateError: updateError,
                 updateInfo: updateInfo,
@@ -144,9 +122,7 @@ const AppProvider: Provider<IProps> = ({children}: IProps): ReactNode => {
                 updatePalette: updatePalette,
                 updateHasUnsavedChanges: updateHasUnsavedChanges,
                 updateAllowNavigation: updateAllowNavigation,
-                updateLastUsedWorkflowId: updateLastUsedWorkflowId,
-                updateCurrentExecutionId: updateCurrentExecutionId,
-                registerStatusUpdateCallback: registerStatusUpdateCallback,
+                updateLastUsedWorkflowId: updateLastUsedWorkflowId
             }}
         >
             {children}

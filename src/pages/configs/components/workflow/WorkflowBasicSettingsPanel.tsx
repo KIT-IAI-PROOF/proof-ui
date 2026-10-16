@@ -1,12 +1,12 @@
 import React, {ChangeEvent, Fragment, ReactNode, useContext} from "react";
-import Grid from "@mui/material/Grid2";
-import {FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Tooltip, Typography} from "@mui/material";
+import {FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, Typography} from "@mui/material";
 import {StepBasedConfigurationDetail, WorkflowDetailCommunicationParadigmEnum, WorkflowDetailSimulationStrategyEnum} from "@kit-iai-proof/proof-config-manager-client";
 import {useTranslation} from "react-i18next";
-import {Info} from "@mui/icons-material";
 import {IAppContext} from "../../../../provider/AppProvider.tsx";
 import {AppContext} from "../../../../provider/AppContext.tsx";
 import dayjs from "dayjs";
+import LabeledFieldsGrid from "../../../../app/components/LabeledFieldsGrid.tsx";
+import LabeledField from "../../../../app/components/LabeledField.tsx";
 
 interface IProps {
     id: string | undefined,
@@ -74,31 +74,8 @@ const WorkflowBasicSettingsPanel: ({
 
     return (
         <Fragment>
-            <Grid
-                container={true}
-                padding={1}
-                paddingTop={5}
-                spacing={2}
-                paddingBottom={5}
-            >
-                <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                    <Stack direction={"row"} alignItems={"center"}>
-                        <Typography
-                            variant={"body1"}
-                            color={"primary"}
-                        >
-                            {t("word.id")}
-                        </Typography>
-                        <Tooltip title={t("tooltip.id")}>
-                            <Info
-                                color={"primary"}
-                                fontSize={"small"}
-                                sx={{ml: 1, cursor: "pointer"}}
-                            />
-                        </Tooltip>
-                    </Stack>
-                </Grid>
-                <Grid size={{xs: 9, lg: 10, xl: 10}}>
+            <LabeledFieldsGrid>
+                <LabeledField labelKey={"word.id"} tooltipKey={"tooltip.id"}>
                     <TextField
                         disabled={true}
                         fullWidth={true}
@@ -110,25 +87,8 @@ const WorkflowBasicSettingsPanel: ({
                             const id: string = event.target.value;
                             setId(id);
                         }}/>
-                </Grid>
-                <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                    <Stack direction={"row"} alignItems={"center"}>
-                        <Typography
-                            variant={"body1"}
-                            color={"primary"}
-                        >
-                            {t("word.label")} *
-                        </Typography>
-                        <Tooltip title={t("tooltip.label")}>
-                            <Info
-                                color={"primary"}
-                                fontSize={"small"}
-                                sx={{ml: 1, cursor: "pointer"}}
-                            />
-                        </Tooltip>
-                    </Stack>
-                </Grid>
-                <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                </LabeledField>
+                <LabeledField labelKey={"word.label"} tooltipKey={"tooltip.label"} required={true}>
                     <TextField
                         required={true}
                         fullWidth={true}
@@ -143,25 +103,8 @@ const WorkflowBasicSettingsPanel: ({
                             setLabel(label);
                             if (!hasUnsavedChanges) updateHasUnsavedChanges(true)
                         }}/>
-                </Grid>
-                <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                    <Stack direction={"row"} alignItems={"center"}>
-                        <Typography
-                            variant={"body1"}
-                            color={"primary"}
-                        >
-                            {t("word.description")}
-                        </Typography>
-                        <Tooltip title={t("tooltip.description")}>
-                            <Info
-                                color={"primary"}
-                                fontSize={"small"}
-                                sx={{ml: 1, cursor: "pointer"}}
-                            />
-                        </Tooltip>
-                    </Stack>
-                </Grid>
-                <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                </LabeledField>
+                <LabeledField labelKey={"word.description"} tooltipKey={"tooltip.description"}>
                     <TextField
                         fullWidth={true}
                         value={description ?? ""}
@@ -173,25 +116,9 @@ const WorkflowBasicSettingsPanel: ({
                             setDescription(description);
                             if (!hasUnsavedChanges) updateHasUnsavedChanges(true)
                         }}/>
-                </Grid>
-                <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                    <Stack direction={"row"} alignItems={"center"}>
-                        <Typography
-                            variant={"body1"}
-                            color={"primary"}
-                        >
-                            {t("word.communicationParadigm")} *
-                        </Typography>
-                        <Tooltip title={t("tooltip.communicationParadigm")}>
-                            <Info
-                                color={"primary"}
-                                fontSize={"small"}
-                                sx={{ml: 1, cursor: "pointer"}}
-                            />
-                        </Tooltip>
-                    </Stack>
-                </Grid>
-                <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                </LabeledField>
+                <LabeledField labelKey={"word.communicationParadigm"} tooltipKey={"tooltip.communicationParadigm"}
+                              required={true}>
                     <FormControl
                         required={true}
                         color={"primary"}
@@ -235,25 +162,9 @@ const WorkflowBasicSettingsPanel: ({
                             </Typography>
                         )}
                     </FormControl>
-                </Grid>
-                <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                    <Stack direction={"row"} alignItems={"center"}>
-                        <Typography
-                            variant={"body1"}
-                            color={"primary"}
-                        >
-                            {t("word.simulationStrategy")} *
-                        </Typography>
-                        <Tooltip title={t("tooltip.simulationStrategy")}>
-                            <Info
-                                color={"primary"}
-                                fontSize={"small"}
-                                sx={{ml: 1, cursor: "pointer"}}
-                            />
-                        </Tooltip>
-                    </Stack>
-                </Grid>
-                <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                </LabeledField>
+                <LabeledField labelKey={"word.simulationStrategy"} tooltipKey={"tooltip.simulationStrategy"}
+                              required={true}>
                     <FormControl
                         required={true}
                         color={"primary"}
@@ -277,7 +188,6 @@ const WorkflowBasicSettingsPanel: ({
                                 if (!hasUnsavedChanges) updateHasUnsavedChanges(true)
                             }}
                         >
-                            {/*
                             <MenuItem
                                 key={WorkflowDetailSimulationStrategyEnum.Abort}
                                 value={WorkflowDetailSimulationStrategyEnum.Abort}
@@ -296,21 +206,18 @@ const WorkflowBasicSettingsPanel: ({
                             >
                                 {WorkflowDetailSimulationStrategyEnum.Ignore}
                             </MenuItem>
-                            */}
                             <MenuItem
                                 key={WorkflowDetailSimulationStrategyEnum.WaitAndContinue}
                                 value={WorkflowDetailSimulationStrategyEnum.WaitAndContinue}
                             >
                                 {WorkflowDetailSimulationStrategyEnum.WaitAndContinue}
                             </MenuItem>
-                            {/*
                             <MenuItem
                                 key={WorkflowDetailSimulationStrategyEnum.WaitAndRetry}
                                 value={WorkflowDetailSimulationStrategyEnum.WaitAndRetry}
                             >
                                 {WorkflowDetailSimulationStrategyEnum.WaitAndRetry}
                             </MenuItem>
-                            */}
                         </Select>
                         {simulationStrategyError && (
                             <Typography paddingLeft={2} paddingTop={0.5} variant="caption" color="error">
@@ -318,25 +225,8 @@ const WorkflowBasicSettingsPanel: ({
                             </Typography>
                         )}
                     </FormControl>
-                </Grid>
-                <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                    <Stack direction={"row"} alignItems={"center"}>
-                        <Typography
-                            variant={"body1"}
-                            color={"primary"}
-                        >
-                            {t("word.lastModifiedBy")}
-                        </Typography>
-                        <Tooltip title={t("tooltip.lastModifiedBy")}>
-                            <Info
-                                color={"primary"}
-                                fontSize={"small"}
-                                sx={{ml: 1, cursor: "pointer"}}
-                            />
-                        </Tooltip>
-                    </Stack>
-                </Grid>
-                <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                </LabeledField>
+                <LabeledField labelKey={"word.lastModifiedBy"} tooltipKey={"tooltip.lastModifiedBy"}>
                     <TextField
                         fullWidth={true}
                         value={modifiedBy ?? ""}
@@ -344,25 +234,8 @@ const WorkflowBasicSettingsPanel: ({
                         label={t("word.lastModifiedBy")}
                         variant="outlined"
                         disabled/>
-                </Grid>
-                <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                    <Stack direction={"row"} alignItems={"center"}>
-                        <Typography
-                            variant={"body1"}
-                            color={"primary"}
-                        >
-                            {t("word.lastModifiedDate")}
-                        </Typography>
-                        <Tooltip title={t("tooltip.lastModifiedDate")}>
-                            <Info
-                                color={"primary"}
-                                fontSize={"small"}
-                                sx={{ml: 1, cursor: "pointer"}}
-                            />
-                        </Tooltip>
-                    </Stack>
-                </Grid>
-                <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                </LabeledField>
+                <LabeledField labelKey={"word.lastModifiedDate"} tooltipKey={"tooltip.lastModifiedDate"}>
                     <TextField
                         fullWidth={true}
                         value={modifiedDate ? dayjs.unix(Number(modifiedDate)).format("DD.MM.YYYY HH:mm [Uhr]") : ""}
@@ -370,25 +243,8 @@ const WorkflowBasicSettingsPanel: ({
                         label={t("word.lastModifiedDate")}
                         variant="outlined"
                         disabled/>
-                </Grid>
-                <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                    <Stack direction={"row"} alignItems={"center"}>
-                        <Typography
-                            variant={"body1"}
-                            color={"primary"}
-                        >
-                            {t("word.createdBy")}
-                        </Typography>
-                        <Tooltip title={t("tooltip.createdBy")}>
-                            <Info
-                                color={"primary"}
-                                fontSize={"small"}
-                                sx={{ml: 1, cursor: "pointer"}}
-                            />
-                        </Tooltip>
-                    </Stack>
-                </Grid>
-                <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                </LabeledField>
+                <LabeledField labelKey={"word.createdBy"} tooltipKey={"tooltip.createdBy"}>
                     <TextField
                         fullWidth={true}
                         value={createdBy ?? ""}
@@ -396,25 +252,8 @@ const WorkflowBasicSettingsPanel: ({
                         label={t("word.createdBy")}
                         variant="outlined"
                         disabled/>
-                </Grid>
-                <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                    <Stack direction={"row"} alignItems={"center"}>
-                        <Typography
-                            variant={"body1"}
-                            color={"primary"}
-                        >
-                            {t("word.creationDate")}
-                        </Typography>
-                        <Tooltip title={t("tooltip.creationDate")}>
-                            <Info
-                                color={"primary"}
-                                fontSize={"small"}
-                                sx={{ml: 1, cursor: "pointer"}}
-                            />
-                        </Tooltip>
-                    </Stack>
-                </Grid>
-                <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                </LabeledField>
+                <LabeledField labelKey={"word.creationDate"} tooltipKey={"tooltip.creationDate"}>
                     <TextField
                         fullWidth={true}
                         value={creationDate ? dayjs.unix(Number(creationDate)).format("DD.MM.YYYY HH:mm [Uhr]") : ""}
@@ -422,9 +261,9 @@ const WorkflowBasicSettingsPanel: ({
                         label={t("word.creationDate")}
                         variant="outlined"
                         disabled/>
-                </Grid>
+                </LabeledField>
 
-            </Grid>
+            </LabeledFieldsGrid>
         </Fragment>
     );
 

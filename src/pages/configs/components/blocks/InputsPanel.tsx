@@ -14,18 +14,22 @@ const InputsPanel = ({inputs}: IProps) => {
     const {t} = useTranslation();
 
     return (
-        <Stack spacing={1} padding={2}>
+        <Stack spacing={1} paddingX={2}>
             {
                 inputs?.map((handle: InputDetail, index): ReactNode => {
                     return (
                         <Accordion
                             defaultExpanded={true}
-                            disableGutters={true}
                             key={handle.id || `Id ${index + 1}`}
-                            style={{
+                            disableGutters={true}
+                            sx={{
                                 background: theme.palette.elevated.paper,
-                                borderRadius: "5px"
-                            }}>
+                                borderRadius: 2,
+                                '&:before': {
+                                    display: 'none'
+                                },
+                            }}
+                        >
                             <AccordionSummary
                                 sx={{
                                     overflow: "hidden",

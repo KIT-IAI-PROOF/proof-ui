@@ -6,12 +6,14 @@ import {ExecutionDetail, InputDetail} from "@kit-iai-proof/proof-config-manager-
 import {useTranslation} from "react-i18next";
 import {Info} from "@mui/icons-material";
 import Progress from "./Progress.tsx";
+import LabeledField, {LabeledFieldSizes} from "../../../app/components/LabeledField.tsx";
 
 interface IProps {
     execution: ExecutionDetail
 }
 
 const ExecutionSettingsPanel: ({execution}: IProps) => ReactNode = ({execution}: IProps): ReactNode => {
+
     const theme: Theme = useTheme();
     const {t} = useTranslation();
 
@@ -26,6 +28,13 @@ const ExecutionSettingsPanel: ({execution}: IProps) => ReactNode = ({execution}:
     ) || []
 
     const [showOnlyWithValues, setShowOnlyWithValues] = useState<boolean>(true);
+
+    // Half-page layout sizes
+    const halfPageSizes: LabeledFieldSizes = {
+        xs: {label: 3, content: 9},
+        lg: {label: 4, content: 8},
+        xl: {label: 4, content: 8}
+    };
 
     return (
         <Fragment>
@@ -58,173 +67,48 @@ const ExecutionSettingsPanel: ({execution}: IProps) => ReactNode = ({execution}:
                             </Grid>
                         </AccordionSummary>
                         <AccordionDetails>
-                            <Grid container={true} paddingX={1} spacing={1}>
-                                <Grid size={4}>
-                                    <Stack
-                                        direction={"row"}
-                                        alignItems={"center"}
-                                    >
-                                        <Typography
-                                            variant={"body1"}
-                                            color={"primary"}
-                                        >
-                                            {t("word.id")}
-
-                                        </Typography>
-                                        <Tooltip title={t("tooltip.id")}>
-                                            <Info
-                                                color={"primary"}
-                                                fontSize={"small"}
-                                                sx={{ml: 1, cursor: "pointer"}}
-                                            />
-                                        </Tooltip>
-                                    </Stack>
-                                </Grid>
-                                <Grid size={8}>
+                            <Grid container={true} paddingX={1} spacing={0.5}>
+                                <LabeledField labelKey={"word.id"} tooltipKey={"tooltip.id"} sizes={halfPageSizes}>
                                     <Typography
                                         variant={"body1"}
                                     >
                                         {execution?.id}
                                     </Typography>
-                                </Grid>
-                                <Grid size={4}>
-                                    <Stack
-                                        direction={"row"}
-                                        alignItems={"center"}
-                                    >
-                                        <Typography
-                                            variant={"body1"}
-                                            color={"primary"}
-                                        >
-                                            {t("word.label")}
-                                        </Typography>
-                                        <Tooltip title={t("tooltip.label")}>
-                                            <Info
-                                                color={"primary"}
-                                                fontSize={"small"}
-                                                sx={{ml: 1, cursor: "pointer"}}
-                                            />
-                                        </Tooltip>
-                                    </Stack>
-                                </Grid>
-                                <Grid size={8}>
+                                </LabeledField>
+                                <LabeledField labelKey={"word.label"} tooltipKey={"tooltip.label"} sizes={halfPageSizes}>
                                     <Typography
                                         variant={"body1"}
                                     >
                                         {execution?.label}
                                     </Typography>
-                                </Grid>
-                                <Grid size={4}>
-                                    <Stack
-                                        direction={"row"}
-                                        alignItems={"center"}
-                                    >
-                                        <Typography
-                                            variant={"body1"}
-                                            color={"primary"}
-                                        >
-                                            {t("word.description")}
-
-                                        </Typography>
-                                        <Tooltip title={t("tooltip.description")}>
-                                            <Info
-                                                color={"primary"}
-                                                fontSize={"small"}
-                                                sx={{ml: 1, cursor: "pointer"}}
-                                            />
-                                        </Tooltip>
-                                    </Stack>
-                                </Grid>
-                                <Grid size={8}>
+                                </LabeledField>
+                                <LabeledField labelKey={"word.description"} tooltipKey={"tooltip.description"} sizes={halfPageSizes}>
                                     <Typography
                                         variant={"body1"}>
                                         {execution?.description}
                                     </Typography>
-                                </Grid>
-                                <Grid size={4}>
-                                    <Stack
-                                        direction={"row"}
-                                        alignItems={"center"}
-                                    >
-                                        <Typography
-                                            variant={"body1"}
-                                            color={"primary"}
-                                        >
-                                            {t("word.status")}
-
-                                        </Typography>
-                                        <Tooltip title={t("tooltip.status")}>
-                                            <Info
-                                                color={"primary"}
-                                                fontSize={"small"}
-                                                sx={{ml: 1, cursor: "pointer"}}
-                                            />
-                                        </Tooltip>
-                                    </Stack>
-                                </Grid>
-                                <Grid size={8}>
+                                </LabeledField>
+                                <LabeledField labelKey={"word.status"} tooltipKey={"tooltip.status"} sizes={halfPageSizes}>
                                     <Typography
                                         variant={"body1"}
                                     >
                                         {execution?.status}
                                     </Typography>
-                                </Grid>
-                                <Grid size={4}>
-                                    <Stack
-                                        direction={"row"}
-                                        alignItems={"center"}
-                                    >
-                                        <Typography
-                                            variant={"body1"}
-                                            color={"primary"}
-                                        >
-                                            {t("word.startedAt")}
-
-                                        </Typography>
-                                        <Tooltip title={t("tooltip.startedAt")}>
-                                            <Info
-                                                color={"primary"}
-                                                fontSize={"small"}
-                                                sx={{ml: 1, cursor: "pointer"}}
-                                            />
-                                        </Tooltip>
-                                    </Stack>
-                                </Grid>
-                                <Grid size={8}>
+                                </LabeledField>
+                                <LabeledField labelKey={"word.startedAt"} tooltipKey={"tooltip.startedAt"} sizes={halfPageSizes}>
                                     <Typography
                                         variant={"body1"}
                                     >
                                         {execution?.startedAt && new Date(execution.startedAt).toLocaleString("de-DE")}
                                     </Typography>
-                                </Grid>
-                                <Grid size={4}>
-                                    <Stack
-                                        direction={"row"}
-                                        alignItems={"center"}
-                                    >
-                                        <Typography
-                                            variant={"body1"}
-                                            color={"primary"}
-                                        >
-                                            {t("word.stoppedAt")}
-
-                                        </Typography>
-                                        <Tooltip title={t("tooltip.stoppedAt")}>
-                                            <Info
-                                                color={"primary"}
-                                                fontSize={"small"}
-                                                sx={{ml: 1, cursor: "pointer"}}
-                                            />
-                                        </Tooltip>
-                                    </Stack>
-                                </Grid>
-                                <Grid size={8}>
+                                </LabeledField>
+                                <LabeledField labelKey={"word.stoppedAt"} tooltipKey={"tooltip.stoppedAt"} sizes={halfPageSizes}>
                                     <Typography
                                         variant={"body1"}
                                     >
                                         {execution?.stoppedAt ? new Date(execution.stoppedAt).toLocaleString("de-DE") : t('word.notStopped')}
                                     </Typography>
-                                </Grid>
+                                </LabeledField>
                                 <Grid size={12} paddingTop={1}>
                                     <Accordion sx={{background: theme.palette.background.paper}}>
                                         <AccordionSummary
@@ -255,100 +139,100 @@ const ExecutionSettingsPanel: ({execution}: IProps) => ReactNode = ({execution}:
                                                     Object.entries(block)
                                                         .map(([blockLabel, inputs]: [string, InputDetail[]]): ReactNode =>
                                                             inputs.length > 0 ? (
-                                                            <Paper key={blockLabel} elevation={1}>
-                                                                <Grid
-                                                                    container={true}
-                                                                    marginBottom={1}
-                                                                    padding={2}
-                                                                >
-                                                                    <Grid size={12}>
-                                                                        <Stack direction={"row"}
-                                                                               alignItems={"center"}>
-                                                                            <Typography
-                                                                                variant={"body1"}
-                                                                                color={"primary"}
-                                                                                sx={{
-                                                                                    overflow: "hidden",
-                                                                                    textOverflow: "ellipsis",
-                                                                                    whiteSpace: "nowrap",
-                                                                                    flexShrink: 1,
-                                                                                    minWidth: 0
-                                                                                }}
-                                                                            >
-                                                                                {blockLabel}
-                                                                            </Typography>
-                                                                            <Tooltip
-                                                                                title={t("tooltip.blockLabel")}
-                                                                            >
-                                                                                <Info
+                                                                <Paper key={blockLabel} elevation={1}>
+                                                                    <Grid
+                                                                        container={true}
+                                                                        marginBottom={1}
+                                                                        padding={2}
+                                                                    >
+                                                                        <Grid size={12}>
+                                                                            <Stack direction={"row"}
+                                                                                   alignItems={"center"}>
+                                                                                <Typography
+                                                                                    variant={"body1"}
                                                                                     color={"primary"}
-                                                                                    fontSize={"small"}
-                                                                                    sx={{ml: 1, cursor: "pointer"}}
-                                                                                />
-                                                                            </Tooltip>
-                                                                        </Stack>
-                                                                    </Grid>
-                                                                    {inputs.map((input: InputDetail, index: number): ReactNode =>
-                                                                        <Fragment key={index}>
-                                                                            <Grid paddingLeft={2} size={5}>
-                                                                                <Stack
-                                                                                    direction={"row"}
-                                                                                    alignItems={"center"}
+                                                                                    sx={{
+                                                                                        overflow: "hidden",
+                                                                                        textOverflow: "ellipsis",
+                                                                                        whiteSpace: "nowrap",
+                                                                                        flexShrink: 1,
+                                                                                        minWidth: 0
+                                                                                    }}
                                                                                 >
-                                                                                    <Typography
-                                                                                        variant={"body1"}
+                                                                                    {blockLabel}
+                                                                                </Typography>
+                                                                                <Tooltip
+                                                                                    title={t("tooltip.blockLabel")}
+                                                                                >
+                                                                                    <Info
                                                                                         color={"primary"}
-                                                                                        sx={{
-                                                                                            overflow: "hidden",
-                                                                                            textOverflow: "ellipsis",
-                                                                                            whiteSpace: "nowrap",
-                                                                                            flexShrink: 1,
-                                                                                            minWidth: 0
-                                                                                        }}
+                                                                                        fontSize={"small"}
+                                                                                        sx={{ml: 1, cursor: "pointer"}}
+                                                                                    />
+                                                                                </Tooltip>
+                                                                            </Stack>
+                                                                        </Grid>
+                                                                        {inputs.map((input: InputDetail, index: number): ReactNode =>
+                                                                            <Fragment key={index}>
+                                                                                <Grid paddingLeft={2} size={5}>
+                                                                                    <Stack
+                                                                                        direction={"row"}
+                                                                                        alignItems={"center"}
                                                                                     >
-                                                                                        {input.label}
-                                                                                    </Typography>
-                                                                                    <Tooltip
-                                                                                        title={input.description + (input.unit ? `\n${t("word.unit")}: ${input.unit}` : "")}
-                                                                                    >
-                                                                                        <Info
+                                                                                        <Typography
+                                                                                            variant={"body1"}
                                                                                             color={"primary"}
-                                                                                            fontSize={"small"}
                                                                                             sx={{
-                                                                                                ml: 1,
-                                                                                                cursor: "pointer"
+                                                                                                overflow: "hidden",
+                                                                                                textOverflow: "ellipsis",
+                                                                                                whiteSpace: "nowrap",
+                                                                                                flexShrink: 1,
+                                                                                                minWidth: 0
                                                                                             }}
-                                                                                        />
-                                                                                    </Tooltip>
-                                                                                </Stack>
-                                                                            </Grid>
-                                                                            <Grid size={7} paddingLeft={1}>
-                                                                                <Stack
-                                                                                    direction={"row"}
-                                                                                    alignItems={"center"}
-                                                                                    spacing={1}
-                                                                                >
-                                                                                    <Typography variant={"body1"}>
-                                                                                        {Object.entries(execution.execParameters || {}).find(([key]: [string, string]): boolean => input.id === key)?.[1]}
-                                                                                    </Typography>
-                                                                                    <Typography variant={"body2"}>
-                                                                                        {input.unit ? input.unit : ""}
-                                                                                    </Typography>
-                                                                                    <Tooltip
-                                                                                        title={t("tooltip.inputValue")}
+                                                                                        >
+                                                                                            {input.label}
+                                                                                        </Typography>
+                                                                                        <Tooltip
+                                                                                            title={input.description + (input.unit ? `\n${t("word.unit")}: ${input.unit}` : "")}
+                                                                                        >
+                                                                                            <Info
+                                                                                                color={"primary"}
+                                                                                                fontSize={"small"}
+                                                                                                sx={{
+                                                                                                    ml: 1,
+                                                                                                    cursor: "pointer"
+                                                                                                }}
+                                                                                            />
+                                                                                        </Tooltip>
+                                                                                    </Stack>
+                                                                                </Grid>
+                                                                                <Grid size={7} paddingLeft={1}>
+                                                                                    <Stack
+                                                                                        direction={"row"}
+                                                                                        alignItems={"center"}
+                                                                                        spacing={1}
                                                                                     >
-                                                                                        <Info
-                                                                                            color={"primary"}
-                                                                                            fontSize={"small"}
-                                                                                            sx={{cursor: "pointer"}}
-                                                                                        />
-                                                                                    </Tooltip>
-                                                                                </Stack>
-                                                                            </Grid>
-                                                                        </Fragment>
-                                                                    )}
-                                                                </Grid>
-                                                            </Paper>
+                                                                                        <Typography variant={"body1"}>
+                                                                                            {Object.entries(execution.execParameters || {}).find(([key]: [string, string]): boolean => input.id === key)?.[1]}
+                                                                                        </Typography>
+                                                                                        <Typography variant={"body2"}>
+                                                                                            {input.unit ? input.unit : ""}
+                                                                                        </Typography>
+                                                                                        <Tooltip
+                                                                                            title={t("tooltip.inputValue")}
+                                                                                        >
+                                                                                            <Info
+                                                                                                color={"primary"}
+                                                                                                fontSize={"small"}
+                                                                                                sx={{cursor: "pointer"}}
+                                                                                            />
+                                                                                        </Tooltip>
+                                                                                    </Stack>
+                                                                                </Grid>
+                                                                            </Fragment>
+                                                                        )}
+                                                                    </Grid>
+                                                                </Paper>
                                                             ) : null
                                                         ))}
                                         </AccordionDetails>
@@ -359,7 +243,8 @@ const ExecutionSettingsPanel: ({execution}: IProps) => ReactNode = ({execution}:
                                         <AccordionSummary
                                             expandIcon={<ExpandMoreIcon/>}
                                         >
-                                            <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"} width={"100%"}>
+                                            <Stack direction={"row"} alignItems={"center"}
+                                                   justifyContent={"space-between"} width={"100%"}>
                                                 <Stack direction={"row"} alignItems={"center"}>
                                                     <Typography variant={"h3"}>
                                                         {t("word.nonStaticInputValues")}
@@ -607,109 +492,27 @@ const ExecutionSettingsPanel: ({execution}: IProps) => ReactNode = ({execution}:
                             </Grid>
                         </AccordionSummary>
                         <AccordionDetails>
-                            <Grid container={true} paddingX={1} spacing={1}>
-                                <Grid size={4}>
-                                    <Stack
-                                        direction={"row"}
-                                        alignItems={"center"}
-                                    >
-                                        <Typography
-                                            variant={"body1"}
-                                            color={"primary"}
-                                        >
-                                            {t("word.workflowLabel")}
-
-                                        </Typography>
-                                        <Tooltip title={t("tooltip.workflowLabel")}>
-                                            <Info
-                                                color={"primary"}
-                                                fontSize={"small"}
-                                                sx={{ml: 1, cursor: "pointer"}}
-                                            />
-                                        </Tooltip>
-                                    </Stack>
-                                </Grid>
-                                <Grid size={8}>
+                            <Grid container={true} paddingX={1} spacing={0.5}>
+                                <LabeledField labelKey={"word.workflowLabel"} tooltipKey={"tooltip.workflowLabel"} sizes={halfPageSizes}>
                                     <Typography
                                         variant={"body1"}>
                                         {execution?.workflow?.label ?? t("word.unknownWorkflow")}
                                     </Typography>
-                                </Grid>
-                                <Grid size={4}>
-                                    <Stack
-                                        direction={"row"}
-                                        alignItems={"center"}
-                                    >
-                                        <Typography
-                                            variant={"body1"}
-                                            color={"primary"}
-                                        >
-                                            {t("word.communicationParadigm")}
-
-                                        </Typography>
-                                        <Tooltip title={t("tooltip.communicationParadigm")}>
-                                            <Info
-                                                color={"primary"}
-                                                fontSize={"small"}
-                                                sx={{ml: 1, cursor: "pointer"}}
-                                            />
-                                        </Tooltip>
-                                    </Stack>
-
-                                </Grid>
-                                <Grid size={8}>
+                                </LabeledField>
+                                <LabeledField labelKey={"word.communicationParadigm"}
+                                              tooltipKey={"tooltip.communicationParadigm"} sizes={halfPageSizes}>
                                     <Typography variant={"body1"}>
                                         {execution?.workflow?.communicationParadigm ?? ""}
                                     </Typography>
-                                </Grid>
-                                <Grid size={4}>
-                                    <Stack
-                                        direction={"row"}
-                                        alignItems={"center"}
-                                    >
-                                        <Typography
-                                            variant={"body1"}
-                                            color={"primary"}
-                                        >
-                                            {t("word.simulationStrategy")}
-
-                                        </Typography>
-                                        <Tooltip title={t("tooltip.simulationStrategy")}>
-                                            <Info
-                                                color={"primary"}
-                                                fontSize={"small"}
-                                                sx={{ml: 1, cursor: "pointer"}}
-                                            />
-                                        </Tooltip>
-                                    </Stack>
-                                </Grid>
-                                <Grid size={8}>
+                                </LabeledField>
+                                <LabeledField labelKey={"word.simulationStrategy"}
+                                              tooltipKey={"tooltip.simulationStrategy"} sizes={halfPageSizes}>
                                     <Typography variant={"body1"}>
                                         {execution.workflow?.simulationStrategy ?? ""}
                                     </Typography>
-                                </Grid>
-                                <Grid size={4}>
-                                    <Stack
-                                        direction={"row"}
-                                        alignItems={"center"}
-                                    >
-                                        <Typography
-                                            variant={"body1"}
-                                            color={"primary"}
-                                        >
-                                            {t("word.simulationStartPoint")}
-
-                                        </Typography>
-                                        <Tooltip title={t("tooltip.simulationStartPoint")}>
-                                            <Info
-                                                color={"primary"}
-                                                fontSize={"small"}
-                                                sx={{ml: 1, cursor: "pointer"}}
-                                            />
-                                        </Tooltip>
-                                    </Stack>
-                                </Grid>
-                                <Grid size={8}>
+                                </LabeledField>
+                                <LabeledField labelKey={"word.simulationStartPoint"}
+                                              tooltipKey={"tooltip.simulationStartPoint"} sizes={halfPageSizes}>
                                     <Stack direction={"row"} alignItems={"center"} spacing={0.5}>
                                         <Typography variant={"body1"}>
                                             {execution.workflow?.stepBasedConfig?.startPoint ?? ""}
@@ -727,33 +530,14 @@ const ExecutionSettingsPanel: ({execution}: IProps) => ReactNode = ({execution}:
                                                         sx={{ml: 1, cursor: "pointer"}}
                                                     />
                                                 </Tooltip>
-                                                <Typography variant={"body1"} color={"text.secondary"}> = {execution.workflow.stepBasedConfig.startTime} )</Typography>
+                                                <Typography variant={"body1"}
+                                                            color={"text.secondary"}> = {execution.workflow.stepBasedConfig.startTime} )</Typography>
                                             </Fragment>
                                         )}
                                     </Stack>
-                                </Grid>
-                                <Grid size={4}>
-                                    <Stack
-                                        direction={"row"}
-                                        alignItems={"center"}
-                                    >
-                                        <Typography
-                                            variant={"body1"}
-                                            color={"primary"}
-                                        >
-                                            {t("word.simulationEndPoint")}
-
-                                        </Typography>
-                                        <Tooltip title={t("tooltip.simulationEndPoint")}>
-                                            <Info
-                                                color={"primary"}
-                                                fontSize={"small"}
-                                                sx={{ml: 1, cursor: "pointer"}}
-                                            />
-                                        </Tooltip>
-                                    </Stack>
-                                </Grid>
-                                <Grid size={8}>
+                                </LabeledField>
+                                <LabeledField labelKey={"word.simulationEndPoint"}
+                                              tooltipKey={"tooltip.simulationEndPoint"} sizes={halfPageSizes}>
                                     <Stack direction={"row"} alignItems={"center"} spacing={0.5}>
                                         <Typography variant={"body1"}>
                                             {execution.workflow?.stepBasedConfig?.endPoint ?? ""}
@@ -771,44 +555,35 @@ const ExecutionSettingsPanel: ({execution}: IProps) => ReactNode = ({execution}:
                                                         sx={{ml: 1, cursor: "pointer"}}
                                                     />
                                                 </Tooltip>
-                                                <Typography variant={"body1"} color={"text.secondary"}> = {execution.workflow.stepBasedConfig.endTime} )</Typography>
+                                                <Typography variant={"body1"}
+                                                            color={"text.secondary"}> = {execution.workflow.stepBasedConfig.endTime} )</Typography>
                                             </Fragment>
                                         )}
                                     </Stack>
-                                </Grid>
-                                <Grid size={4}>
-                                    <Stack
-                                        direction={"row"}
-                                        alignItems={"center"}
-                                    >
-                                        <Typography
-                                            variant={"body1"}
-                                            color={"primary"}
-                                        >
-                                            {t("word.duration")}
-
-                                        </Typography>
-                                        <Tooltip title={t("tooltip.duration")}>
-                                            <Info
-                                                color={"primary"}
-                                                fontSize={"small"}
-                                                sx={{ml: 1, cursor: "pointer"}}
-                                            />
-                                        </Tooltip>
-                                    </Stack>
-                                </Grid>
-                                <Grid size={8}>
+                                </LabeledField>
+                                <LabeledField labelKey={"word.duration"} tooltipKey={"tooltip.duration"} sizes={halfPageSizes}>
                                     <Typography variant={"body1"}>
-                                        {execution.workflow?.stepBasedConfig?.duration ?? ""}
+                                        {execution.workflow?.stepBasedConfig?.duration ?? ""} ms
                                     </Typography>
-                                </Grid>
-                            </Grid></AccordionDetails>
+                                </LabeledField>
+                                <LabeledField labelKey={"word.timeoutWorker"} tooltipKey={"tooltip.timeoutWorker"} sizes={halfPageSizes}>
+                                    <Typography variant={"body1"}>
+                                        {execution.workflow?.stepBasedConfig?.workerTimeout ?? ""} s
+                                    </Typography>
+                                </LabeledField>
+                                <LabeledField labelKey={"word.timeoutInput"} tooltipKey={"tooltip.timeoutInput"} sizes={halfPageSizes}>
+                                    <Typography variant={"body1"}>
+                                        {execution.workflow?.stepBasedConfig?.inputTimeout ?? ""} s
+                                    </Typography>
+                                </LabeledField>
+                            </Grid>
+                        </AccordionDetails>
                     </Accordion>
                 </Grid>
             </Grid>
             <Progress execution={execution}/>
         </Fragment>
-    )
-}
+    );
+};
 
 export default ExecutionSettingsPanel;

@@ -73,10 +73,10 @@ const Handle = ({handle, jsonError, setJsonError, showLeftColumn: showLeftColumn
                 size={12}
                 container={true}
                 spacing={1}
-                paddingBottom={2}
                 display={"flex"}
                 flexDirection={"row"}
                 alignItems={"center"}
+                sx={{paddingTop: 0, paddingBottom: 0.5}}
             >
                 {/* Label Column */}
                 <Grid
@@ -130,7 +130,7 @@ const Handle = ({handle, jsonError, setJsonError, showLeftColumn: showLeftColumn
                     <Grid
                         size={{xs: 4, lg: 5}}
                     >
-                        <Stack direction={"row"} alignItems={"center"} spacing={2}>
+                        <Stack direction={"row"} alignItems={"center"} spacing={1}>
                             {
                                 handle.type === InputDetailTypeEnum.FileName &&
                                 <Autocomplete
@@ -239,7 +239,7 @@ const Handle = ({handle, jsonError, setJsonError, showLeftColumn: showLeftColumn
                 <Grid
                     size={{xs: showLeftColumn ? 4 : 8, lg: showLeftColumn ? 5 : 10}}
                 >
-                    <Stack direction={"row"} alignItems={"center"} spacing={2}>
+                    <Stack direction={"row"} alignItems={"center"} spacing={1}>
                         {
                             handle.type === InputDetailTypeEnum.FileName &&
                             <Autocomplete
@@ -251,9 +251,11 @@ const Handle = ({handle, jsonError, setJsonError, showLeftColumn: showLeftColumn
                                 options={files ?? []}
                                 onInputChange={(_event: SyntheticEvent<Element, Event>, value: string | null): void => {
                                     if (value && value !== "") {
-                                        showLeftColumn ? addExecDefaultValue(handle.id!, value) : addExecParameter(handle.id!, value)
+                                        if (showLeftColumn) addExecDefaultValue(handle.id!, value)
+                                        else addExecParameter(handle.id!, value)
                                     } else {
-                                        showLeftColumn ? removeKeyFromExecDefaultValues(handle.id!) : removeKeyFromExecParameters(handle.id!)
+                                        if (showLeftColumn) removeKeyFromExecDefaultValues(handle.id!)
+                                        else removeKeyFromExecParameters(handle.id!)
                                     }
                                 }}
                                 renderInput={(params: AutocompleteRenderInputParams) => <TextField
@@ -278,9 +280,12 @@ const Handle = ({handle, jsonError, setJsonError, showLeftColumn: showLeftColumn
                                 value={showLeftColumn ? (execDefaultValues[handle.id!] ?? "") : (execParameters[handle.id!] ?? handle.defaultValue ?? "")}
                                 onChange={(event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => {
                                     if (event.target.value.toString() !== "") {
-                                        showLeftColumn ? addExecDefaultValue(handle.id!, event.target.value.toString()) : addExecParameter(handle.id!, event.target.value.toString())
+                                        if (showLeftColumn) addExecDefaultValue(handle.id!, event.target.value.toString())
+                                        else addExecParameter(handle.id!, event.target.value.toString())
+
                                     } else {
-                                        showLeftColumn ? removeKeyFromExecDefaultValues(handle.id!) : removeKeyFromExecParameters(handle.id!)
+                                        if (showLeftColumn) removeKeyFromExecDefaultValues(handle.id!)
+                                        else removeKeyFromExecParameters(handle.id!)
                                     }
                                 }}
                                 fullWidth={true}
@@ -314,9 +319,11 @@ const Handle = ({handle, jsonError, setJsonError, showLeftColumn: showLeftColumn
                                         if (value === "")
                                             updateJsonError(handle.id!, undefined);
                                         if (value !== '') {
-                                            showLeftColumn ? addExecDefaultValue(handle.id!, value) : addExecParameter(handle.id!, value)
+                                            if (showLeftColumn) addExecDefaultValue(handle.id!, value)
+                                            else addExecParameter(handle.id!, value)
                                         } else {
-                                            showLeftColumn ? removeKeyFromExecDefaultValues(handle.id!) : removeKeyFromExecParameters(handle.id!)
+                                            if (showLeftColumn) removeKeyFromExecDefaultValues(handle.id!)
+                                            else removeKeyFromExecParameters(handle.id!)
                                         }
                                     }}
                                     theme={theme.palette.mode === "dark" ? oneDark : githubLight}

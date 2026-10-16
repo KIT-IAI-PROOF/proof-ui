@@ -1,20 +1,21 @@
-import {Fragment, ReactNode, useCallback, useContext, useEffect, useState} from "react";
+import {Fragment, ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {Alert, Box, Button, ButtonGroup, Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Paper, Stack, Theme, Tooltip, Typography, useTheme} from "@mui/material";
 import StopIcon from '@mui/icons-material/Stop';
 import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
-import {DataGrid, GridColDef, GridFilterModel, GridPaginationModel, GridRenderCellParams, GridRowParams, GridSortModel} from "@mui/x-data-grid";
+import {DataGrid, GridColDef, GridFilterModel, GridPaginationModel, GridRenderCellParams, GridRowParams, GridRowSelectionModel, GridSortModel} from "@mui/x-data-grid";
 import {useTranslation} from "react-i18next";
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import Grid from "@mui/material/Grid2";
 import {ExecutionListing, ExecutionListingStatusEnum, ExecutionPagingModelListing} from "@kit-iai-proof/proof-config-manager-client";
 import {QueryClient, useIsFetching, useMutation, UseMutationResult, useQuery, useQueryClient, UseQueryResult} from "@tanstack/react-query";
-import {DEFAULT_FILTER, DEFAULT_MONITORING_SORTING, DEFAULT_PAGINATION, ENTITY_TYPES, EXECUTIONS_KEY, INVALIDATION_KEYS} from "../../utils/constants.ts";
+import {DEFAULT_FILTER, DEFAULT_MONITORING_SORTING, DEFAULT_PAGINATION, ENTITY_TYPES, EXECUTIONS_KEY, INVALIDATION_KEYS, PAGE_CONTAINER_PADDING} from "../../utils/constants.ts";
 import {AuthContextProps, useAuth} from "react-oidc-context";
 import {IAppContext} from "../../provider/AppProvider.tsx";
 import {AppContext} from "../../provider/AppContext.tsx";
 import {RestartAlt, UploadRounded} from "@mui/icons-material";
 import dayjs from "dayjs";
 import DeleteIcon from "@mui/icons-material/Delete";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import {AxiosError} from "axios";
 import {isAdmin} from "../../utils/auth.ts";
 import ConfirmDialog from "../../app/components/ConfirmDialog.tsx";
@@ -23,6 +24,16 @@ import {getErrorMessage} from "../../utils/error.ts";
 import {MonitoringContext} from "../../provider/MonitoringContext.tsx";
 import {IMonitoringContext} from "../../provider/MonitoringProvider.tsx";
 import {searchExecutionsQueryOptions} from "../../query/options/executionQueryOptions.tsx";
+import MonitoringTableFooter from "./components/MonitoringTableFooter.tsx";
+import {usePersistedState} from "../../hooks/usePersistedState.ts";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import {saveAs} from "file-saver";
+
+const STOPPED_STATES: ExecutionListingStatusEnum[] = [
+    ExecutionListingStatusEnum.Stopped,
+    ExecutionListingStatusEnum.Aborted,
+    ExecutionListingStatusEnum.ShutDown
+];
 
 const Monitoring: () => ReactNode = (): ReactNode => {
 
@@ -43,145 +54,187 @@ const Monitoring: () => ReactNode = (): ReactNode => {
     const [executionSortModel, setExecutionSortModel] = useState<GridSortModel>(DEFAULT_MONITORING_SORTING);
     const [executionFilterModel, setExecutionFilterModel] = useState<GridFilterModel>(DEFAULT_FILTER);
     const [executionPaginationModel, setExecutionPaginationModel] = useState<GridPaginationModel>(DEFAULT_PAGINATION);
+    const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
+    const [bulkDeleteOpen, setBulkDeleteOpen] = useState<boolean>(false);
 
     const isFetching: number = useIsFetching({queryKey: [EXECUTIONS_KEY, executionRequest], exact: true});
 
-    const columns: GridColDef<ExecutionListing>[] = [
-        {
-            field: "label",
-            headerName: t("word.label"),
-            width: 250,
-            filterable: false,
-            editable: false
-        },
-        {
-            field: "description",
-            headerName: t("word.description"),
-            width: 250,
-            filterable: false,
-            editable: false
-        },
-        {
-            field: "workflow",
-            headerName: t("word.workflow"),
-            width: 250,
-            filterable: false,
-            editable: false,
-            valueGetter: (_value: any, row: ExecutionListing): string => {
-                return row.workflow?.label ?? "";
-            }
-        },
-        {
-            field: "id",
-            headerName: t("word.id"),
-            width: 250,
-            filterable: false,
-            editable: false
-        },
-        {
-            field: "status",
-            headerName: t("word.status"),
-            width: 150,
-            filterable: false,
-            editable: false,
-            renderCell: (params: GridRenderCellParams<ExecutionListing>): ReactNode => {
-                return (
-                    <Chip label={params.row.status}/>
-                );
-            }
-        },
-        {
-            field: "startedAt",
-            headerName: t("word.startedAt"),
-            width: 150,
-            filterable: false,
-            editable: false,
-            renderCell: (params: GridRenderCellParams<ExecutionListing>): ReactNode => {
-                return (
-                    params.row.startedAt ? <Chip label={dayjs(params.row.startedAt).format("DD.MM.YYYY HH:mm")}/> : ""
-                );
-            }
-        },
-        {
-            field: "stoppedAt",
-            headerName: t("word.stoppedAt"),
-            width: 150,
-            filterable: false,
-            editable: false,
-            renderCell: (params: GridRenderCellParams<ExecutionListing>): ReactNode => {
-                return (
-                    params.row.startedAt ? <Chip label={dayjs(params.row.stoppedAt).format("DD.MM.YYYY HH:mm")}/> : ""
-                );
-            }
-        },
-        {
-            field: "buttonGroup",
-            headerName: t("word.actions"),
-            flex: 1,
-            align: "right",
-            headerAlign: "right",
-            sortable: false,
-            editable: false,
-            filterable: false,
-            renderCell: (params: GridRenderCellParams<ExecutionListing>): ReactNode => (
-                <ButtonGroup
-                    size="small"
-                    variant="outlined"
-                    onClick={async (e): Promise<void> => {
-                        e.stopPropagation()
-                    }}
-                >
-                    <Tooltip
-                        title={t("action.stop")}
+    const [columnWidths, setColumnWidths] = usePersistedState<Record<string, number>>({}, "programConfigsColumnWidths");
+
+    const resetColumnWidths: () => void = (): void => {
+        setColumnWidths({});
+    }
+
+    const columns: GridColDef<ExecutionListing>[] = useMemo(() => {
+        const applyWidth = (field: string) => {
+            return columnWidths[field] ? {width: columnWidths[field], flex: undefined} : {};
+        };
+
+        return [
+            {
+                field: "label",
+                headerName: t("word.label"),
+                width: 250,
+                filterable: false,
+                editable: false,
+                ...applyWidth("label")
+            },
+            {
+                field: "description",
+                headerName: t("word.description"),
+                width: 250,
+                filterable: false,
+                editable: false,
+                ...applyWidth("description")
+            },
+            {
+                field: "workflow",
+                headerName: t("word.workflow"),
+                width: 250,
+                filterable: false,
+                editable: false,
+                ...applyWidth("workflow"),
+                valueGetter: (_value: any, row: ExecutionListing): string => {
+                    return row.workflow?.label ?? "";
+                }
+            },
+            {
+                field: "id",
+                headerName: t("word.id"),
+                width: 280,
+                filterable: false,
+                editable: false,
+                ...applyWidth("id")
+            },
+            {
+                field: "status",
+                headerName: t("word.status"),
+                width: 150,
+                filterable: false,
+                editable: false,
+                ...applyWidth("status"),
+                renderCell: (params: GridRenderCellParams<ExecutionListing>): ReactNode => {
+                    return (
+                        <Chip label={params.row.status}/>
+                    );
+                }
+            },
+            {
+                field: "startedAt",
+                headerName: t("word.startedAt"),
+                width: 150,
+                filterable: false,
+                editable: false,
+                ...applyWidth("startedAt"),
+                renderCell: (params: GridRenderCellParams<ExecutionListing>): ReactNode => {
+                    return (
+                        params.row.startedAt ?
+                            <Chip label={dayjs(params.row.startedAt).format("DD.MM.YYYY HH:mm")}/> : ""
+                    );
+                }
+            },
+            {
+                field: "stoppedAt",
+                headerName: t("word.stoppedAt"),
+                width: 150,
+                filterable: false,
+                editable: false,
+                ...applyWidth("stoppedAt"),
+                renderCell: (params: GridRenderCellParams<ExecutionListing>): ReactNode => {
+                    return (
+                        params.row.startedAt ?
+                            <Chip label={dayjs(params.row.stoppedAt).format("DD.MM.YYYY HH:mm")}/> : ""
+                    );
+                }
+            },
+            {
+                field: "buttonGroup",
+                headerName: t("word.actions"),
+                width: 190,
+                align: "center",
+                headerAlign: "left",
+                sortable: false,
+                editable: false,
+                filterable: false,
+                ...applyWidth("buttonGroup"),
+                renderCell: (params: GridRenderCellParams<ExecutionListing>): ReactNode => (
+                    <ButtonGroup
+                        size="small"
+                        variant="outlined"
+                        onClick={async (e): Promise<void> => {
+                            e.stopPropagation()
+                        }}
                     >
-                        <Box>
-                            <IconButton
-                                color="error"
-                                disabled={params.row.status === ExecutionListingStatusEnum.Stopped || params.row.status === ExecutionListingStatusEnum.Aborted || params.row.status === ExecutionListingStatusEnum.ShutDown}
-                                onClick={async (e): Promise<void> => {
-                                    e.stopPropagation()
-                                    if (params.row.id) await orchestrationService.abortExecution(undefined, params.row.id)
-                                }}
-                            >
-                                <StopIcon/>
-                            </IconButton>
-                        </Box>
-                    </Tooltip>
-                    <Tooltip
-                        title={t('action.restart')}
-                    >
-                        <Box>
-                            <IconButton
-                                disabled={params.row.status !== ExecutionListingStatusEnum.Stopped && params.row.status !== ExecutionListingStatusEnum.Aborted && params.row.status !== ExecutionListingStatusEnum.ShutDown}
-                                color="primary"
-                                onClick={async (e): Promise<void> => {
-                                    e.stopPropagation()
-                                    if (params.row.id) await orchestrationService.startExecution(undefined, params.row.id)
-                                }}
-                            >
-                                <RestartAlt/>
-                            </IconButton>
-                        </Box>
-                    </Tooltip>
-                    <Tooltip
-                        title={t("action.delete")}
-                    >
-                        <Box>
-                            <IconButton
-                                color="error"
-                                onClick={async (e): Promise<void> => {
-                                    e.stopPropagation()
-                                    setDeleteExecution(params.row.id)
-                                }}
-                            >
-                                <DeleteIcon/>
-                            </IconButton>
-                        </Box>
-                    </Tooltip>
-                </ButtonGroup>
-            )
-        }
-    ];
+                        <Tooltip
+                            title={t("action.stop")}
+                        >
+                            <Box>
+                                <IconButton
+                                    color="error"
+                                    disabled={params.row.status && STOPPED_STATES.includes(params.row.status)}
+                                    onClick={async (e): Promise<void> => {
+                                        e.stopPropagation()
+                                        if (params.row.id) await orchestrationService.abortExecution(undefined, params.row.id)
+                                    }}
+                                >
+                                    <StopIcon/>
+                                </IconButton>
+                            </Box>
+                        </Tooltip>
+                        <Tooltip
+                            title={t('action.restart')}
+                        >
+                            <Box>
+                                <IconButton
+                                    disabled={params.row.status && !STOPPED_STATES.includes(params.row.status)}
+                                    color="primary"
+                                    onClick={async (e): Promise<void> => {
+                                        e.stopPropagation()
+                                        if (params.row.id) await orchestrationService.startExecution(undefined, params.row.id)
+                                    }}
+                                >
+                                    <RestartAlt/>
+                                </IconButton>
+                            </Box>
+                        </Tooltip>
+                        <Tooltip
+                            title={t("action.export")}
+                        >
+                            <Box>
+                                <IconButton
+                                    color="primary"
+                                    onClick={async (e): Promise<void> => {
+                                        e.stopPropagation()
+                                        if (params.row.id) {
+                                            const file: File = await executionService.exportExecution(params.row.id, undefined);
+                                            saveAs(file, "export-" + params.row.label + "_" + params.row.id + ".proof");
+                                        }
+                                    }}
+                                >
+                                    <FileDownloadIcon/>
+                                </IconButton>
+                            </Box>
+                        </Tooltip>
+                        <Tooltip
+                            title={t("action.delete")}
+                        >
+                            <Box>
+                                <IconButton
+                                    color="error"
+                                    onClick={async (e): Promise<void> => {
+                                        e.stopPropagation()
+                                        setDeleteExecution(params.row.id)
+                                    }}
+                                >
+                                    <DeleteIcon/>
+                                </IconButton>
+                            </Box>
+                        </Tooltip>
+                    </ButtonGroup>
+                )
+            }
+        ]
+    }, [columnWidths, t]);
 
     useEffect((): void => {
         setExecutionRequest({
@@ -205,6 +258,18 @@ const Monitoring: () => ReactNode = (): ReactNode => {
 
     const {data: executions}: UseQueryResult<ExecutionPagingModelListing, AxiosError> = useQuery(searchExecutionsQueryOptions(executionRequest));
 
+    const selectedExecutions: () => ExecutionListing[] = (): ExecutionListing[] => {
+        const ids: Set<string> = new Set(rowSelectionModel.map((id): string => id.toString()));
+        return (executions?.results ?? []).filter((execution: ExecutionListing): boolean => !!execution.id && ids.has(execution.id));
+    };
+
+    const invalidateExecutions: () => Promise<void> = async (): Promise<void> => {
+        for (const queryKey of INVALIDATION_KEYS[EXECUTIONS_KEY]) await queryClient.invalidateQueries({
+            queryKey: [queryKey],
+            exact: false
+        });
+    };
+
     const executionImport: UseMutationResult<void, AxiosError, File, any> = useMutation({
         retry: false,
         mutationFn: async (file: File): Promise<void> => {
@@ -213,9 +278,7 @@ const Monitoring: () => ReactNode = (): ReactNode => {
         onMutate: async (): Promise<void> => {
             return await queryClient.cancelQueries({queryKey: [EXECUTIONS_KEY]});
         },
-        onSuccess: async (): Promise<void> => {
-            for (const queryKey of INVALIDATION_KEYS[EXECUTIONS_KEY]) await queryClient.invalidateQueries({queryKey: [queryKey], exact: false});
-        }
+        onSuccess: async (): Promise<void> => invalidateExecutions()
     });
 
     const executionDeletion: UseMutationResult<boolean, AxiosError, string, void> = useMutation({
@@ -223,16 +286,29 @@ const Monitoring: () => ReactNode = (): ReactNode => {
         mutationFn: async (executionId: string): Promise<boolean> => {
             return await executionService.deleteExecution(executionId, undefined, sessionKey);
         },
+        // Deactivate any still-mounted status/value websocket, otherwise the STOMP client keeps
+        // reconnecting and RabbitMQ re-declares the deleted stream queues.
         onSuccess: async (): Promise<void> => {
-            for (const queryKey of INVALIDATION_KEYS[EXECUTIONS_KEY]) await queryClient.invalidateQueries({
-                queryKey: [queryKey],
-                exact: false
-            });
+            resetEditor();
+            await invalidateExecutions();
         },
         onError: (error: AxiosError): void => {
             getErrorMessage(error, ENTITY_TYPES[EXECUTIONS_KEY], t)
         }
     });
+
+    const handleBulkStop: () => Promise<void> = async (): Promise<void> => {
+        const targets: ExecutionListing[] = selectedExecutions().filter((execution: ExecutionListing): boolean => !STOPPED_STATES.includes(execution.status as ExecutionListingStatusEnum));
+        await Promise.allSettled(targets.map((execution: ExecutionListing): Promise<void> => orchestrationService.abortExecution(undefined, execution.id!)));
+        await invalidateExecutions();
+        setRowSelectionModel([]);
+    };
+
+    const handleBulkDelete: () => Promise<void> = async (): Promise<void> => {
+        const targets: ExecutionListing[] = selectedExecutions();
+        await Promise.allSettled(targets.map((execution: ExecutionListing): Promise<boolean> => executionDeletion.mutateAsync(execution.id!)));
+        setRowSelectionModel([]);
+    };
 
     const handleChange: (e: any) => void = (e: any): void => {
         if (e.target.files && e.target.files[0]) {
@@ -244,10 +320,7 @@ const Monitoring: () => ReactNode = (): ReactNode => {
     return (
         <Fragment>
             <Box
-                padding={2}
-                paddingTop={7}
-                paddingLeft={10}
-                paddingBottom={15}>
+                {...PAGE_CONTAINER_PADDING}>
                 <Paper>
                     <Box padding={3}>
                         <Grid
@@ -270,31 +343,47 @@ const Monitoring: () => ReactNode = (): ReactNode => {
                             <Grid size={{sm: 12, md: "auto"}}>
                                 <Stack
                                     direction={"row"}
+                                    spacing={1}
                                     justifyContent={"flex-end"}
                                 >
-                                    <ButtonGroup>
+                                    <Tooltip title="Reset column widths">
                                         <Button
+                                            startIcon={<RestartAltIcon/>}
+                                            variant={"outlined"}
+                                            color={"primary"}
+                                            onClick={resetColumnWidths}
+                                            disabled={Object.keys(columnWidths).length === 0}
+                                        >
+                                            {t("action.resetColumnWidths")}
+                                        </Button>
+                                    </Tooltip>
+                                    <Button
+                                        color={"primary"}
+                                        variant={"outlined"}
+                                        onClick={(): void => navigate("/monitoring/execution")}
+                                    >
+                                        {t("action.run")}
+                                    </Button>
+                                    {
+                                        user && isAdmin(user) && <Button
                                             color={"primary"}
                                             variant={"outlined"}
-                                            onClick={(): void => navigate("/monitoring/execution")}
+                                            onClick={(): void => setImportDialogOpen(true)}
                                         >
-                                            {t("action.run")}
+                                            {t("action.import")}
                                         </Button>
-                                        {
-                                            user && isAdmin(user) && <Button
-                                                color={"primary"}
-                                                variant={"outlined"}
-                                                onClick={(): void => setImportDialogOpen(true)}
-                                            >
-                                                {t("action.import")}
-                                            </Button>
-                                        }
-                                    </ButtonGroup>
+                                    }
                                 </Stack>
                             </Grid>
                         </Grid>
                         <div style={{display: "flex", flexDirection: "column"}}>
                             <DataGrid<ExecutionListing>
+                                disableRowSelectionOnClick={true}
+                                checkboxSelection={true}
+                                onRowSelectionModelChange={(newRowSelectionModel) => {
+                                    setRowSelectionModel(newRowSelectionModel);
+                                }}
+                                rowSelectionModel={rowSelectionModel}
                                 loading={!!isFetching}
                                 rows={executions?.results ?? []}
                                 rowCount={executions?.rowCount ?? 0}
@@ -316,9 +405,20 @@ const Monitoring: () => ReactNode = (): ReactNode => {
                                     }
                                 }}
                                 pageSizeOptions={[10, 25, 50, 100]}
-                                disableRowSelectionOnClick={true}
-                                checkboxSelection={false}
                                 pagination={true}
+                                slots={{footer: MonitoringTableFooter}}
+                                slotProps={{
+                                    footer: {
+                                        selectedCount: rowSelectionModel.length,
+                                        stopLabel: t("action.stop"),
+                                        deleteLabel: t("action.delete"),
+                                        onBulkStop: handleBulkStop,
+                                        onBulkDelete: (): void => setBulkDeleteOpen(true)
+                                    }
+                                }}
+                                onColumnWidthChange={(params) => {
+                                    setColumnWidths((prev) => ({...prev, [params.colDef.field]: params.width}));
+                                }}
                             />
                         </div>
                     </Box>
@@ -416,6 +516,13 @@ const Monitoring: () => ReactNode = (): ReactNode => {
                             });
                     }
                 }}
+            />
+            <ConfirmDialog
+                dialogTitle={rowSelectionModel.length === 1 ? t("dialog.header.confirmDelete") : t("dialog.header.confirmDeleteMultiple")}
+                confirmAction={t("action.delete")}
+                open={bulkDeleteOpen}
+                setOpen={() => setBulkDeleteOpen(false)}
+                callback={handleBulkDelete}
             />
         </Fragment>
     );

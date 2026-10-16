@@ -11,6 +11,7 @@ import {DEFAULT_PALETTE} from "../../utils/palette.ts";
 import {Info} from "@mui/icons-material";
 import {AppContext} from "../../provider/AppContext.tsx";
 import {DEFAULT_SETTINGS} from "../../utils/settings.ts";
+import {PAGE_CONTAINER_PADDING} from "../../utils/constants.ts";
 
 const Settings: () => ReactNode = (): ReactNode => {
 
@@ -32,10 +33,7 @@ const Settings: () => ReactNode = (): ReactNode => {
     return (
         <Fragment>
             <Box
-                padding={2}
-                paddingTop={7}
-                paddingLeft={10}
-                paddingBottom={15}>
+                {...PAGE_CONTAINER_PADDING}>
                 <Paper>
                     <Box padding={3}>
                         <Stack

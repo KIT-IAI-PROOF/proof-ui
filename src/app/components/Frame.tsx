@@ -12,7 +12,7 @@ import {useAutoSignin} from "react-oidc-context";
 
 export const Frame = () => {
 
-    const { isLoading, isAuthenticated, error } = useAutoSignin({
+    const {isLoading, isAuthenticated, error} = useAutoSignin({
         signinMethod: "signinRedirect",
         signinArgs: {
             state: window.location.pathname === "/" ? "/" : window.location.pathname,

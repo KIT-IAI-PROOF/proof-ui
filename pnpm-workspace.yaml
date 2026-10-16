@@ -1,12 +1,10 @@
 allowBuilds:
-  esbuild: set this to true or false
-
-ignoredBuiltDependencies:
-  - '@swc/core'
-  - esbuild
+  '@swc/core': false
 
 minimumReleaseAgeExclude:
   - vite@6.4.3
+  - '@webis/proof-config-manager-client@1.5.1-dev0 || 1.5.1-dev2'
 
 overrides:
+  axios: "1.18.1"
   js-yaml@>=4.0.0 <4.1.1: '>=4.1.1'

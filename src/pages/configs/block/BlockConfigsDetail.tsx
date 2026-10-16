@@ -1,11 +1,31 @@
 import {NavigateFunction, useNavigate, useParams, useSearchParams} from "react-router-dom";
-import {ChangeEvent, Fragment, ReactNode, useContext, useEffect, useState} from "react";
-import {Box, Button, Divider, FormControl, FormHelperText, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Stack, TextField, Theme, Tooltip, Typography, useTheme} from "@mui/material";
+import {ChangeEvent, Fragment, ReactNode, SyntheticEvent, useContext, useEffect, useState} from "react";
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Box,
+    Button,
+    Divider,
+    FormControl,
+    FormHelperText,
+    InputLabel,
+    MenuItem,
+    Paper,
+    Select,
+    SelectChangeEvent,
+    Stack,
+    TextField,
+    Theme,
+    Tooltip,
+    Typography,
+    useTheme
+} from "@mui/material";
 import {Info} from "@mui/icons-material";
 import Grid from "@mui/material/Grid2";
 import {useTranslation} from "react-i18next";
 import {useMutation, UseMutationResult, useQuery, useQueryClient, UseQueryResult} from "@tanstack/react-query";
-import {BLOCKS_KEY, ENTITY_TYPES, INVALIDATION_KEYS} from "../../../utils/constants.ts";
+import {BLOCKS_KEY, ENTITY_TYPES, INVALIDATION_KEYS, PAGE_CONTAINER_PADDING} from "../../../utils/constants.ts";
 import PageHeader from "../../../app/components/PageHeader.tsx";
 import ColorPicker from "../../../app/components/ColorPicker.tsx";
 import ConfirmDialog from "../../../app/components/ConfirmDialog.tsx";
@@ -21,6 +41,9 @@ import {getErrorMessage} from "../../../utils/error.ts";
 import {blockService} from "../../../services/instances.ts";
 import {blockQueryOptions} from "../../../query/options/blockQueryOptions.tsx";
 import {templateQueryOptions} from "../../../query/options/templateQueryOptions.tsx";
+import LabeledFieldsGrid from "../../../app/components/LabeledFieldsGrid.tsx";
+import LabeledField from "../../../app/components/LabeledField.tsx";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
 const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
 
@@ -30,7 +53,13 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
     const {blockId} = useParams();
     const navigate: NavigateFunction = useNavigate();
     const queryClient = useQueryClient();
-    const {hasUnsavedChanges, updateError, sessionKey, updateHasUnsavedChanges, updateAllowNavigation} = useContext<IAppContext>(AppContext);
+    const {
+        hasUnsavedChanges,
+        updateError,
+        sessionKey,
+        updateHasUnsavedChanges,
+        updateAllowNavigation
+    } = useContext<IAppContext>(AppContext);
     const returnToWorkflowId: string | null = searchParams.get("workflowId");
 
     const [label, setLabel] = useState<string | undefined>(undefined);
@@ -41,6 +70,8 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
     const [syncStrategy, setSyncStrategy] = useState<TemplateDetailSyncStrategyEnum | undefined>(undefined);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
     const [shutdownRelevant, setShutdownRelevant] = useState<boolean>(true);
+    const [outputsExpanded, setOutputsExpanded] = useState<boolean>(true);
+    const [inputsExpanded, setInputsExpanded] = useState<boolean>(true);
 
     const {data: block}: UseQueryResult<BlockDetail, AxiosError> = useQuery(blockQueryOptions(blockId));
     const {data: template}: UseQueryResult<TemplateDetail, AxiosError> = useQuery(templateQueryOptions(block?.templateId));
@@ -95,10 +126,7 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
     return (
         <Fragment>
             <Box
-                padding={2}
-                paddingTop={7}
-                paddingBottom={10}
-                paddingLeft={10}
+                {...PAGE_CONTAINER_PADDING}
             >
                 <Paper elevation={0}>
                     <Box padding={3}>
@@ -149,31 +177,8 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                             }
                         />
                         <Divider/>
-                        <Grid
-                            container={true}
-                            padding={1}
-                            paddingTop={5}
-                            spacing={2}
-                            paddingBottom={5}
-                        >
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.id")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.id")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                        <LabeledFieldsGrid>
+                            <LabeledField labelKey={"word.id"} tooltipKey={"tooltip.id"}>
                                 <TextField
                                     fullWidth={true}
                                     value={block?.id ?? ""}
@@ -182,25 +187,8 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                     variant="outlined"
                                     disabled
                                 />
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.index")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.index")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.index"} tooltipKey={"tooltip.index"}>
                                 <TextField
                                     fullWidth={true}
                                     value={block?.index ?? ""}
@@ -209,25 +197,8 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                     variant="outlined"
                                     disabled
                                 />
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.label")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.label")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.label"} tooltipKey={"tooltip.label"}>
                                 <TextField
                                     fullWidth={true}
                                     value={label ?? ""}
@@ -239,25 +210,8 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                         setLabel(label);
                                         if (!hasUnsavedChanges) updateHasUnsavedChanges(true)
                                     }}/>
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.templateName")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.templateName")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.templateName"} tooltipKey={"tooltip.templateName"}>
                                 <TextField
                                     fullWidth={true}
                                     value={block?.templateName ?? ""}
@@ -265,25 +219,8 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                     label={t("word.templateName")}
                                     variant="outlined"
                                     disabled/>
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.description")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.description")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.description"} tooltipKey={"tooltip.description"}>
                                 <TextField
                                     fullWidth={true}
                                     value={description ?? ""}
@@ -295,25 +232,8 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                         setDescription(description);
                                         if (!hasUnsavedChanges) updateHasUnsavedChanges(true)
                                     }}/>
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.image")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.image")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.image"} tooltipKey={"tooltip.image"}>
                                 <TextField
                                     fullWidth={true}
                                     value={image ?? ""}
@@ -337,25 +257,8 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                         template?.containerImage !== block?.containerImage ? `${t("word.valueDifferent")} ${template?.containerImage}` : ""
                                     }
                                 />
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.blockType")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.blockType")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.blockType"} tooltipKey={"tooltip.blockType"}>
                                 <TextField
                                     fullWidth={true}
                                     value={block?.blockType ?? ""}
@@ -364,25 +267,9 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                     variant="outlined"
                                     disabled={true}
                                 />
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.communicationParadigm")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.communicationParadigm")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.communicationParadigm"}
+                                          tooltipKey={"tooltip.communicationParadigm"}>
                                 <TextField
                                     fullWidth={true}
                                     value={block?.communicationParadigm ?? ""}
@@ -391,25 +278,8 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                     variant="outlined"
                                     disabled={true}
                                 />
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.syncStrategy")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.syncStrategy")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.syncStrategy"} tooltipKey={"tooltip.syncStrategy"}>
                                 <FormControl
                                     fullWidth={true}
                                     sx={{
@@ -442,36 +312,17 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                             value={TemplateDetailSyncStrategyEnum.WaitForSync}>
                                             {TemplateDetailSyncStrategyEnum.WaitForSync}
                                         </MenuItem>
-                                        {/*
                                         <MenuItem
                                             value={TemplateDetailSyncStrategyEnum.Instant}>
                                             {TemplateDetailSyncStrategyEnum.Instant}
                                         </MenuItem>
-                                        */}
                                     </Select>
                                     <FormHelperText>
                                         {template?.syncStrategy !== block?.syncStrategy ? `${t("word.valueDifferent")} ${template?.syncStrategy}` : ""}
                                     </FormHelperText>
                                 </FormControl>
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.shutdownRelevant")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.shutdownRelevant")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.shutdownRelevant"} tooltipKey={"tooltip.shutdownRelevant"}>
                                 <FormControl
                                     fullWidth={true}
                                     sx={{
@@ -506,25 +357,8 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                         {template?.shutdownRelevant !== block?.shutdownRelevant ? `${t("word.valueDifferent")} ${template?.shutdownRelevant ? t('action.yes') : t('action.no')}` : ""}
                                     </FormHelperText>
                                 </FormControl>
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.color")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.color")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.color"} tooltipKey={"tooltip.color"}>
                                 <ColorPicker
                                     color={color}
                                     onChange={(color: string): void => {
@@ -532,25 +366,8 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                         if (!hasUnsavedChanges) updateHasUnsavedChanges(true)
                                     }}
                                 />
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.textColor")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.textColor")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.textColor"} tooltipKey={"tooltip.textColor"}>
                                 <ColorPicker
                                     color={textColor}
                                     onChange={(textColor: string): void => {
@@ -558,25 +375,8 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                         if (!hasUnsavedChanges) updateHasUnsavedChanges(true)
                                     }}
                                 />
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.lastModifiedBy")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.lastModifiedBy")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.lastModifiedBy"} tooltipKey={"tooltip.lastModifiedBy"}>
                                 <TextField
                                     fullWidth={true}
                                     value={block?.lastModifiedBy ?? ""}
@@ -584,25 +384,8 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                     label={t("word.lastModifiedBy")}
                                     variant="outlined"
                                     disabled/>
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.lastModifiedDate")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.lastModifiedDate")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.lastModifiedDate"} tooltipKey={"tooltip.lastModifiedDate"}>
                                 <TextField
                                     fullWidth={true}
                                     value={block?.lastModifiedDate ? dayjs.unix(Number(block.lastModifiedDate)).format("DD.MM.YYYY HH:mm [Uhr]") : ""}
@@ -610,25 +393,8 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                     label={t("word.lastModifiedDate")}
                                     variant="outlined"
                                     disabled/>
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.createdBy")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.createdBy")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.createdBy"} tooltipKey={"tooltip.createdBy"}>
                                 <TextField
                                     fullWidth={true}
                                     value={block?.createdBy ?? ""}
@@ -636,25 +402,8 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                     label={t("word.createdBy")}
                                     variant="outlined"
                                     disabled/>
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.creationDate")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.creationDate")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.creationDate"} tooltipKey={"tooltip.creationDate"}>
                                 <TextField
                                     fullWidth={true}
                                     value={block?.creationDate ? dayjs.unix(Number(block?.creationDate)).format("DD.MM.YYYY HH:mm [Uhr]") : ""}
@@ -662,20 +411,20 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                     label={t("word.creationDate")}
                                     variant="outlined"
                                     disabled/>
-                            </Grid>
-                        </Grid>
+                            </LabeledField>
+                        </LabeledFieldsGrid>
                         <Paper sx={{background: theme.palette.elevated.default}}>
-                            <Stack spacing={2} padding={2}>
+                            <Stack spacing={1} padding={2}>
                                 <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                                    <Typography variant={"h5"} color={"textPrimary"} padding={2} paddingRight={0}>
+                                    <Typography variant={"h5"} color={"textPrimary"} paddingX={2} paddingRight={0}>
                                         {t("word.program")}
                                     </Typography>
                                     <Tooltip title={t("tooltip.program")}>
                                         <Info color={"action"} sx={{cursor: "pointer"}}/>
                                     </Tooltip>
                                 </Stack>
-                                <Box padding={1} paddingTop={0}>
-                                    <FormControl fullWidth={true}>
+                                <Box paddingY={1} paddingLeft={2}>
+                                    <FormControl size={"small"} fullWidth={true}>
                                         <InputLabel>{t("word.program")}</InputLabel>
                                         <Select
                                             size={"small"}
@@ -700,8 +449,30 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                             pb={2}
                             container={true}>
                             <Grid size={{xs: 12, sm: 6, md: 6, lg: 6, xl: 6}}>
-                                <Paper style={{background: theme.palette.elevated.default}}>
-                                    <Box padding={2}>
+                                <Accordion
+                                    expanded={inputsExpanded}
+                                    onChange={(_event: SyntheticEvent, isExpanded: boolean) => setInputsExpanded(isExpanded)}
+                                    sx={{
+                                        backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[100],
+                                        borderRadius: 2,
+                                        '&:before': {
+                                            display: 'none'
+                                        },
+                                        boxShadow: theme.shadows[1]
+                                    }}
+                                >
+                                    <AccordionSummary
+                                        expandIcon={
+                                            <Tooltip
+                                                title={inputsExpanded
+                                                    ? t("action.collapseInputs")
+                                                    : t("action.expandInputs")
+                                                }
+                                            >
+                                                <ArrowDownwardIcon/>
+                                            </Tooltip>
+                                        }
+                                    >
                                         <Stack direction={"row"} alignItems={"center"} spacing={1}>
                                             <Typography
                                                 variant={"h5"}
@@ -715,13 +486,37 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                                 <Info color={"action"} sx={{cursor: "pointer"}}/>
                                             </Tooltip>
                                         </Stack>
+                                    </AccordionSummary>
+                                    <AccordionDetails>
                                         <InputsPanel inputs={block?.inputs ?? []}/>
-                                    </Box>
-                                </Paper>
+                                    </AccordionDetails>
+                                </Accordion>
                             </Grid>
                             <Grid size={{xs: 12, sm: 6, md: 6, lg: 6, xl: 6}}>
-                                <Paper style={{background: theme.palette.elevated.default}}>
-                                    <Box padding={2}>
+                                <Accordion
+                                    expanded={outputsExpanded}
+                                    onChange={(_event: SyntheticEvent, isExpanded: boolean) => setOutputsExpanded(isExpanded)}
+                                    sx={{
+                                        backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[100],
+                                        borderRadius: 2,
+                                        '&:before': {
+                                            display: 'none'
+                                        },
+                                        boxShadow: theme.shadows[1]
+                                    }}
+                                >
+                                    <AccordionSummary
+                                        expandIcon={
+                                            <Tooltip
+                                                title={outputsExpanded
+                                                    ? t("action.collapseOutputs")
+                                                    : t("action.expandOutputs")
+                                                }
+                                            >
+                                                <ArrowDownwardIcon/>
+                                            </Tooltip>
+                                        }
+                                    >
                                         <Stack direction={"row"} alignItems={"center"} spacing={1}>
                                             <Typography
                                                 variant={"h5"}
@@ -735,9 +530,11 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                                 <Info color={"action"} sx={{cursor: "pointer"}}/>
                                             </Tooltip>
                                         </Stack>
+                                    </AccordionSummary>
+                                    <AccordionDetails>
                                         <OutputsPanel outputs={block?.outputs ?? []}/>
-                                    </Box>
-                                </Paper>
+                                    </AccordionDetails>
+                                </Accordion>
                             </Grid>
                         </Grid>
                     </Box>

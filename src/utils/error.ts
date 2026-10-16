@@ -7,7 +7,11 @@ export const getErrorMessage = (error: AxiosError, key: string, t: any): string 
         }
         default: {
             const data: any = error.response?.data;
-            switch (data.exception) {
+            // If there is no data but there is an error message, return it.
+            if (!data && error.message) {
+                return t(`Error.${key}: ${error.message}`);
+            }
+            switch (data?.exception) {
                 case "com.smateso.proof.adapter.exceptions.AlreadyExistsException": {
                     return t(`error.${key}.alreadyExists`);
                 }
@@ -18,7 +22,7 @@ export const getErrorMessage = (error: AxiosError, key: string, t: any): string 
                     return t(`error.${key}.inUse`);
                 }
                 default: {
-                    return t(`error.${key}.unknown`);
+                    return data?.message ?? t(`error.${key}.unknown`);
                 }
             }
         }
