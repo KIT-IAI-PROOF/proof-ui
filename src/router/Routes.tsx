@@ -7,15 +7,17 @@ import {TFunction} from "i18next";
 import {Frame as EFrame} from "../pages/editor/Editor.frame.tsx";
 import {Frame as MFrame} from "../pages/monitoring/Monitoring.frame.tsx";
 import {Frame as CFrame} from "../pages/configs/Configs.frame.tsx";
+import {Frame as IFrame} from "../pages/import/Import.frame.tsx";
 import {IRoute} from "../model/IRoute.ts";
 import MonitoringDetail from "../pages/monitoring/MonitoringDetail.tsx";
 import Monitoring from "../pages/monitoring/Monitoring.tsx";
 import MonitoringStart from "../pages/monitoring/MonitoringStart.tsx";
 import {Fragment} from "react";
 import Configs from "../pages/configs/Configs.tsx";
+import Import from "../pages/import/Import.tsx";
 import WorkflowConfigs from "../pages/configs/workflow/WorkflowConfigs.tsx";
 import WorkflowConfigsDetail from "../pages/configs/workflow/WorkflowConfigsDetail.tsx";
-import {EditNoteRounded} from "@mui/icons-material";
+import {EditNoteRounded, FileUpload} from "@mui/icons-material";
 import TemplateConfigsDetail from "../pages/configs/template/TemplateConfigsDetail.tsx";
 import TemplateConfigs from "../pages/configs/template/TemplateConfigs.tsx";
 import BlockConfigs from "../pages/configs/block/BlockConfigs.tsx";
@@ -24,6 +26,8 @@ import ProgramConfigs from "../pages/configs/program/ProgramConfigs.tsx";
 import ProgramConfigsDetail from "../pages/configs/program/ProgramConfigsDetail.tsx";
 import AttachmentConfigs from "../pages/configs/attachment/AttachmentConfigs.tsx";
 import AttachmentConfigsDetail from "../pages/configs/attachment/AttachmentConfigsDetail.tsx";
+import FmuImport from "../pages/import/fmu/FmuImport.tsx";
+import WorkflowImport from "../pages/import/workflow/WorkflowImport.tsx";
 
 export const getRoutes: (t: TFunction) => IRoute[] = (t: TFunction): IRoute[] => {
 
@@ -322,6 +326,63 @@ export const getRoutes: (t: TFunction) => IRoute[] = (t: TFunction): IRoute[] =>
                     },
                     children: []
                 },
+            ]
+        },
+        {
+            name: t("page.header.import.index"),
+            displayPath: "/import",
+            routingPath: "/import",
+            description: t("page.description.import"),
+            element: <IFrame/>,
+            icon: <FileUpload color={"primary"}/>,
+            index: false,
+            menu: {
+                1: true,
+                2: true
+            },
+            children: [
+                {
+                    index: true,
+                    name: t("page.header.import.root"),
+                    displayPath: "/import",
+                    routingPath: "/import",
+                    description: "",
+                    element: <Import/>,
+                    icon: <FileUpload color={"primary"}/>,
+                    menu: {
+                        1: true,
+                        2: true
+                    },
+                    children: []
+                },
+                {
+                    index: false,
+                    name: t("page.header.import.fmu"),
+                    displayPath: "/import/fmu",
+                    routingPath: "/import/fmu",
+                    description: "",
+                    element: <FmuImport/>,
+                    icon: <FileUpload color={"primary"}/>,
+                    menu: {
+                        1: true,
+                        2: true
+                    },
+                    children: []
+                },
+                {
+                    index: false,
+                    name: t("page.header.import.workflow"),
+                    displayPath: "/import/workflows",
+                    routingPath: "/import/workflows",
+                    description: "",
+                    element: <WorkflowImport/>,
+                    icon: <FileUpload color={"primary"}/>,
+                    menu: {
+                        1: true,
+                        2: true
+                    },
+                    children: []
+                }
             ]
         },
         {

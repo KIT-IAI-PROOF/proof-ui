@@ -13,10 +13,12 @@ import {IAppContext} from "../../../provider/AppProvider.tsx";
 import {AppContext} from "../../../provider/AppContext.tsx";
 import {MonitoringContext} from "../../../provider/MonitoringContext.tsx";
 import {IMonitoringContext} from "../../../provider/MonitoringProvider.tsx";
+import {useTranslation} from "react-i18next";
 
 const createBlockNode = (withBlockStatus?: boolean) => {
     const Node = memo(({data, width, height}: NodeProps<TBlock>): ReactNode => {
 
+        const {t} = useTranslation();
         const theme: Theme = useTheme();
         const {palette} = useContext<IAppContext>(AppContext);
         const {blockStates} = useContext<IMonitoringContext>(MonitoringContext);
@@ -29,6 +31,13 @@ const createBlockNode = (withBlockStatus?: boolean) => {
         const handleTooltipClose = (id: string) => {
             setTooltipOpenMap(prev => ({...prev, [id]: false}));
         };
+
+        const blockState = blockStates
+            .filter((blockState) => blockState.blockId === data.id)
+            .reduce<typeof blockStates[number] | undefined>((highest, current) => {
+                if (!highest) return current;
+                return (current.offset ?? -1) > (highest.offset ?? -1) ? current : highest;
+            }, undefined);
 
         return (
             <Fragment>
@@ -44,10 +53,10 @@ const createBlockNode = (withBlockStatus?: boolean) => {
                         opacity: 0.95
                     }}
                 >
-                    {withBlockStatus &&
-                        <Box paddingBottom={1.5}>
+                    {
+                        withBlockStatus && <Box paddingBottom={1.5}>
                             <Chip
-                                label={`CP: ${blockStates.find((blockState) => blockState.blockId === data.id)?.cp ?? "N/A"}`}
+                                label={`CP: ${blockState?.cp ?? "N/A"}`}
                                 sx={{
                                     position: "absolute",
                                     top: "20px",
@@ -61,7 +70,7 @@ const createBlockNode = (withBlockStatus?: boolean) => {
                                 }}
                             />
                             <Chip
-                                label={blockStates.find((blockState) => blockState.blockId === data.id)?.status ?? "UNKNOWN"}
+                                label={t(blockState?.status ?? "UNKNOWN")}
                                 sx={{
                                     position: "absolute",
                                     top: "5px",
@@ -200,7 +209,7 @@ const createBlockNode = (withBlockStatus?: boolean) => {
                         className="handles sources"
                     >
                         {
-                            data.outputs?.map((handle: OutputDetail): false | JSX.Element => (
+                            data.outputs?.map((handle: OutputDetail) => (
                                 (!handle.communicationType || !handle.communicationType.toString().includes("STATIC")) &&
                                 <Stack
                                     key={handle.id}
@@ -288,4 +297,3 @@ const BlockNode = createBlockNode();
 BlockNode.displayName = "BlockNode";
 
 export {createBlockNode};
-export default BlockNode;

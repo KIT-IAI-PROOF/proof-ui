@@ -65,9 +65,12 @@ const OutputsPanel = ({
                                 [index]: false
                             })) : setOutputPanelExpanded(prevState => ({...prevState, [index]: true}))}
                             disableGutters={true}
-                            style={{
+                            sx={{
                                 background: theme.palette.elevated.paper,
-                                borderRadius: "5px"
+                                borderRadius: 2,
+                                '&:before': {
+                                    display: 'none'
+                                },
                             }}
                         >
                             <AccordionSummary

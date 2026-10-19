@@ -5,6 +5,7 @@ import {useTranslation} from "react-i18next";
 import {getRoutes} from "../../router/Routes.tsx";
 import {IRoute} from "../../model/IRoute.ts";
 import RoutePanel from "../landing/components/RoutePanel.tsx";
+import {PAGE_CONTAINER_PADDING} from "../../utils/constants.ts";
 
 const Import = () => {
 
@@ -13,9 +14,7 @@ const Import = () => {
     return (
         <Fragment>
             <Box
-                padding={2}
-                paddingTop={7}
-                paddingLeft={10}>
+                {...PAGE_CONTAINER_PADDING}>
                 <Paper>
                     <Box padding={3}>
                         <Typography

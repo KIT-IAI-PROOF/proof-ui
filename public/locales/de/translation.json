@@ -62,7 +62,12 @@
     "zoomIn": "Vergrößern",
     "zoomOut": "Verkleinern",
     "copy": "Kopieren",
-    "update": "Aktualisieren"
+    "update": "Aktualisieren",
+    "resetColumnWidths": "Spaltenbreiten zurücksetzen",
+    "expandOutputs": "Ausgänge einblenden",
+    "collapseOutputs": "Ausgänge ausblenden",
+    "expandInputs": "Eingänge einblenden",
+    "collapseInputs": "Eingänge ausblenden"
   },
   "dialog": {
     "header": {
@@ -71,9 +76,11 @@
       "about": "Über uns",
       "account": "Konto",
       "confirmDelete": "Möchten Sie dieses Objekt wirklich löschen?",
+      "confirmDeleteMultiple": "Möchten Sie diese Objekte wirklich löschen?",
       "confirmCopy": "Möchten Sie dieses Objekt wirklich kopieren?",
       "loadLastUsedWorkflow": "Möchten Sie den letzten Workflow den Sie bearbeitet haben laden?",
-      "logs": "Logs"
+      "logs": "Logs",
+      "connectionPanel.maxValues": "Max letzte Einträge"
     }
   },
   "error": {
@@ -289,9 +296,12 @@
     "status": "Aktueller Status der Ausführung (z.B. RUNNING, STOPPED)",
     "startedAt": "Datum und Uhrzeit, wann die Ausführung gestartet wurde",
     "stoppedAt": "Datum und Uhrzeit, wann die Ausführung gestoppt wurde",
-    "shutdownRelevant": "Gibt an, ob dieser Block die Shutdown-Phase auslöst, wenn er alle Schritte beendet hat."
+    "shutdownRelevant": "Gibt an, ob dieser Block die Shutdown-Phase auslöst, wenn er alle Schritte beendet hat.",
+    "timeoutWorker": "Zeit in [s], wie lange der Orchestrator auf eine Notify-Nachricht aller Worker wartet",
+    "timeoutInput": "Zeit in [s], wie lange ein Worker maximal auf einen erforderlichen Eingabewert wartet, bevor defaultValue/Timeout zurückgegeben wird"
   },
   "word": {
+    "connection": "Verbindung",
     "baseName": "Basis Name",
     "textColor": "Textfarbe",
     "actions": "Aktionen",
@@ -411,6 +421,8 @@
     "startValue": "Startwert",
     "noStartValue": "-",
     "shutdownRelevant": "Abschalt-Relevant",
+    "timeoutWorker": "Zeitüberschreitung Worker",
+    "timeoutInput": "Zeitüberschreitung Eingang",
     "notStopped": "noch nicht angehalten",
     "valueDifferent": "Der Wert dieses Parameter unterscheidet sich von dem Wert der Vorlage. Wert der Vorlage:"
   },

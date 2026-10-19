@@ -1,10 +1,14 @@
 import {Fragment, ReactNode, useContext, useMemo} from "react";
 import {createTheme, CssBaseline, Theme as MTheme, ThemeProvider} from "@mui/material";
+
 import {IAppContext} from "../provider/AppProvider.tsx";
 import {AppContext} from "../provider/AppContext.tsx";
 import {deDE as deDECore, enUS as enUSCore} from "@mui/material/locale";
 import {deDE as deDEDG, enUS as enUSDG} from "@mui/x-data-grid/locales";
 import {useTranslation} from "react-i18next";
+
+import type {} from "@mui/x-data-grid/themeAugmentation";
+import type {} from "@mui/x-tree-view/themeAugmentation";
 
 interface IProps {
     children: ReactNode;
@@ -138,10 +142,69 @@ const Theme: ({children}: IProps) => ReactNode = ({children}: IProps): ReactNode
                         root: {
                             "&.MuiAccordion-root:before": {
                                 backgroundColor: "transparent"
-                            }
+                            },
                         }
                     }
-                }
+                },
+                MuiAccordionSummary: {
+                    styleOverrides: {
+                        root: {
+                            "&.Mui-expanded": {
+                                minHeight: 32,
+                            },
+
+                            "& .MuiAccordionSummary-content": {
+                                marginTop: 0,
+                                marginBottom: 0,
+                            },
+
+                            "& .MuiAccordionSummary-content.Mui-expanded": {
+                                marginTop: 8,
+                                marginBottom: 8,
+                            },
+                        },
+                    },
+                },
+                MuiDataGrid: {
+                    defaultProps: {
+                        rowHeight: 42,
+                        columnHeaderHeight: 42,
+                    },
+                    styleOverrides: {
+                        root: {
+                            "& .MuiDataGrid-cell": {
+                                py: 0.25,
+                                display: "flex",
+                                alignItems: "center",
+                            },
+                            "& .MuiDataGrid-columnHeader": {
+                                py: 0.25,
+                            },
+                            "& .MuiDataGrid-footerContainer": {
+                                minHeight: 42,
+                                height: 42,
+                            },
+                            "& .MuiTablePagination-root": {
+                                minHeight: 42,
+                                height: 42,
+                                fontSize: "0.8125rem",
+                            },
+                            "& .MuiTablePagination-toolbar": {
+                                minHeight: 42,
+                                height: 42,
+                            },
+                        },
+                    },
+                },
+                MuiTextField: {
+                    styleOverrides: {
+                        root: {
+                            "& input": {
+                                padding: "7px 10px !important",
+                            },
+                        },
+                    },
+                },
             }
         }, activeLocale.dataGrid, activeLocale.core);
     }, [activeLocale.core, activeLocale.dataGrid, palette, primaryPaletteIndex, secondaryPaletteIndex])

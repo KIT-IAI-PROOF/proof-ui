@@ -1,36 +1,6 @@
-import {
-    ChangeEvent,
-    DragEvent,
-    DragEventHandler,
-    Fragment,
-    MouseEvent as ReactMouseEvent,
-    ReactNode,
-    useCallback,
-    useContext,
-    useEffect,
-    useMemo,
-    useRef,
-    useState
-} from "react";
-import {Background, Connection, ConnectionMode, ControlButton, Controls, ReactFlow, useReactFlow} from "@xyflow/react";
-import {
-    Alert,
-    Box,
-    Button,
-    ButtonGroup,
-    Collapse,
-    FormControl,
-    IconButton,
-    List,
-    ListItem,
-    Paper,
-    TextField,
-    Theme,
-    Tooltip,
-    Typography,
-    useColorScheme,
-    useTheme
-} from "@mui/material";
+import {ChangeEvent, DragEvent, DragEventHandler, Fragment, MouseEvent as ReactMouseEvent, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
+import {Background, BackgroundVariant, Connection, ConnectionMode, ControlButton, Controls, ReactFlow, useReactFlow} from "@xyflow/react";
+import {Alert, Box, Button, ButtonGroup, Collapse, FormControl, IconButton, List, ListItem, Paper, Stack, TextField, Theme, Tooltip, Typography, useColorScheme, useTheme} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import {IEditorContext} from "../../../provider/EditorProvider.tsx";
 import {useTranslation} from "react-i18next";
@@ -177,8 +147,8 @@ const EditorBoard: () => ReactNode = (): ReactNode => {
                 paddingTop={1}
             >
                 <Grid flex={1}>
-                    <Paper variant={"outlined"}>
-                        <Box height={"calc(90vh - 300px)"}>
+                    <Stack direction={"column"} spacing={0}>
+                        <Box height={"calc(80vh - 200px)"}>
                             <ReactFlow<TBlock, TEdge>
                                 id={"editor"}
                                 key={"editor"}
@@ -224,7 +194,10 @@ const EditorBoard: () => ReactNode = (): ReactNode => {
                                     edgeMenuObject={edgeMenuObject}
                                     setEdgeMenuObject={setEdgeMenuObject}
                                 />
-                                <Background/>
+                                <Background
+                                    bgColor={theme.palette.elevated.default}
+                                    variant={BackgroundVariant.Dots}
+                                />
                                 <Controls showZoom={false} showFitView={false} showInteractive={false}>
                                     <Fragment>
                                         <ControlButton
@@ -281,94 +254,65 @@ const EditorBoard: () => ReactNode = (): ReactNode => {
                                 />
                             </ReactFlow>
                         </Box>
-                    </Paper>
-                    <Box paddingTop={1}>
-                        <ButtonGroup>
-                            <Button
-                                variant={"text"}
-                                color={"primary"}
-                                disabled={canUndo}
-                                onClick={undo}>
-                                <Typography>
-                                    {t("action.undo")}
-                                </Typography>
-                            </Button>
-                            <Button
-                                variant={"text"}
-                                color={"primary"}
-                                disabled={canRedo}
-                                onClick={redo}>
-                                <Typography>
-                                    {t("action.redo")}
-                                </Typography>
-                            </Button>
-                        </ButtonGroup>
-                    </Box>
-                    <Box paddingTop={1}>
-                        {
-                            outdatedBlocks.length > 0 &&
-                            <Alert
-                                severity={"info"}
-                                sx={{alignItems: "center"}}
-                            >
-                                <List dense disablePadding>
-                                    {
-                                        outdatedBlocks.map((block: BlockDetail) =>
-                                            <ListItem key={block.id}>
-                                                {t('word.outdatedBlock')}: {block.label} ({block.index})
-                                            </ListItem>
-                                        )
-                                    }
-                                </List>
-                            </Alert>
-
-                        }
-                        {changedBlocks.length > 0 &&
-                            <Alert
-                                severity={"info"}
-                                sx={{alignItems: "center", marginTop: 1}}
-                            >
-                                <List dense disablePadding>
-                                    {
-                                        changedBlocks.map((block: BlockDetail) =>
-                                            <ListItem key={block.id}>
-                                                {t('word.blockChanged', {
-                                                    block: block.label,
-                                                    index: block.index,
-                                                    parameters: block.id ? differingParameters[block.id] : undefined
-                                                })}
-                                            </ListItem>
-                                        )
-                                    }
-                                </List>
-                            </Alert>
-                        }
-                    </Box>
+                        <Box>
+                            <ButtonGroup>
+                                <Button
+                                    variant={"text"}
+                                    color={"primary"}
+                                    disabled={canUndo}
+                                    onClick={undo}>
+                                    <Typography>
+                                        {t("action.undo")}
+                                    </Typography>
+                                </Button>
+                                <Button
+                                    variant={"text"}
+                                    color={"primary"}
+                                    disabled={canRedo}
+                                    onClick={redo}>
+                                    <Typography>
+                                        {t("action.redo")}
+                                    </Typography>
+                                </Button>
+                            </ButtonGroup>
+                        </Box>
+                    </Stack>
                 </Grid>
                 <Grid>
                     <Paper
                         style={{background: theme.palette.elevated.default}}
                         variant={"outlined"}
+                        sx={{height: "calc(80vh - 200px)", overflowY: "auto", overflowX: "hidden", borderRadius: "5px"}}
                     >
-                        <Box padding={1} paddingBottom={0}>
+                        <Stack
+                            direction="row"
+                            alignItems="center"
+                            padding={1}
+                            paddingBottom={0}
+                        >
                             <IconButton
                                 color={"primary"}
                                 onClick={(): void => setNodesOpen(!nodesOpen)}>
                                 {!nodesOpen ? <ArrowBackRounded/> : <ArrowForwardRounded/>}
                             </IconButton>
-                        </Box>
+                            <Collapse
+                                in={nodesOpen}
+                                orientation={"horizontal"}
+                            >
+                                <Typography
+                                    variant={"h5"}
+                                    color={"primary"}
+                                    sx={{whiteSpace: "nowrap", pl: 1}}
+                                >
+                                    {t("word.templates")}
+                                </Typography>
+                            </Collapse>
+                        </Stack>
                         <Collapse
                             in={nodesOpen}
                             orientation={"horizontal"}
                         >
-                            <Box padding={3}>
-                                <Typography
-                                    variant={"h5"}
-                                    color={"primary"}
-                                    paddingBottom={2}
-                                >
-                                    {t("word.templates")}
-                                </Typography>
+                            <Box padding={2}>
                                 {
                                     templates && templates.length > 0 ?
                                         <Fragment>
@@ -389,88 +333,80 @@ const EditorBoard: () => ReactNode = (): ReactNode => {
                                                     variant={"outlined"}
                                                 />
                                             </FormControl>
-                                            <Box
-                                                sx={{
-                                                    maxHeight: "calc(100vh - 300px)",
-                                                    overflowY: "auto",
-                                                    overflowX: "hidden"
-                                                }}
+                                            <List
+                                                component={"div"}
+                                                dense={true}
                                             >
-                                                <List
-                                                    component={"div"}
-                                                    dense={true}
-                                                >
-                                                    {
-                                                        templates
-                                                            .filter((template: TemplateDetail): boolean => {
-                                                                if (search) {
-                                                                    return (template.name?.toLowerCase().includes(search.toLowerCase()) ||
-                                                                        template.description?.toLowerCase().includes(search.toLowerCase())) ?? false;
-                                                                }
-                                                                return true;
-                                                            })
-                                                            .map((template: TemplateDetail): ReactNode => {
-                                                                return (
-                                                                    <Fragment key={template.id}>
-                                                                        <ListItem
-                                                                            style={{cursor: "pointer"}}
-                                                                            draggable={true}
-                                                                            onDragStart={(event: DragEvent): void => onDragStart(event, template)}
-                                                                            disableGutters={true}
-                                                                            alignItems={"center"}
-                                                                            component={"div"}
-                                                                            disablePadding={false}
+                                                {
+                                                    templates
+                                                        .filter((template: TemplateDetail): boolean => {
+                                                            if (search) {
+                                                                return (template.name?.toLowerCase().includes(search.toLowerCase()) ||
+                                                                    template.description?.toLowerCase().includes(search.toLowerCase())) ?? false;
+                                                            }
+                                                            return true;
+                                                        })
+                                                        .map((template: TemplateDetail): ReactNode => {
+                                                            return (
+                                                                <Fragment key={template.id}>
+                                                                    <ListItem
+                                                                        style={{cursor: "pointer"}}
+                                                                        draggable={true}
+                                                                        onDragStart={(event: DragEvent): void => onDragStart(event, template)}
+                                                                        disableGutters={true}
+                                                                        alignItems={"center"}
+                                                                        component={"div"}
+                                                                        disablePadding={false}
+                                                                    >
+                                                                        <Paper
+                                                                            color={"primary"}
+                                                                            variant={"outlined"}
+                                                                            style={{
+                                                                                width: "100%",
+                                                                                maxWidth: "200px",
+                                                                                background: lighten(template.color ?? "#000", 0.5),
+                                                                                borderColor: lighten(template.color ?? "#000", 0.2),
+                                                                                borderStyle: "solid",
+                                                                                borderWidth: "3px",
+                                                                                borderRadius: "10px",
+                                                                                opacity: 0.95
+                                                                            }}
                                                                         >
-                                                                            <Paper
-                                                                                color={"primary"}
-                                                                                variant={"outlined"}
-                                                                                style={{
-                                                                                    width: "100%",
-                                                                                    maxWidth: "200px",
-                                                                                    background: lighten(template.color ?? "#000", 0.5),
-                                                                                    borderColor: lighten(template.color ?? "#000", 0.2),
-                                                                                    borderStyle: "solid",
-                                                                                    borderWidth: "3px",
-                                                                                    borderRadius: "10px",
-                                                                                    opacity: 0.95
-                                                                                }}
-                                                                            >
-                                                                                <Box padding={1}>
+                                                                            <Box padding={1}>
+                                                                                <Typography
+                                                                                    title={template.name}
+                                                                                    noWrap={true}
+                                                                                    style={{color: "white"}}
+                                                                                    textOverflow={"ellipsis"}
+                                                                                    overflow={"hidden"}
+                                                                                    variant={"body1"}
+                                                                                >
+                                                                                    {template.name}
+                                                                                </Typography>
+
+                                                                                <Tooltip
+                                                                                    title={showTooltipIds.has(template.id!) ? template.description : ''}>
                                                                                     <Typography
-                                                                                        title={template.name}
-                                                                                        noWrap={true}
+                                                                                        ref={(el: HTMLDivElement) => {
+                                                                                            if (el) descriptionRefs.current.set(template.id!, el);
+                                                                                        }}
+                                                                                        noWrap
                                                                                         style={{color: "white"}}
                                                                                         textOverflow={"ellipsis"}
                                                                                         overflow={"hidden"}
-                                                                                        variant={"body1"}
+                                                                                        variant={"body2"}
                                                                                     >
-                                                                                        {template.name}
+                                                                                        {template.description}
                                                                                     </Typography>
-
-                                                                                    <Tooltip
-                                                                                        title={showTooltipIds.has(template.id!) ? template.description : ''}>
-                                                                                        <Typography
-                                                                                            ref={(el: HTMLDivElement) => {
-                                                                                                if (el) descriptionRefs.current.set(template.id!, el);
-                                                                                            }}
-                                                                                            noWrap
-                                                                                            style={{color: "white"}}
-                                                                                            textOverflow={"ellipsis"}
-                                                                                            overflow={"hidden"}
-                                                                                            variant={"body2"}
-                                                                                        >
-                                                                                            {template.description}
-                                                                                        </Typography>
-                                                                                    </Tooltip>
-                                                                                </Box>
-                                                                            </Paper>
-                                                                        </ListItem>
-                                                                    </Fragment>
-                                                                );
-                                                            })
-                                                    }
-                                                </List>
-                                            </Box>
+                                                                                </Tooltip>
+                                                                            </Box>
+                                                                        </Paper>
+                                                                    </ListItem>
+                                                                </Fragment>
+                                                            );
+                                                        })
+                                                }
+                                            </List>
                                         </Fragment>
                                         :
                                         <Typography>{t("page.description.nodata")}</Typography>
@@ -479,9 +415,56 @@ const EditorBoard: () => ReactNode = (): ReactNode => {
                         </Collapse>
                     </Paper>
                 </Grid>
+                <Grid size={12}>
+                    <Stack spacing={1} direction={"column"}>
+                        {
+                            outdatedBlocks.length > 0 &&
+                            <Alert
+                                severity={"info"}
+                                variant={"outlined"}
+                                sx={{alignItems: "center"}}
+                            >
+                                <List dense disablePadding>
+                                    {
+                                        outdatedBlocks.map((block: BlockDetail) =>
+                                            <ListItem key={block.id}>
+                                                {t('word.outdatedBlock')}: {block.label} ({block.index})
+                                            </ListItem>
+                                        )
+                                    }
+                                </List>
+                            </Alert>
+                        }
+                        {
+                            changedBlocks.length > 0 &&
+                            <Alert
+                                severity={"info"}
+                                variant={"outlined"}
+                                sx={{alignItems: "center"}}
+                            >
+                                <List dense disablePadding>
+                                    {
+                                        changedBlocks.map((block: BlockDetail) =>
+                                            <ListItem key={block.id}>
+                                                {t('word.blockChanged', {
+                                                    block: block.label,
+                                                    index: block.index,
+                                                    parameters: block.id ? differingParameters[block.id] : undefined
+                                                })}
+                                            </ListItem>
+                                        )
+                                    }
+                                </List>
+                            </Alert>
+                        }
+                    </Stack>
+                </Grid>
             </Grid>
-            <NotificationDisplay visible={connectionErrorMessageVisible} message={connectionErrorMessage!}
-                                 position={connectionErrorMessagePosition}/>
+            <NotificationDisplay
+                visible={connectionErrorMessageVisible}
+                message={connectionErrorMessage!}
+                position={connectionErrorMessagePosition}
+            />
         </Fragment>
     );
 };

@@ -15,11 +15,13 @@ import {IAppContext} from "../../../provider/AppProvider.tsx";
 import {AppContext} from "../../../provider/AppContext.tsx";
 import dayjs from "dayjs";
 import {AxiosError} from "axios";
-import {ENTITY_TYPES, INVALIDATION_KEYS, PROGRAMS_KEY} from "../../../utils/constants.ts";
+import {ENTITY_TYPES, INVALIDATION_KEYS, PAGE_CONTAINER_PADDING, PROGRAMS_KEY} from "../../../utils/constants.ts";
 import {programService} from "../../../services/instances.ts";
 import {v4 as uuidv4} from "uuid";
 import {getErrorMessage} from "../../../utils/error.ts";
 import {programQueryOptions} from "../../../query/options/programQueryOptions.tsx";
+import LabeledFieldsGrid from "../../../app/components/LabeledFieldsGrid.tsx";
+import LabeledField from "../../../app/components/LabeledField.tsx";
 
 const ProgramConfigsDetail: () => ReactNode = (): ReactNode => {
 
@@ -28,7 +30,13 @@ const ProgramConfigsDetail: () => ReactNode = (): ReactNode => {
     const navigate: NavigateFunction = useNavigate();
     const {programId} = useParams();
     const queryClient = useQueryClient();
-    const {hasUnsavedChanges, sessionKey, updateHasUnsavedChanges, updateError, updateAllowNavigation} = useContext<IAppContext>(AppContext);
+    const {
+        hasUnsavedChanges,
+        sessionKey,
+        updateHasUnsavedChanges,
+        updateError,
+        updateAllowNavigation
+    } = useContext<IAppContext>(AppContext);
 
     const [label, setLabel] = useState<string | undefined>(undefined);
     const [description, setDescription] = useState<string | undefined>(undefined);
@@ -145,10 +153,7 @@ const ProgramConfigsDetail: () => ReactNode = (): ReactNode => {
     return (
         <Fragment>
             <Box
-                padding={2}
-                paddingTop={7}
-                paddingLeft={10}
-                paddingBottom={15}
+                {...PAGE_CONTAINER_PADDING}
             >
                 <Paper elevation={0}>
                     <Box padding={3}>
@@ -196,61 +201,19 @@ const ProgramConfigsDetail: () => ReactNode = (): ReactNode => {
                             }
                         />
                         <Divider/>
-                        <Grid
-                            container={true}
-                            padding={1}
-                            paddingTop={5}
-                            spacing={2}
-                            paddingBottom={5}
-                        >
+                        <LabeledFieldsGrid>
                             {
-                                programId && <Fragment>
-                                    <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                        <Stack direction={"row"} alignItems={"center"}>
-                                            <Typography
-                                                variant={"body1"}
-                                                color={"primary"}
-                                            >
-                                                {t("word.id")}
-                                            </Typography>
-                                            <Tooltip title={t("tooltip.id")}>
-                                                <Info
-                                                    color={"primary"}
-                                                    fontSize={"small"}
-                                                    sx={{ml: 1, cursor: "pointer"}}
-                                                />
-                                            </Tooltip>
-                                        </Stack>
-                                    </Grid>
-                                    <Grid size={{xs: 9, lg: 10, xl: 10}}>
-                                        <TextField
-                                            fullWidth={true}
-                                            value={program?.id ?? ""}
-                                            size={"small"}
-                                            label={t("word.id")}
-                                            variant="outlined"
-                                            disabled/>
-                                    </Grid>
-                                </Fragment>
+                                programId && <LabeledField labelKey={"word.id"} tooltipKey={"tooltip.id"}>
+                                    <TextField
+                                        fullWidth={true}
+                                        value={program?.id ?? ""}
+                                        size={"small"}
+                                        label={t("word.id")}
+                                        variant="outlined"
+                                        disabled/>
+                                </LabeledField>
                             }
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.label")} *
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.label")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            <LabeledField labelKey={"word.label"} tooltipKey={"tooltip.label"} required={true}>
                                 <TextField
                                     required={true}
                                     fullWidth={true}
@@ -265,25 +228,8 @@ const ProgramConfigsDetail: () => ReactNode = (): ReactNode => {
                                         setLabel(label);
                                         if (!hasUnsavedChanges) updateHasUnsavedChanges(true);
                                     }}/>
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.description")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.description")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.description"} tooltipKey={"tooltip.description"}>
                                 <TextField
                                     fullWidth={true}
                                     value={description ?? ""}
@@ -295,25 +241,8 @@ const ProgramConfigsDetail: () => ReactNode = (): ReactNode => {
                                         setDescription(description);
                                         if (!hasUnsavedChanges) updateHasUnsavedChanges(true);
                                     }}/>
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.entryPoint")} *
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.entryPoint")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.entryPoint"} tooltipKey={"tooltip.entryPoint"} required={true}>
                                 <FormControl fullWidth={true} error={entryPointError}>
                                     <Select
                                         displayEmpty={true}
@@ -340,7 +269,8 @@ const ProgramConfigsDetail: () => ReactNode = (): ReactNode => {
                                                     value={attachment.id}
                                                 >
                                                     {attachment.label} (
-                                                    <Typography component="span" sx={{fontStyle: "italic"}}>{attachment.id}</Typography>
+                                                    <Typography component="span"
+                                                                sx={{fontStyle: "italic"}}>{attachment.id}</Typography>
                                                     )
                                                 </MenuItem>
                                             )}
@@ -351,25 +281,8 @@ const ProgramConfigsDetail: () => ReactNode = (): ReactNode => {
                                         </Typography>
                                     )}
                                 </FormControl>
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.runTime")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.runTime")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.runTime"} tooltipKey={"tooltip.runTime"}>
                                 <FormControl fullWidth sx={{pb: 2}}>
                                     <InputLabel>{t("word.runTime")}</InputLabel>
                                     <Select
@@ -390,35 +303,16 @@ const ProgramConfigsDetail: () => ReactNode = (): ReactNode => {
                                             value={ProgramDetailRuntimeEnum.Java}>
                                             {ProgramDetailRuntimeEnum.Java}
                                         </MenuItem>
-                                        {/*
                                         <MenuItem
                                             value={ProgramDetailRuntimeEnum.Matlab}>
                                             {ProgramDetailRuntimeEnum.Matlab}
                                         </MenuItem>
-                                        */}
                                     </Select>
                                 </FormControl>
-                            </Grid>
+                            </LabeledField>
                             {(programId && program) &&
                                 <>
-                                    <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                        <Stack direction={"row"} alignItems={"center"}>
-                                            <Typography
-                                                variant={"body1"}
-                                                color={"primary"}
-                                            >
-                                                {t("word.lastModifiedBy")}
-                                            </Typography>
-                                            <Tooltip title={t("tooltip.lastModifiedBy")}>
-                                                <Info
-                                                    color={"primary"}
-                                                    fontSize={"small"}
-                                                    sx={{ml: 1, cursor: "pointer"}}
-                                                />
-                                            </Tooltip>
-                                        </Stack>
-                                    </Grid>
-                                    <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                                    <LabeledField labelKey={"word.lastModifiedBy"} tooltipKey={"tooltip.lastModifiedBy"}>
                                         <TextField
                                             fullWidth={true}
                                             value={program.lastModifiedBy ?? ""}
@@ -426,25 +320,9 @@ const ProgramConfigsDetail: () => ReactNode = (): ReactNode => {
                                             label={t("word.lastModifiedBy")}
                                             variant="outlined"
                                             disabled/>
-                                    </Grid>
-                                    <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                        <Stack direction={"row"} alignItems={"center"}>
-                                            <Typography
-                                                variant={"body1"}
-                                                color={"primary"}
-                                            >
-                                                {t("word.lastModifiedDate")}
-                                            </Typography>
-                                            <Tooltip title={t("tooltip.lastModifiedDate")}>
-                                                <Info
-                                                    color={"primary"}
-                                                    fontSize={"small"}
-                                                    sx={{ml: 1, cursor: "pointer"}}
-                                                />
-                                            </Tooltip>
-                                        </Stack>
-                                    </Grid>
-                                    <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                                    </LabeledField>
+                                    <LabeledField labelKey={"word.lastModifiedDate"}
+                                                  tooltipKey={"tooltip.lastModifiedDate"}>
                                         <TextField
                                             fullWidth={true}
                                             value={program.lastModifiedDate ? dayjs.unix(Number(program.lastModifiedDate)).format("DD.MM.YYYY HH:mm [Uhr]") : ""}
@@ -452,25 +330,8 @@ const ProgramConfigsDetail: () => ReactNode = (): ReactNode => {
                                             label={t("word.lastModifiedDate")}
                                             variant="outlined"
                                             disabled/>
-                                    </Grid>
-                                    <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                        <Stack direction={"row"} alignItems={"center"}>
-                                            <Typography
-                                                variant={"body1"}
-                                                color={"primary"}
-                                            >
-                                                {t("word.createdBy")}
-                                            </Typography>
-                                            <Tooltip title={t("tooltip.createdBy")}>
-                                                <Info
-                                                    color={"primary"}
-                                                    fontSize={"small"}
-                                                    sx={{ml: 1, cursor: "pointer"}}
-                                                />
-                                            </Tooltip>
-                                        </Stack>
-                                    </Grid>
-                                    <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                                    </LabeledField>
+                                    <LabeledField labelKey={"word.createdBy"} tooltipKey={"tooltip.createdBy"}>
                                         <TextField
                                             fullWidth={true}
                                             value={program.createdBy ?? ""}
@@ -478,25 +339,8 @@ const ProgramConfigsDetail: () => ReactNode = (): ReactNode => {
                                             label={t("word.createdBy")}
                                             variant="outlined"
                                             disabled/>
-                                    </Grid>
-                                    <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                        <Stack direction={"row"} alignItems={"center"}>
-                                            <Typography
-                                                variant={"body1"}
-                                                color={"primary"}
-                                            >
-                                                {t("word.creationDate")}
-                                            </Typography>
-                                            <Tooltip title={t("tooltip.creationDate")}>
-                                                <Info
-                                                    color={"primary"}
-                                                    fontSize={"small"}
-                                                    sx={{ml: 1, cursor: "pointer"}}
-                                                />
-                                            </Tooltip>
-                                        </Stack>
-                                    </Grid>
-                                    <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                                    </LabeledField>
+                                    <LabeledField labelKey={"word.creationDate"} tooltipKey={"tooltip.creationDate"}>
                                         <TextField
                                             fullWidth={true}
                                             value={program.creationDate ? dayjs.unix(Number(program.creationDate)).format("DD.MM.YYYY HH:mm [Uhr]") : ""}
@@ -504,12 +348,12 @@ const ProgramConfigsDetail: () => ReactNode = (): ReactNode => {
                                             label={t("word.creationDate")}
                                             variant="outlined"
                                             disabled/>
-                                    </Grid>
+                                    </LabeledField>
                                 </>
                             }
-                        </Grid>
+                        </LabeledFieldsGrid>
                         <Paper style={{background: theme.palette.elevated.default}}>
-                            <Stack spacing={2} padding={2}>
+                            <Stack spacing={1} padding={2}>
                                 <Stack direction={"row"} alignItems={"center"} spacing={1}>
                                     <Typography variant={"h5"} color={"textPrimary"}>
                                         {t("word.attachments")}
@@ -521,7 +365,7 @@ const ProgramConfigsDetail: () => ReactNode = (): ReactNode => {
                                         />
                                     </Tooltip>
                                 </Stack>
-                                <Stack spacing={1} paddingLeft={{xs: 1, sm: 5}} paddingRight={{xs: 1, sm: 5}}>
+                                <Stack spacing={1} paddingLeft={{xs: 1, sm: 2}} paddingRight={{xs: 1, sm: 2}}>
                                     {
                                         programAttachments && programAttachments.length > 0 && programAttachments
                                             .map((item: AttachmentDetail) => (
@@ -626,7 +470,7 @@ const ProgramConfigsDetail: () => ReactNode = (): ReactNode => {
                                                 </Paper>
                                             ))
                                     }
-                                    <Box padding={1}>
+                                    <Box>
                                         <Button
                                             color={"inherit"}
                                             size="small"

@@ -62,7 +62,12 @@
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
     "copy": "Copy",
-    "update": "Update"
+    "update": "Update",
+    "resetColumnWidths": "Reset column widths",
+    "expandOutputs": "Show outputs",
+    "collapseOutputs": "Hide outputs",
+    "expandInputs": "Show inputs",
+    "collapseInputs": "Hide inputs"
   },
   "dialog": {
     "header": {
@@ -71,9 +76,11 @@
       "about": "About",
       "account": "Account",
       "confirmDelete": "Do you really want to delete this item?",
+      "confirmDeleteMultiple": "Do you really want to delete these items?",
       "confirmCopy": "Do you really want to copy this item?",
       "loadLastUsedWorkflow": "Would you like to load the last workflow you edited?",
-      "logs": "Logs"
+      "logs": "Logs",
+      "connectionPanel.maxValues": "Max last entries"
     }
   },
   "error": {
@@ -289,9 +296,12 @@
     "status": "Current status of the execution (e.g., RUNNING, STOPPED)",
     "startedAt": "Date and time when the execution was started",
     "stoppedAt": "Date and time when the execution was stopped",
-    "shutdownRelevant": "Indicates whether this block triggers the shutdown phase when it has completed all steps."
+    "shutdownRelevant": "Indicates whether this block triggers the shutdown phase when it has completed all steps.",
+    "timeoutWorker": "Time in [s] how long the orchestrator waits for a notify message from all workers",
+    "timeoutInput": "Time in [s] how long a worker waits at most for a required input value before returning defaultValue/timeout"
   },
   "word": {
+    "connection": "Connection",
     "baseName": "Base name",
     "textColor": "Text color",
     "actions": "Actions",
@@ -411,6 +421,8 @@
     "startValue": "Start value",
     "noStartValue": "-",
     "shutdownRelevant": "Shutdown Relevant",
+    "timeoutWorker": "Worker timeout",
+    "timeoutInput": "Input timeout",
     "notStopped": "not stopped (yet)",
     "valueDifferent": "The value of this parameter is different from the template. Value of the Template:"
   },

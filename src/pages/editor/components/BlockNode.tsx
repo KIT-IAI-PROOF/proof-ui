@@ -70,7 +70,7 @@ const Node = memo(({data, id, selected, height, width}: NodeProps<TBlock>): Reac
         }
         updateNodeInternals(id);
     }, [collapsed, width, height, data.minWidth, data.minHeight, id, setNodes, updateNodeInternals]);
-    
+
     return (
         <Fragment>
             <div
