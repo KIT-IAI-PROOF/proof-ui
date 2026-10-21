@@ -3,7 +3,7 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - vite@6.4.3
-  - '@kit-iai-proof/proof-config-manager-client@1.4.0-dev0'
+  - '@webis/proof-config-manager-client@1.5.1-dev3'
 
 overrides:
   axios: "1.18.1"
