@@ -9,7 +9,7 @@ import {
     OutputDetailCommunicationTypeEnum,
     OutputDetailPhaseEnum,
     OutputDetailTypeEnum
-} from "@kit-iai-proof/proof-config-manager-client";
+} from "@webis/proof-config-manager-client";
 import {
     Box,
     Button,

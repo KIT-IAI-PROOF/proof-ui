@@ -6,7 +6,7 @@ import {DataGrid, GridColDef, GridFilterModel, GridPaginationModel, GridRenderCe
 import {useTranslation} from "react-i18next";
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import Grid from "@mui/material/Grid2";
-import {ExecutionListing, ExecutionListingStatusEnum, ExecutionPagingModelListing} from "@kit-iai-proof/proof-config-manager-client";
+import {ExecutionListing, ExecutionListingStatusEnum, ExecutionPagingModelListing} from "@webis/proof-config-manager-client";
 import {QueryClient, useIsFetching, useMutation, UseMutationResult, useQuery, useQueryClient, UseQueryResult} from "@tanstack/react-query";
 import {DEFAULT_FILTER, DEFAULT_MONITORING_SORTING, DEFAULT_PAGINATION, ENTITY_TYPES, EXECUTIONS_KEY, INVALIDATION_KEYS, PAGE_CONTAINER_PADDING} from "../../utils/constants.ts";
 import {AuthContextProps, useAuth} from "react-oidc-context";

@@ -1,4 +1,4 @@
-import {ProgramDetail, ProgramPagingModelListing, RequestListing as Request,} from "@kit-iai-proof/proof-config-manager-client";
+import {ProgramDetail, ProgramPagingModelListing, RequestListing as Request,} from "@webis/proof-config-manager-client";
 
 export interface IProgramService {
 

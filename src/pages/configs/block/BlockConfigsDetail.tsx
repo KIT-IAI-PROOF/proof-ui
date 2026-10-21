@@ -34,7 +34,7 @@ import {AppContext} from "../../../provider/AppContext.tsx";
 import dayjs from "dayjs";
 import InputsPanel from "../components/blocks/InputsPanel.tsx";
 import OutputsPanel from "../components/blocks/OutputsPanel.tsx";
-import {BlockDetail, TemplateDetail, TemplateDetailSyncStrategyEnum} from "@kit-iai-proof/proof-config-manager-client";
+import {BlockDetail, TemplateDetail, TemplateDetailSyncStrategyEnum} from "@webis/proof-config-manager-client";
 import {AxiosError} from "axios";
 import {v4 as uuidv4} from "uuid";
 import {getErrorMessage} from "../../../utils/error.ts";

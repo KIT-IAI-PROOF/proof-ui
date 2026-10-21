@@ -10,7 +10,7 @@ import PageHeader from "../../../app/components/PageHeader.tsx";
 import ConfirmDialog from "../../../app/components/ConfirmDialog.tsx";
 import {AppContext} from "../../../provider/AppContext.tsx";
 import dayjs from "dayjs";
-import {AttachmentDetail} from "@kit-iai-proof/proof-config-manager-client";
+import {AttachmentDetail} from "@webis/proof-config-manager-client";
 import {AxiosError} from "axios";
 import {v4 as uuidv4} from "uuid";
 import {getErrorMessage} from "../../../utils/error.ts";

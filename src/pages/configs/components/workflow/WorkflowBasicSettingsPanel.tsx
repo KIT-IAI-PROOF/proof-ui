@@ -1,6 +1,6 @@
 import React, {ChangeEvent, Fragment, ReactNode, useContext} from "react";
 import {FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, Typography} from "@mui/material";
-import {StepBasedConfigurationDetail, WorkflowDetailCommunicationParadigmEnum, WorkflowDetailSimulationStrategyEnum} from "@kit-iai-proof/proof-config-manager-client";
+import {StepBasedConfigurationDetail, WorkflowDetailCommunicationParadigmEnum, WorkflowDetailSimulationStrategyEnum} from "@webis/proof-config-manager-client";
 import {useTranslation} from "react-i18next";
 import {IAppContext} from "../../../../provider/AppProvider.tsx";
 import {AppContext} from "../../../../provider/AppContext.tsx";

@@ -1,4 +1,4 @@
-import {BlockDetailStatusEnum} from "@kit-iai-proof/proof-config-manager-client";
+import {BlockDetailStatusEnum} from "@webis/proof-config-manager-client";
 
 export interface IStatusUpdate {
     executionId: string;

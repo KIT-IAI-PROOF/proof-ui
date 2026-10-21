@@ -25,7 +25,7 @@ import {
     XYPosition
 } from "@xyflow/react";
 import BlockNode from "../pages/editor/components/BlockNode.tsx";
-import {BlockDetail, InputDetail, OutputDetail, TemplateDetail, WorkflowDetail} from "@kit-iai-proof/proof-config-manager-client";
+import {BlockDetail, InputDetail, OutputDetail, TemplateDetail, WorkflowDetail} from "@webis/proof-config-manager-client";
 import {convertWorkflow, getNextAvailableIndex, makeEdge, makeNode} from "../utils/storage/inboundConverter.ts";
 import {TWorkflow} from "../model/TWorkflow.ts";
 import useHistory from "../hooks/useHistory.ts";

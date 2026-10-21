@@ -7,7 +7,7 @@ import {ATTACHMENTS_KEY, DEFAULT_CONFIGS_SORTING, DEFAULT_FILTER, DEFAULT_PAGINA
 import {DataGrid, GridColDef, GridFilterModel, GridPaginationModel, GridRenderCellParams, GridRowParams, GridRowSelectionModel, GridSortModel} from "@mui/x-data-grid";
 import {Box, Button, ButtonGroup, IconButton, Paper, Tooltip} from "@mui/material";
 import {EditNoteRounded} from "@mui/icons-material";
-import {AttachmentListing, AttachmentPagingModelListing} from "@kit-iai-proof/proof-config-manager-client";
+import {AttachmentListing, AttachmentPagingModelListing} from "@webis/proof-config-manager-client";
 import PageHeader from "../../../app/components/PageHeader.tsx";
 import AddIcon from "@mui/icons-material/Add";
 import {AxiosError} from "axios";
