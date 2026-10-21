@@ -24,18 +24,20 @@ import AccountTreeRoundedIcon from "@mui/icons-material/AccountTreeRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import {IEditorContext} from "../../provider/EditorProvider.tsx";
 import {useTranslation} from "react-i18next";
-import {InputDetailTypeEnum, WorkflowDetail, WorkflowDetailCommunicationParadigmEnum, WorkflowDetailSimulationStrategyEnum} from "@kit-iai-proof/proof-config-manager-client";
+import {InputDetailTypeEnum, WorkflowDetail, WorkflowDetailCommunicationParadigmEnum, WorkflowDetailSimulationStrategyEnum} from "@webis/proof-config-manager-client";
 import {NavigateFunction, useLocation, useNavigate, useParams} from "react-router-dom";
 import {convertRemoteBlocks, convertRemoteEdges} from "../../utils/storage/outboundConverter.ts";
 import TerminalIcon from "@mui/icons-material/Terminal";
 import SaveIcon from "@mui/icons-material/Save";
 import SettingsIcon from "@mui/icons-material/Settings";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import {Info} from "@mui/icons-material";
+import {saveAs} from "file-saver";
 import {getTypeColor} from "../../utils/palette.ts";
 import {EditorContext} from "../../provider/EditorContext.tsx";
 import {IAppContext} from "../../provider/AppProvider.tsx";
 import {AppContext} from "../../provider/AppContext.tsx";
-import {ENTITY_TYPES, INVALIDATION_KEYS, STEPBASEDCONFIG_DEFAULT, WORKFLOWS_KEY} from "../../utils/constants.ts";
+import {ENTITY_TYPES, INVALIDATION_KEYS, PAGE_CONTAINER_PADDING, STEPBASEDCONFIG_DEFAULT, WORKFLOWS_KEY} from "../../utils/constants.ts";
 import dayjs from "dayjs";
 import {useMutation, UseMutationResult, useQuery, useQueryClient, UseQueryResult} from "@tanstack/react-query";
 import {AxiosError} from "axios";
@@ -57,7 +59,15 @@ const Editor: () => ReactNode = (): ReactNode => {
     const open: boolean = Boolean(anchorEl);
 
     const {edges, nodes, updateWorkflow, resetEditor} = useContext<IEditorContext>(EditorContext);
-    const {hasUnsavedChanges, publishEntityMessage, sessionKey, updateHasUnsavedChanges, palette, lastUsedWorkflowId, updateError} = useContext<IAppContext>(AppContext);
+    const {
+        hasUnsavedChanges,
+        publishEntityMessage,
+        sessionKey,
+        updateHasUnsavedChanges,
+        palette,
+        lastUsedWorkflowId,
+        updateError
+    } = useContext<IAppContext>(AppContext);
 
     const {data: workflow}: UseQueryResult<WorkflowDetail, AxiosError> = useQuery(workflowQueryOptions(workflowId));
     const {data: workflows}: UseQueryResult<WorkflowDetail[], AxiosError> = useQuery(workflowsQueryOptions());
@@ -101,7 +111,7 @@ const Editor: () => ReactNode = (): ReactNode => {
             if (lastUsedWorkflowId && lastUsedWorkflowId !== workflowId) {
                 publishEntityMessage(lastUsedWorkflowId, "workflows");
                 resetEditor();
-                navigate(`/editor/${lastUsedWorkflowId}`, {state: {from: location.pathname}}); // Always navigate to the last used workflow
+                navigate(`/editor/${lastUsedWorkflowId}`, {state: {from: location.pathname}});
             }
         }
     }, [lastUsedWorkflowId, location, navigate, publishEntityMessage, resetEditor, workflowId]);
@@ -109,10 +119,7 @@ const Editor: () => ReactNode = (): ReactNode => {
     return (
         <Fragment>
             <Box
-                padding={2}
-                paddingTop={7}
-                paddingLeft={10}
-                paddingBottom={10}
+                {...PAGE_CONTAINER_PADDING}
             >
                 <Paper>
                     <Box padding={3}>
@@ -152,7 +159,7 @@ const Editor: () => ReactNode = (): ReactNode => {
                                                     id="workflow"
                                                     label="Workflow"
                                                     variant={"outlined"}
-                                                    value={workflow?.id ?? ""}
+                                                    value={workflowId ?? ""}
                                                     onChange={(event: SelectChangeEvent): void => {
                                                         publishEntityMessage(event.target.value, "workflows")
                                                         resetEditor();
@@ -251,6 +258,20 @@ const Editor: () => ReactNode = (): ReactNode => {
                                             variant={"outlined"}
                                         >
                                             {t("action.settings")}
+                                        </Button>
+                                        <Button
+                                            onClick={async (): Promise<void> => {
+                                                if (workflow?.id) {
+                                                    const file: File = await workflowService.exportWorkflow(workflow.id, undefined);
+                                                    saveAs(file, "workflow-" + workflow.label + "_" + workflow.id + ".proof");
+                                                }
+                                            }}
+                                            disabled={!workflow}
+                                            startIcon={<FileDownloadIcon/>}
+                                            color={"primary"}
+                                            variant={"outlined"}
+                                        >
+                                            {t("action.export")}
                                         </Button>
                                     </ButtonGroup>
                                     <Box>

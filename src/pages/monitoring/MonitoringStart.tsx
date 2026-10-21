@@ -7,7 +7,7 @@ import {IMonitoringContext} from "../../provider/MonitoringProvider";
 import PreselectedStart from "./components/PreselectedStart.tsx";
 import UnselectedStart from "./components/UnselectedStart.tsx";
 import Grid from "@mui/material/Grid2";
-import {AttachmentDetail, BlockDetail, ExecutionDetail, ExecutionDetailStatusEnum, InputDetail, WorkflowDetail} from "@kit-iai-proof/proof-config-manager-client";
+import {AttachmentDetail, BlockDetail, ExecutionDetail, ExecutionDetailStatusEnum, InputDetail, WorkflowDetail} from "@webis/proof-config-manager-client";
 import {Info} from "@mui/icons-material";
 import {MonitoringContext} from "../../provider/MonitoringContext.tsx";
 import {IAppContext} from "../../provider/AppProvider.tsx";
@@ -15,7 +15,7 @@ import {AppContext} from "../../provider/AppContext.tsx";
 import {useMutation, UseMutationResult, useQuery, useQueryClient, UseQueryResult} from "@tanstack/react-query";
 import {AxiosError} from "axios";
 import {v4 as uuidv4} from "uuid";
-import {ENTITY_TYPES, EXECUTIONS_KEY, INVALIDATION_KEYS} from "../../utils/constants.ts";
+import {ENTITY_TYPES, EXECUTIONS_KEY, INVALIDATION_KEYS, PAGE_CONTAINER_PADDING} from "../../utils/constants.ts";
 import {getErrorMessage} from "../../utils/error.ts";
 import {executionService, orchestrationService} from "../../services/instances.ts";
 import {workflowQueryOptions} from "../../query/options/workflowQueryOptions.tsx";
@@ -33,11 +33,11 @@ const MonitoringStart: () => ReactNode = (): ReactNode => {
         execDefaultValues,
         executionLabel,
         executionDescription,
-        blockStates,
-        updateBlockStates,
         simulationStartPoint,
         simulationEndPoint,
         simulationDuration,
+        simulationTimeoutWorker,
+        simulationTimeoutInput,
         updateMissingRequiredFields
     } = useContext<IMonitoringContext>(MonitoringContext);
     const {sessionKey}: IAppContext = useContext<IAppContext>(AppContext);
@@ -138,7 +138,9 @@ const MonitoringStart: () => ReactNode = (): ReactNode => {
                 ...workflow?.stepBasedConfig,
                 startPoint: simulationStartPoint !== undefined ? Number(simulationStartPoint) : workflow?.stepBasedConfig?.startPoint,
                 endPoint: simulationEndPoint !== undefined ? Number(simulationEndPoint) : workflow?.stepBasedConfig?.endPoint,
-                duration: simulationDuration !== undefined ? Number(simulationDuration) : workflow?.stepBasedConfig?.duration
+                duration: simulationDuration !== undefined ? Number(simulationDuration) : workflow?.stepBasedConfig?.duration,
+                workerTimeout: simulationTimeoutWorker !== undefined ? Number(simulationTimeoutWorker) : workflow?.stepBasedConfig?.workerTimeout,
+                inputTimeout: simulationTimeoutInput !== undefined ? Number(simulationTimeoutInput) : workflow?.stepBasedConfig?.inputTimeout
             }
         } : undefined;
 
@@ -158,20 +160,6 @@ const MonitoringStart: () => ReactNode = (): ReactNode => {
             } as any)
             .then(async (result: ExecutionDetail): Promise<void> => {
                 if (result.id) {
-                    const blockStatesCopy = blockStates ?? []
-                    result?.workflow?.blocks?.forEach(block => {
-                        const index: number = blockStatesCopy.findIndex((blockState: {
-                            blockId: string,
-                            status: string | undefined,
-                            cp?: number
-                        }): boolean => blockState.blockId === block.id);
-                        if (index !== -1) {
-                            blockStatesCopy[index].status = undefined;
-                            blockStatesCopy[index].cp = undefined;
-                        }
-                    })
-                    updateBlockStates(blockStatesCopy)
-
                     navigate(`/monitoring/${result.id}`)
                     await orchestrationService.startExecution(undefined, result.id)
                 }
@@ -181,10 +169,7 @@ const MonitoringStart: () => ReactNode = (): ReactNode => {
     return (
         <Fragment>
             <Box
-                padding={2}
-                paddingTop={7}
-                paddingLeft={10}
-                paddingBottom={15}
+                {...PAGE_CONTAINER_PADDING}
             >
                 <Paper elevation={0}>
                     <Box padding={3}>

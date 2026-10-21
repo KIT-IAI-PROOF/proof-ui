@@ -20,7 +20,7 @@ import {
 import React, {ChangeEvent, Dispatch, Fragment, MutableRefObject, ReactNode, SetStateAction, useContext} from "react";
 import {IAppContext} from "../../../../provider/AppProvider.tsx";
 import {AppContext} from "../../../../provider/AppContext.tsx";
-import {InputDetail, OutputDetail, OutputDetailCommunicationTypeEnum, OutputDetailPhaseEnum, OutputDetailTypeEnum} from "@kit-iai-proof/proof-config-manager-client";
+import {InputDetail, OutputDetail, OutputDetailCommunicationTypeEnum, OutputDetailPhaseEnum, OutputDetailTypeEnum} from "@webis/proof-config-manager-client";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {Info} from "@mui/icons-material";
 
@@ -65,9 +65,12 @@ const OutputsPanel = ({
                                 [index]: false
                             })) : setOutputPanelExpanded(prevState => ({...prevState, [index]: true}))}
                             disableGutters={true}
-                            style={{
+                            sx={{
                                 background: theme.palette.elevated.paper,
-                                borderRadius: "5px"
+                                borderRadius: 2,
+                                '&:before': {
+                                    display: 'none'
+                                },
                             }}
                         >
                             <AccordionSummary

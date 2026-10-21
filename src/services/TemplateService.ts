@@ -1,4 +1,4 @@
-import {Configuration, RequestListing as Request, TemplateControllerApi, TemplateDetail, TemplatePagingModelListing, WorkflowDetail} from "@kit-iai-proof/proof-config-manager-client";
+import {Configuration, RequestListing as Request, TemplateControllerApi, TemplateDetail, TemplatePagingModelListing, WorkflowDetail} from "@webis/proof-config-manager-client";
 import type {AxiosResponse, RawAxiosRequestConfig} from "axios";
 import axios from "../utils/axios";
 import {ITemplateService} from "./interfaces/ITemplateService.ts";
@@ -51,6 +51,24 @@ class TemplateService implements ITemplateService {
     async getWorkflowsForTemplate(templateId: string, signal: AbortSignal | undefined): Promise<WorkflowDetail[]> {
         const options: RawAxiosRequestConfig = {signal: signal};
         const response: AxiosResponse<WorkflowDetail[]> = await this.templateApi.getWorkflowsForTemplate(templateId, options);
+        return response.data;
+    }
+
+    async getContainerImages(signal: AbortSignal | undefined): Promise<string[]> {
+        const options: RawAxiosRequestConfig = {signal: signal};
+        const response: AxiosResponse<string[]> = await this.templateApi.getContainerImages(options);
+        return response.data;
+    }
+
+    async exportTemplate(templateId: string, signal: AbortSignal | undefined): Promise<File> {
+        const options: RawAxiosRequestConfig = {
+            signal: signal,
+            responseType: "blob",
+            headers: {
+                Accept: "application/octet-stream",
+            }
+        };
+        const response: AxiosResponse = await this.templateApi.exportTemplate(templateId, options);
         return response.data;
     }
 

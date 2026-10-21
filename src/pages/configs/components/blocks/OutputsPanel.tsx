@@ -1,6 +1,6 @@
 import {Accordion, AccordionDetails, AccordionSummary, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Theme, Typography, useTheme} from "@mui/material";
 import {useTranslation} from "react-i18next";
-import {OutputDetail, OutputDetailCommunicationTypeEnum, OutputDetailTypeEnum} from "@kit-iai-proof/proof-config-manager-client";
+import {OutputDetail, OutputDetailCommunicationTypeEnum, OutputDetailTypeEnum} from "@webis/proof-config-manager-client";
 import React, {ReactNode} from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
@@ -14,7 +14,7 @@ const OutputsPanel = ({outputs}: IProps) => {
     const {t} = useTranslation();
 
     return (
-        <Stack spacing={2} padding={2}>
+        <Stack spacing={1} paddingX={2}>
             {
                 outputs?.map((handle: OutputDetail, index): ReactNode => {
                     return (
@@ -22,10 +22,14 @@ const OutputsPanel = ({outputs}: IProps) => {
                             defaultExpanded={true}
                             key={handle.id || `Id ${index + 1}`}
                             disableGutters={true}
-                            style={{
+                            sx={{
                                 background: theme.palette.elevated.paper,
-                                borderRadius: "5px"
-                            }}>
+                                borderRadius: 2,
+                                '&:before': {
+                                    display: 'none'
+                                },
+                            }}
+                        >
                             <AccordionSummary
                                 sx={{
                                     overflow: "hidden",

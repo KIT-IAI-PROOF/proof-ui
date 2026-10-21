@@ -1,4 +1,4 @@
-import {Configuration, ExecutionListing, RequestListing as Request, WorkflowControllerApi, WorkflowDetail, WorkflowPagingModelListing} from "@kit-iai-proof/proof-config-manager-client";
+import {Configuration, ExecutionListing, RequestListing as Request, WorkflowControllerApi, WorkflowDetail, WorkflowPagingModelListing} from "@webis/proof-config-manager-client";
 import type {AxiosResponse, RawAxiosRequestConfig} from "axios";
 import axios from "../utils/axios";
 import {IWorkflowService} from "./interfaces/IWorkflowService.ts";
@@ -51,6 +51,18 @@ class WorkflowService implements IWorkflowService {
     async getExecutionsForWorkflow(workflowId: string, signal: AbortSignal | undefined): Promise<ExecutionListing[]> {
         const options: RawAxiosRequestConfig = {signal: signal};
         const response: AxiosResponse<ExecutionListing[]> = await this.workflowApi.getExecutionsOfWorkflow(workflowId, options);
+        return response.data;
+    }
+
+    async exportWorkflow(workflowId: string, signal: AbortSignal | undefined): Promise<File> {
+        const options: RawAxiosRequestConfig = {
+            signal: signal,
+            responseType: "blob",
+            headers: {
+                Accept: "application/octet-stream",
+            }
+        };
+        const response: AxiosResponse = await this.workflowApi.exportWorkflow(workflowId, options);
         return response.data;
     }
 

@@ -2,10 +2,10 @@ import {Fragment, ReactNode, useContext, useEffect, useState} from "react";
 import {NavigateFunction, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Alert, Box, Button, Divider, Paper, Stack, Typography} from "@mui/material";
 import WorkflowBasicSettingsPanel from "../components/workflow/WorkflowBasicSettingsPanel.tsx";
-import {ExecutionListing, StepBasedConfigurationDetail, WorkflowDetail, WorkflowDetailCommunicationParadigmEnum, WorkflowDetailSimulationStrategyEnum} from "@kit-iai-proof/proof-config-manager-client";
+import {ExecutionListing, StepBasedConfigurationDetail, WorkflowDetail, WorkflowDetailCommunicationParadigmEnum, WorkflowDetailSimulationStrategyEnum} from "@webis/proof-config-manager-client";
 import {useTranslation} from "react-i18next";
 import {useMutation, UseMutationResult, useQuery, useQueryClient, UseQueryResult} from "@tanstack/react-query";
-import {ENTITY_TYPES, INVALIDATION_KEYS, STEPBASEDCONFIG_DEFAULT, WORKFLOWS_KEY} from "../../../utils/constants.ts";
+import {ENTITY_TYPES, INVALIDATION_KEYS, PAGE_CONTAINER_PADDING, STEPBASEDCONFIG_DEFAULT, WORKFLOWS_KEY} from "../../../utils/constants.ts";
 import PageHeader from "../../../app/components/PageHeader.tsx";
 import WorkflowStepBasedConfigPanel from "../components/workflow/WorkflowStepBasedConfigPanel.tsx";
 import {EditNoteRounded} from "@mui/icons-material";
@@ -15,6 +15,7 @@ import {AppContext} from "../../../provider/AppContext.tsx";
 import {AxiosError} from "axios";
 import {workflowService} from "../../../services/instances.ts";
 import {v4 as uuidv4} from "uuid";
+import {saveAs} from "file-saver";
 import {getErrorMessage} from "../../../utils/error.ts";
 import {executionsForWorkflowQueryOptions, workflowQueryOptions} from "../../../query/options/workflowQueryOptions.tsx";
 
@@ -24,7 +25,14 @@ const MonitoringDetail: () => ReactNode = (): ReactNode => {
     const {workflowId} = useParams();
     const [searchParams] = useSearchParams();
     const queryClient = useQueryClient();
-    const {hasUnsavedChanges, updateError, sessionKey, updateLastUsedWorkflowId, updateHasUnsavedChanges, updateAllowNavigation} = useContext<IAppContext>(AppContext);
+    const {
+        hasUnsavedChanges,
+        updateError,
+        sessionKey,
+        updateLastUsedWorkflowId,
+        updateHasUnsavedChanges,
+        updateAllowNavigation
+    } = useContext<IAppContext>(AppContext);
     const navigate: NavigateFunction = useNavigate();
     const returnToWorkflowId: string | null = searchParams.get("workflowId");
 
@@ -128,17 +136,14 @@ const MonitoringDetail: () => ReactNode = (): ReactNode => {
         setCommunicationParadigm(workflow?.communicationParadigm ?? WorkflowDetailCommunicationParadigmEnum.Stepbased);
         setSimulationStrategy(workflow?.simulationStrategy ?? WorkflowDetailSimulationStrategyEnum.WaitAndContinue);
         setDescription(workflow?.description ?? workflow?.label);
-        setStepBasedConfig(workflow?.stepBasedConfig ?? STEPBASEDCONFIG_DEFAULT);
+        setStepBasedConfig({...STEPBASEDCONFIG_DEFAULT, ...workflow?.stepBasedConfig});
         setId(workflow?.id);
-    }, [workflow?.simulationStrategy, workflow?.communicationParadigm, workflow?.description, workflow?.id, workflow?.label, workflow?.stepBasedConfig]);
+    }, [workflow?.simulationStrategy, workflow?.communicationParadigm, workflow?.description, workflow?.id, workflow?.label, workflow?.stepBasedConfig, workflowId]);
 
     return (
         <Fragment>
             <Box
-                padding={2}
-                paddingTop={7}
-                paddingLeft={10}
-                paddingBottom={15}
+                {...PAGE_CONTAINER_PADDING}
             >
                 <Paper elevation={0} sx={{pb: 3}}>
                     <Box padding={3}>
@@ -170,6 +175,18 @@ const MonitoringDetail: () => ReactNode = (): ReactNode => {
                                         onClick={handleSave}
                                         color={"primary"}>
                                         {t("action.save")}
+                                    </Button>
+                                    <Button
+                                        variant={"outlined"}
+                                        color={"primary"}
+                                        onClick={async (): Promise<void> => {
+                                            if (workflow?.id) {
+                                                const file: File = await workflowService.exportWorkflow(workflow.id, undefined);
+                                                saveAs(file, "workflow-" + workflow.label + "_" + workflow.id + ".proof");
+                                            }
+                                        }}
+                                    >
+                                        {t("action.export")}
                                     </Button>
                                     <Button
                                         variant={"outlined"}

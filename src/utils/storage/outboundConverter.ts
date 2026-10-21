@@ -1,4 +1,4 @@
-import {BlockDetail as RBlock, ConnectionDetail as REdge} from "@kit-iai-proof/proof-config-manager-client";
+import {BlockDetail as RBlock, ConnectionDetail as REdge} from "@webis/proof-config-manager-client";
 import {TBlock} from "../../model/TBlock.ts";
 import {TEdge} from "../../model/TEdge.ts";
 

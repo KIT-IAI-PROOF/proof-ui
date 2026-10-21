@@ -3,11 +3,11 @@ import {Box, Paper, Stack, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import {useTranslation} from "react-i18next";
 import {DataGrid, GridColDef, GridFilterModel, GridPaginationModel, GridRowParams, GridSortModel} from "@mui/x-data-grid";
-import {BlockListing, BlockPagingModelListing} from "@kit-iai-proof/proof-config-manager-client";
+import {BlockListing, BlockPagingModelListing} from "@webis/proof-config-manager-client";
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import {EditNoteRounded} from "@mui/icons-material";
 import {useIsFetching, useQuery, UseQueryResult} from "@tanstack/react-query";
-import {BLOCKS_KEY, DEFAULT_CONFIGS_SORTING, DEFAULT_FILTER, DEFAULT_PAGINATION} from "../../../utils/constants.ts";
+import {BLOCKS_KEY, DEFAULT_CONFIGS_SORTING, DEFAULT_FILTER, DEFAULT_PAGINATION, PAGE_CONTAINER_PADDING} from "../../../utils/constants.ts";
 import {AxiosError} from "axios";
 import {IAppContext} from "../../../provider/AppProvider.tsx";
 import {AppContext} from "../../../provider/AppContext.tsx";
@@ -72,10 +72,7 @@ const BlockConfigs = () => {
     return (
         <Fragment>
             <Box
-                padding={2}
-                paddingTop={7}
-                paddingLeft={10}
-                paddingBottom={15}>
+                {...PAGE_CONTAINER_PADDING}>
                 <Paper>
                     <Box padding={3}>
                         <Grid

@@ -18,11 +18,11 @@ const LinearLoader: () => ReactNode = (): ReactNode => {
     });
 
     const [debouncedLoading] = useDebouncedValue((!!isFetching), {
-        wait: 200
+        wait: 500
     })
 
     const [debouncedMutating] = useDebouncedValue((!!isMutating), {
-        wait: 200
+        wait: 500
     })
 
     const showMutating: boolean = debouncedMutating;

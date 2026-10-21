@@ -1,4 +1,4 @@
-import {BlockDetail, BlockPagingModelListing, RequestListing as Request} from "@kit-iai-proof/proof-config-manager-client";
+import {BlockDetail, BlockPagingModelListing, RequestListing as Request} from "@webis/proof-config-manager-client";
 
 export interface IBlockService {
 

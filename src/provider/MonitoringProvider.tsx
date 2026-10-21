@@ -1,4 +1,4 @@
-import {ReactNode, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState} from "react";
+import {ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState} from "react";
 import {TBlock} from "../model/TBlock.ts";
 import {
     applyEdgeChanges,
@@ -16,16 +16,16 @@ import {
 } from "@xyflow/react";
 import {TWorkflow} from "../model/TWorkflow.ts";
 import {convertWorkflow} from "../utils/storage/inboundConverter.ts";
-import {ExecutionDetail} from "@kit-iai-proof/proof-config-manager-client";
+import {ExecutionDetail} from "@webis/proof-config-manager-client";
 import {TEdge} from "../model/TEdge.ts";
 import {Provider} from "../types/provider.ts";
-import {BlockEdge} from "../pages/editor/components/BlockEdge.tsx";
 import {createBlockNode} from "../pages/monitoring/components/BlockNode.tsx";
 import {MonitoringContext} from "./MonitoringContext.tsx";
-import {IStatusUpdate} from "../hooks/useStatusWebSocket.ts";
-import {usePersistedState} from "../hooks/usePersistedState.ts";
-import {AppContext} from "./AppContext.tsx";
-import {IAppContext} from "./AppProvider.tsx";
+import {BlockEdge} from "../pages/monitoring/components/BlockEdge.tsx";
+import {DEFAULT_SETTINGS} from "../utils/settings.ts";
+import {useExecutionWebsocket} from "../hooks/useExecutionWebsocket.ts";
+import {IValueUpdate} from "../model/IValueUpdate.ts";
+import {IStatusUpdate} from "../model/IStatusUpdate.ts";
 
 interface IProps {
     children: ReactNode;
@@ -44,6 +44,8 @@ export interface IMonitoringContext {
     simulationStartPoint: string | undefined;
     simulationEndPoint: string | undefined;
     simulationDuration: string | undefined;
+    simulationTimeoutWorker: string | undefined;
+    simulationTimeoutInput: string | undefined;
     onNodesChange: OnNodesChange<TBlock>;
     onEdgesChange: OnEdgesChange<TEdge>;
     updateExecution: (execution: ExecutionDetail) => void;
@@ -58,14 +60,18 @@ export interface IMonitoringContext {
     removeKeyFromExecDefaultValues: (keyToRemove: string) => void
     updateExecutionLabel: (label: string) => void;
     updateExecutionDescription: (description: string) => void;
-    updateBlockStates: (blockStates: { blockId: string, status: string | undefined, cp?: number }[]) => void
     updateSimulationStartPoint: (startPoint: string) => void;
     updateSimulationEndPoint: (endPoint: string) => void;
     updateSimulationDuration: (duration: string) => void;
+    updateSimulationTimeoutWorker: (timeout: string) => void;
+    updateSimulationTimeoutInput: (timeout: string) => void;
     missingRequiredFields: string[];
     updateMissingRequiredFields: (value: string[]) => void;
-    blockStates: { blockId: string, status: string | undefined, cp?: number }[];
+    blockStates: IStatusUpdate[];
+    connectionStates: IValueUpdate[];
     resetEditor: () => void;
+    registerStatusUpdateCallback: (callback: (updates: IStatusUpdate[]) => void) => void;
+    registerValueUpdateCallback: (callback: (updates: IValueUpdate[]) => void) => void;
 }
 
 const nodeTypes: NodeTypes = {block: createBlockNode(true)};
@@ -74,7 +80,6 @@ const edgeTypes: EdgeTypes = {block: BlockEdge};
 const MonitoringProvider: Provider<IProps> = ({children}: IProps): ReactNode => {
 
     const {fitView} = useReactFlow();
-    const appContext: IAppContext = useContext(AppContext);
     const nodesInitialized: boolean = useNodesInitialized({includeHiddenNodes: false});
     const [isConnecting] = useState<boolean>(false);
     const wasConnectingRecently = useRef(false);
@@ -87,10 +92,16 @@ const MonitoringProvider: Provider<IProps> = ({children}: IProps): ReactNode => 
     const [nodes, setNodes] = useNodesState<TBlock>([]);
     const [edges, setEdges] = useEdgesState<TEdge>([]);
     const [missingRequiredFields, setMissingRequiredFields] = useState<string[]>([]);
-    const [blockStates, setBlockStates] = usePersistedState<{ blockId: string, status: string | undefined, cp?: number }[]>([], "blockStates");
+    const [blockStates, setBlockStates] = useState<IStatusUpdate[]>([]);
+    const [connectionStates, setConnectionStates] = useState<IValueUpdate[]>([]);
     const [simulationStartPoint, setSimulationStartPoint] = useState<string>();
     const [simulationEndPoint, setSimulationEndPoint] = useState<string>();
     const [simulationDuration, setSimulationDuration] = useState<string>();
+    const [simulationTimeoutWorker, setSimulationTimeoutWorker] = useState<string>();
+    const [simulationTimeoutInput, setSimulationTimeoutInput] = useState<string>();
+
+    const statusUpdateCallbackRef = useRef<((updates: IStatusUpdate[]) => void) | undefined>(undefined);
+    const valueUpdateCallbackRef = useRef<((updates: IValueUpdate[]) => void) | undefined>(undefined);
 
     useEffect((): void => {
         Object.keys(execParameters).forEach((key: string): void => {
@@ -195,17 +206,25 @@ const MonitoringProvider: Provider<IProps> = ({children}: IProps): ReactNode => 
         setSimulationDuration(duration);
     }, []);
 
+    const updateSimulationTimeoutWorker: (timeout: string) => void = useCallback((timeout: string): void => {
+        setSimulationTimeoutWorker(timeout);
+    }, []);
+
+    const updateSimulationTimeoutInput: (timeout: string) => void = useCallback((timeout: string): void => {
+        setSimulationTimeoutInput(timeout);
+    }, []);
+
     const updateMissingRequiredFields: (value: string[]) => void = useCallback((value: string[]): void => {
         setMissingRequiredFields(value);
     }, []);
 
-    const updateBlockStates: (blockStates: { blockId: string, status: string | undefined, cp?: number }[]) => void = useCallback((blockStates: {
-        blockId: string,
-        status: string | undefined,
-        cp?: number
-    }[]): void => {
-        setBlockStates(blockStates);
-    }, [setBlockStates]);
+    const registerStatusUpdateCallback: (callback: (updates: IStatusUpdate[]) => void) => void = useCallback((callback: (updates: IStatusUpdate[]) => void): void => {
+        statusUpdateCallbackRef.current = callback;
+    }, []);
+
+    const registerValueUpdateCallback: (callback: (updates: IValueUpdate[]) => void) => void = useCallback((callback: (updates: IValueUpdate[]) => void): void => {
+        valueUpdateCallbackRef.current = callback;
+    }, []);
 
     const onNodesChange: OnNodesChange<TBlock> = useCallback((changes: NodeChange<TBlock>[]): void => {
         setNodes((nodes: TBlock[]): any => applyNodeChanges(changes, nodes));
@@ -214,6 +233,19 @@ const MonitoringProvider: Provider<IProps> = ({children}: IProps): ReactNode => 
     const onEdgesChange: OnEdgesChange<TEdge> = useCallback((changes: EdgeChange<TEdge>[]): void => {
         setEdges((edges: TEdge[]): TEdge[] => applyEdgeChanges(changes, edges));
     }, [setEdges]);
+
+    const handleStatusUpdate = useCallback((updates: IStatusUpdate[]): void => {
+        statusUpdateCallbackRef.current?.(updates);
+    }, []);
+
+    const handleValueUpdate = useCallback((updates: IValueUpdate[]): void => {
+        valueUpdateCallbackRef.current?.(updates);
+    }, []);
+
+    const handleWebsocketReset = useCallback((): void => {
+        setConnectionStates([]);
+        setBlockStates([]);
+    }, []);
 
     useEffect((): void => {
         if (execution?.workflow && execution.workflow.blocks && execution.workflow.connections) {
@@ -240,30 +272,25 @@ const MonitoringProvider: Provider<IProps> = ({children}: IProps): ReactNode => 
         }
     }, [isConnecting]);
 
-    const handleStatusUpdate = useCallback((update: IStatusUpdate): void => {
-        setBlockStates((prev: { blockId: string, status: string | undefined, cp?: number }[]): { blockId: string, status: string | undefined, cp?: number }[] => {
-            const existingIndex: number = prev.findIndex((blockState: {
-                blockId: string,
-                status: string | undefined,
-                cp?: number
-            }): boolean => blockState.blockId === update.blockId);
-            if (existingIndex !== -1) {
-                const copy = [...prev];
-                copy[existingIndex] = {blockId: update.blockId, status: update.status, cp: update.cp};
-                return copy;
-            } else {
-                return [...prev, {blockId: update.blockId, status: update.status, cp: update.cp}];
-            }
-        })
-    }, [setBlockStates]);
+    useEffect(() => {
+        registerStatusUpdateCallback((updates: IStatusUpdate[]) => {
+            setBlockStates((prev: IStatusUpdate[]): IStatusUpdate[] => {
+                const newUpdates: IStatusUpdate[] = updates.filter(u => u.offset !== undefined && !prev.some(e => e.offset === u.offset))
+                return [...prev, ...newUpdates];
+            });
+        });
+    }, [registerStatusUpdateCallback]);
 
     useEffect((): void => {
-        appContext.registerStatusUpdateCallback(handleStatusUpdate);
-    }, [appContext, handleStatusUpdate]);
+        registerValueUpdateCallback((updates: IValueUpdate[]) => {
+            setConnectionStates((prev: IValueUpdate[]): IValueUpdate[] => {
+                const newUpdates: IValueUpdate[] = updates.filter(u => u.offset !== undefined && !prev.some(e => e.offset === u.offset))
+                return [...prev, ...newUpdates];
+            });
+        });
+    }, [registerValueUpdateCallback]);
 
-    useEffect((): void => {
-        appContext.updateCurrentExecutionId(execution?.id);
-    }, [execution?.id, appContext]);
+    useExecutionWebsocket({executionId: execution?.id ?? "", onStatusUpdate: handleStatusUpdate, onValueUpdate: handleValueUpdate, onReset: handleWebsocketReset, settings: DEFAULT_SETTINGS});
 
     return (
         <MonitoringContext.Provider
@@ -276,13 +303,16 @@ const MonitoringProvider: Provider<IProps> = ({children}: IProps): ReactNode => 
                 simulationStartPoint: simulationStartPoint,
                 simulationEndPoint: simulationEndPoint,
                 simulationDuration: simulationDuration,
+                simulationTimeoutWorker: simulationTimeoutWorker,
+                simulationTimeoutInput: simulationTimeoutInput,
                 nodeTypes: nodeTypes,
                 edgeTypes: edgeTypes,
                 nodes: nodes,
                 edges: edges,
                 missingRequiredFields: missingRequiredFields,
-                resetEditor: resetEditor,
                 blockStates: blockStates,
+                connectionStates: connectionStates,
+                resetEditor: resetEditor,
                 onNodesChange: onNodesChange,
                 onEdgesChange: onEdgesChange,
                 updateExecution: updateExecution,
@@ -297,11 +327,14 @@ const MonitoringProvider: Provider<IProps> = ({children}: IProps): ReactNode => 
                 removeKeyFromExecDefaultValues: removeKeyFromExecDefaultValues,
                 updateExecutionLabel: updateExecutionLabel,
                 updateExecutionDescription: updateExecutionDescription,
-                updateBlockStates: updateBlockStates,
                 updateSimulationStartPoint: updateSimulationStartPoint,
                 updateSimulationEndPoint: updateSimulationEndPoint,
                 updateSimulationDuration: updateSimulationDuration,
-                updateMissingRequiredFields: updateMissingRequiredFields
+                updateMissingRequiredFields: updateMissingRequiredFields,
+                registerValueUpdateCallback: registerValueUpdateCallback,
+                registerStatusUpdateCallback: registerStatusUpdateCallback,
+                updateSimulationTimeoutWorker: updateSimulationTimeoutWorker,
+                updateSimulationTimeoutInput: updateSimulationTimeoutInput,
             }}
         >
             {children}

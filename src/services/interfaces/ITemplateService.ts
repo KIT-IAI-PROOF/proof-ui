@@ -1,4 +1,4 @@
-import {RequestListing as Request, TemplateDetail, TemplatePagingModelListing, WorkflowDetail} from "@kit-iai-proof/proof-config-manager-client";
+import {RequestListing as Request, TemplateDetail, TemplatePagingModelListing, WorkflowDetail} from "@webis/proof-config-manager-client";
 
 export interface ITemplateService {
 
@@ -15,5 +15,9 @@ export interface ITemplateService {
     deleteTemplate(templateId: string, signal: AbortSignal | undefined, sessionKey: string): Promise<boolean>;
 
     getWorkflowsForTemplate(s: string, signal: any): Promise<WorkflowDetail[]>;
+
+    getContainerImages(signal: AbortSignal | undefined): Promise<string[]>;
+
+    exportTemplate(templateId: string, signal: AbortSignal | undefined): Promise<File>;
 
 }

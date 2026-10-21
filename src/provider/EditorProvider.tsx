@@ -1,15 +1,4 @@
-import {
-    DragEvent,
-    DragEventHandler,
-    MutableRefObject,
-    ReactNode,
-    useCallback,
-    useContext,
-    useEffect,
-    useLayoutEffect,
-    useRef,
-    useState
-} from "react";
+import {DragEvent, DragEventHandler, MutableRefObject, ReactNode, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState} from "react";
 import {isEqual} from "lodash";
 import {TBlock} from "../model/TBlock.ts";
 import {
@@ -36,13 +25,7 @@ import {
     XYPosition
 } from "@xyflow/react";
 import BlockNode from "../pages/editor/components/BlockNode.tsx";
-import {
-    BlockDetail,
-    InputDetail,
-    OutputDetail,
-    TemplateDetail,
-    WorkflowDetail
-} from "@kit-iai-proof/proof-config-manager-client";
+import {BlockDetail, InputDetail, OutputDetail, TemplateDetail, WorkflowDetail} from "@webis/proof-config-manager-client";
 import {convertWorkflow, getNextAvailableIndex, makeEdge, makeNode} from "../utils/storage/inboundConverter.ts";
 import {TWorkflow} from "../model/TWorkflow.ts";
 import useHistory from "../hooks/useHistory.ts";

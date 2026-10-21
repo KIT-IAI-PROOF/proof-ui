@@ -4,7 +4,7 @@ import {Box, IconButton, Stack, Theme, Tooltip, Typography, useTheme} from "@mui
 import {TBlock} from "../../../model/TBlock.ts";
 import {darken, lighten} from "@mui/material/styles";
 import {getTypeBorder, getTypeColor} from "../../../utils/palette.ts";
-import {BlockDetail, InputDetail, OutputDetail} from "@kit-iai-proof/proof-config-manager-client";
+import {BlockDetail, InputDetail, OutputDetail} from "@webis/proof-config-manager-client";
 import CodeMirror from "@uiw/react-codemirror";
 import {oneDark} from "@codemirror/theme-one-dark";
 import {githubLight} from '@uiw/codemirror-theme-github';
@@ -70,7 +70,7 @@ const Node = memo(({data, id, selected, height, width}: NodeProps<TBlock>): Reac
         }
         updateNodeInternals(id);
     }, [collapsed, width, height, data.minWidth, data.minHeight, id, setNodes, updateNodeInternals]);
-    
+
     return (
         <Fragment>
             <div
