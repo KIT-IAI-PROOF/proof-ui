@@ -7,7 +7,7 @@ import {IMonitoringContext} from "../../provider/MonitoringProvider";
 import PreselectedStart from "./components/PreselectedStart.tsx";
 import UnselectedStart from "./components/UnselectedStart.tsx";
 import Grid from "@mui/material/Grid2";
-import {AttachmentDetail, BlockDetail, ExecutionDetail, ExecutionDetailStatusEnum, InputDetail, WorkflowDetail} from "@webis/proof-config-manager-client";
+import {AttachmentDetail, BlockDetail, ExecutionDetail, ExecutionDetailStatusEnum, InputDetail, WorkflowDetail} from "@kit-iai-proof/proof-config-manager-client";
 import {Info} from "@mui/icons-material";
 import {MonitoringContext} from "../../provider/MonitoringContext.tsx";
 import {IAppContext} from "../../provider/AppProvider.tsx";

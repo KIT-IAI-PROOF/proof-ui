@@ -16,7 +16,7 @@ import {
 } from "@xyflow/react";
 import {TWorkflow} from "../model/TWorkflow.ts";
 import {convertWorkflow} from "../utils/storage/inboundConverter.ts";
-import {ExecutionDetail} from "@webis/proof-config-manager-client";
+import {ExecutionDetail} from "@kit-iai-proof/proof-config-manager-client";
 import {TEdge} from "../model/TEdge.ts";
 import {Provider} from "../types/provider.ts";
 import {createBlockNode} from "../pages/monitoring/components/BlockNode.tsx";

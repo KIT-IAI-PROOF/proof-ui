@@ -2,7 +2,7 @@ import {Fragment, ReactNode, useContext, useState} from "react";
 import {Box, Button, Divider, Paper, Tooltip} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import {FileUpload, Save} from "@mui/icons-material";
-import {WorkflowDetail} from "@webis/proof-config-manager-client";
+import {WorkflowDetail} from "@kit-iai-proof/proof-config-manager-client";
 import {QueryClient, useMutation, UseMutationResult, useQueryClient} from "@tanstack/react-query";
 import {AxiosError} from "axios";
 import {v4 as uuidv4} from "uuid";

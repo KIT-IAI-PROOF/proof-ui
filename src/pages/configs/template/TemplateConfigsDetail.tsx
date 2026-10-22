@@ -35,7 +35,7 @@ import {
     TemplateDetailCommunicationParadigmEnum,
     TemplateDetailSyncStrategyEnum,
     WorkflowDetail
-} from "@webis/proof-config-manager-client";
+} from "@kit-iai-proof/proof-config-manager-client";
 import {useMutation, UseMutationResult, useQuery, useQueryClient, UseQueryResult} from "@tanstack/react-query";
 import {ENTITY_TYPES, INVALIDATION_KEYS, PAGE_CONTAINER_PADDING, TEMPLATES_KEY} from "../../../utils/constants.ts";
 import {EditNoteRounded, Info} from "@mui/icons-material";

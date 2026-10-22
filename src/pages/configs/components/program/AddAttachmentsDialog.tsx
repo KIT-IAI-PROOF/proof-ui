@@ -1,4 +1,4 @@
-import {AttachmentDetail} from "@webis/proof-config-manager-client";
+import {AttachmentDetail} from "@kit-iai-proof/proof-config-manager-client";
 import {Dispatch, Fragment, ReactNode, SetStateAction, useContext, useState} from "react";
 import {Box, Button, Dialog, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Theme, Typography, useTheme} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";

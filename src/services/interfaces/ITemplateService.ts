@@ -1,4 +1,4 @@
-import {RequestListing as Request, TemplateDetail, TemplatePagingModelListing, WorkflowDetail} from "@webis/proof-config-manager-client";
+import {RequestListing as Request, TemplateDetail, TemplatePagingModelListing, WorkflowDetail} from "@kit-iai-proof/proof-config-manager-client";
 
 export interface ITemplateService {
 

@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid2";
 import {IEditorContext} from "../../../provider/EditorProvider.tsx";
 import {useTranslation} from "react-i18next";
 import HelperLines from "./HelperLines.tsx";
-import {BlockDetail, TemplateDetail, WorkflowDetail} from "@webis/proof-config-manager-client";
+import {BlockDetail, TemplateDetail, WorkflowDetail} from "@kit-iai-proof/proof-config-manager-client";
 import GridGoldenratioIcon from "@mui/icons-material/GridGoldenratio";
 import {ConnectionLine} from "./ConnectionLine.tsx";
 import {TBlock} from "../../../model/TBlock.ts";

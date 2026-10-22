@@ -1,7 +1,7 @@
 import {keepPreviousData, queryOptions, UseQueryOptions} from "@tanstack/react-query";
 import {AxiosError} from "axios";
 import {attachmentService} from "../../services/instances.ts";
-import {AttachmentDetail, AttachmentPagingModelListing, RequestListing} from "@webis/proof-config-manager-client";
+import {AttachmentDetail, AttachmentPagingModelListing, RequestListing} from "@kit-iai-proof/proof-config-manager-client";
 import {ATTACHMENTS_KEY} from "../../utils/constants.ts";
 
 export const searchAttachmentsQueryOptions: (attachmentsRequest: RequestListing) => UseQueryOptions<AttachmentPagingModelListing, AxiosError, AttachmentPagingModelListing, (string | RequestListing)[]> = (attachmentsRequest: RequestListing): UseQueryOptions<AttachmentPagingModelListing, AxiosError, AttachmentPagingModelListing, (string | RequestListing)[]> => {

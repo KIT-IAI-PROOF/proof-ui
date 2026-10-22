@@ -1,4 +1,4 @@
-import {AttachmentDetail, AttachmentPagingModelListing, RequestListing as Request} from "@webis/proof-config-manager-client";
+import {AttachmentDetail, AttachmentPagingModelListing, RequestListing as Request} from "@kit-iai-proof/proof-config-manager-client";
 
 export interface IAttachmentService {
 

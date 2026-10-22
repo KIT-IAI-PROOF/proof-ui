@@ -1,7 +1,7 @@
 import {keepPreviousData, queryOptions, UseQueryOptions} from "@tanstack/react-query";
 import {AxiosError} from "axios";
 import {templateService} from "../../services/instances.ts";
-import {RequestListing, TemplateDetail, TemplatePagingModelListing, WorkflowDetail} from "@webis/proof-config-manager-client";
+import {RequestListing, TemplateDetail, TemplatePagingModelListing, WorkflowDetail} from "@kit-iai-proof/proof-config-manager-client";
 import {TEMPLATES_KEY, WORKFLOWS_KEY} from "../../utils/constants.ts";
 
 export const searchTemplatesQueryOptions: (templatesRequest: RequestListing) => UseQueryOptions<TemplatePagingModelListing, AxiosError, TemplatePagingModelListing, (string | RequestListing)[]> = (templatesRequest: RequestListing): UseQueryOptions<TemplatePagingModelListing, AxiosError, TemplatePagingModelListing, (string | RequestListing)[]> => {

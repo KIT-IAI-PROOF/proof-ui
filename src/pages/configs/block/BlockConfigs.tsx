@@ -3,7 +3,7 @@ import {Box, Paper, Stack, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import {useTranslation} from "react-i18next";
 import {DataGrid, GridColDef, GridFilterModel, GridPaginationModel, GridRowParams, GridSortModel} from "@mui/x-data-grid";
-import {BlockListing, BlockPagingModelListing} from "@webis/proof-config-manager-client";
+import {BlockListing, BlockPagingModelListing} from "@kit-iai-proof/proof-config-manager-client";
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import {EditNoteRounded} from "@mui/icons-material";
 import {useIsFetching, useQuery, UseQueryResult} from "@tanstack/react-query";

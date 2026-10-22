@@ -1,5 +1,5 @@
 import React, {ChangeEvent, Dispatch, Fragment, MutableRefObject, ReactNode, SetStateAction, SyntheticEvent, useCallback, useContext,} from "react";
-import {InputDetail, InputDetailCommunicationTypeEnum, InputDetailPhaseEnum, InputDetailTypeEnum, OutputDetailPhaseEnum} from "@webis/proof-config-manager-client";
+import {InputDetail, InputDetailCommunicationTypeEnum, InputDetailPhaseEnum, InputDetailTypeEnum, OutputDetailPhaseEnum} from "@kit-iai-proof/proof-config-manager-client";
 import {
     Accordion,
     AccordionDetails,

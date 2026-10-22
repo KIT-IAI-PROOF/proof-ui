@@ -1,7 +1,7 @@
 import {keepPreviousData, queryOptions, UseQueryOptions} from "@tanstack/react-query";
 import {AxiosError} from "axios";
 import {workflowService} from "../../services/instances.ts";
-import {ExecutionListing, RequestListing, WorkflowDetail, WorkflowPagingModelListing} from "@webis/proof-config-manager-client";
+import {ExecutionListing, RequestListing, WorkflowDetail, WorkflowPagingModelListing} from "@kit-iai-proof/proof-config-manager-client";
 import {EXECUTIONS_KEY, WORKFLOWS_KEY} from "../../utils/constants.ts";
 
 export const searchWorkflowsQueryOptions: (workflowsRequest: RequestListing) => UseQueryOptions<WorkflowPagingModelListing, AxiosError, WorkflowPagingModelListing, (string | RequestListing)[]> = (workflowsRequest: RequestListing): UseQueryOptions<WorkflowPagingModelListing, AxiosError, WorkflowPagingModelListing, (string | RequestListing)[]> => {

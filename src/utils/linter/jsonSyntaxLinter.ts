@@ -2,7 +2,7 @@ import {Extension} from "@uiw/react-codemirror";
 import {Diagnostic, linter} from "@codemirror/lint";
 import {EditorView} from "@codemirror/view";
 import {TFunction} from "i18next";
-import {InputDetailTypeEnum} from "@webis/proof-config-manager-client";
+import {InputDetailTypeEnum} from "@kit-iai-proof/proof-config-manager-client";
 
 const getJsonType = (data: any): string => {
     if (Array.isArray(data)) {

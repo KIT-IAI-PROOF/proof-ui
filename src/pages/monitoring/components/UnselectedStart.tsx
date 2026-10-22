@@ -1,6 +1,6 @@
 import {Fragment, ReactNode} from "react";
 import {FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Theme, useTheme} from "@mui/material";
-import {WorkflowDetail} from "@webis/proof-config-manager-client";
+import {WorkflowDetail} from "@kit-iai-proof/proof-config-manager-client";
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import Grid from "@mui/material/Grid2";
 import {useQuery, UseQueryResult} from "@tanstack/react-query";

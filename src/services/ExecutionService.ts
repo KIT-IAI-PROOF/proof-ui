@@ -1,4 +1,4 @@
-import {Configuration, ExecutionControllerApi, ExecutionDetail, ExecutionPagingModelListing, RequestListing as Request} from "@webis/proof-config-manager-client";
+import {Configuration, ExecutionControllerApi, ExecutionDetail, ExecutionPagingModelListing, RequestListing as Request} from "@kit-iai-proof/proof-config-manager-client";
 import type {AxiosResponse, RawAxiosRequestConfig} from "axios";
 import axios from "../utils/axios";
 import {IExecutionService} from "./interfaces/IExecutionService.ts";

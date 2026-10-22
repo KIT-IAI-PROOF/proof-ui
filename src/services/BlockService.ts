@@ -1,4 +1,4 @@
-import {BlockControllerApi, BlockDetail, BlockPagingModelListing, Configuration, RequestListing as Request} from "@webis/proof-config-manager-client";
+import {BlockControllerApi, BlockDetail, BlockPagingModelListing, Configuration, RequestListing as Request} from "@kit-iai-proof/proof-config-manager-client";
 import type {AxiosResponse, RawAxiosRequestConfig} from "axios";
 import axios from "../utils/axios";
 import {IBlockService} from "./interfaces/IBlockService.ts";

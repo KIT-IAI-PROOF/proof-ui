@@ -1,5 +1,5 @@
 import {Box, LinearProgress, Stack, Typography} from "@mui/material";
-import {ExecutionDetail} from "@webis/proof-config-manager-client";
+import {ExecutionDetail} from "@kit-iai-proof/proof-config-manager-client";
 import {ReactNode, useCallback, useMemo} from "react";
 
 interface IProps {

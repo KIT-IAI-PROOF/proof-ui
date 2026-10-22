@@ -4,7 +4,7 @@ import {ChangeEvent, Fragment, ReactNode, useContext, useEffect, useState} from 
 import {Box, Button, Divider, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Stack, TextField, Theme, Tooltip, Typography, useTheme} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import DeleteIcon from '@mui/icons-material/Delete';
-import {AttachmentDetail, ProgramDetail, ProgramDetailRuntimeEnum} from "@webis/proof-config-manager-client";
+import {AttachmentDetail, ProgramDetail, ProgramDetailRuntimeEnum} from "@kit-iai-proof/proof-config-manager-client";
 import AddIcon from "@mui/icons-material/Add";
 import {EditNoteRounded, Info} from "@mui/icons-material";
 import PageHeader from "../../../app/components/PageHeader.tsx";

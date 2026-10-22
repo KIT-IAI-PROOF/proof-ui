@@ -1,7 +1,7 @@
 import {keepPreviousData, queryOptions, UseQueryOptions} from "@tanstack/react-query";
 import {AxiosError} from "axios";
 import {programService} from "../../services/instances.ts";
-import {ProgramDetail, ProgramPagingModelListing, RequestListing} from "@webis/proof-config-manager-client";
+import {ProgramDetail, ProgramPagingModelListing, RequestListing} from "@kit-iai-proof/proof-config-manager-client";
 import {PROGRAMS_KEY} from "../../utils/constants.ts";
 
 export const searchProgramsQueryOptions: (programsRequest: RequestListing) => UseQueryOptions<ProgramPagingModelListing, AxiosError, ProgramPagingModelListing, (string | RequestListing)[]> = (programsRequest: RequestListing): UseQueryOptions<ProgramPagingModelListing, AxiosError, ProgramPagingModelListing, (string | RequestListing)[]> => {

@@ -1,6 +1,6 @@
 import {keepPreviousData, queryOptions, UseQueryOptions} from "@tanstack/react-query";
 import {AxiosError} from "axios";
-import {ExecutionDetail, ExecutionPagingModelListing, RequestListing} from "@webis/proof-config-manager-client";
+import {ExecutionDetail, ExecutionPagingModelListing, RequestListing} from "@kit-iai-proof/proof-config-manager-client";
 import {EXECUTIONS_KEY} from "../../utils/constants.ts";
 import {executionService} from "../../services/instances.ts";
 

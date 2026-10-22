@@ -1,4 +1,4 @@
-import {InputDetail, InputDetailTypeEnum} from "@webis/proof-config-manager-client";
+import {InputDetail, InputDetailTypeEnum} from "@kit-iai-proof/proof-config-manager-client";
 import React, {ChangeEvent, Dispatch, Fragment, ReactNode, SetStateAction, SyntheticEvent, useCallback, useContext} from "react";
 import Grid from "@mui/material/Grid2";
 import {Alert, Autocomplete, AutocompleteRenderInputParams, Box, FormControl, FormLabel, Stack, TextField, Theme, Tooltip, Typography, useTheme} from "@mui/material";

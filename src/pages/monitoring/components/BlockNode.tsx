@@ -4,7 +4,7 @@ import {Box, Chip, Stack, Theme, Tooltip, Typography, useTheme} from "@mui/mater
 import {TBlock} from "../../../model/TBlock.ts";
 import {darken, lighten} from "@mui/material/styles";
 import {getTypeBorder, getTypeColor} from "../../../utils/palette.ts";
-import {InputDetail, OutputDetail} from "@webis/proof-config-manager-client";
+import {InputDetail, OutputDetail} from "@kit-iai-proof/proof-config-manager-client";
 import CodeMirror from "@uiw/react-codemirror";
 import {oneDark} from "@codemirror/theme-one-dark";
 import {githubLight} from '@uiw/codemirror-theme-github';

@@ -3,7 +3,7 @@ import {useTranslation} from "react-i18next";
 import {Dispatch, Fragment, ReactNode, SetStateAction, useContext, useMemo, useState} from "react";
 import ConfirmDialog from "../../../app/components/ConfirmDialog.tsx";
 import {EditorContext} from "../../../provider/EditorContext.tsx";
-import {BlockDetail, TemplateDetail} from "@webis/proof-config-manager-client";
+import {BlockDetail, TemplateDetail} from "@kit-iai-proof/proof-config-manager-client";
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import {useQuery, UseQueryResult} from "@tanstack/react-query";
 import {AxiosError} from "axios";

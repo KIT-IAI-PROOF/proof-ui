@@ -1,4 +1,4 @@
-import {Configuration} from "@webis/proof-config-manager-client";
+import {Configuration} from "@kit-iai-proof/proof-config-manager-client";
 import {IFMUImporterService} from "./interfaces/IFMUImporterService.ts";
 import axios from "../utils/axios.ts";
 

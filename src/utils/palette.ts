@@ -1,5 +1,5 @@
 import {IPalette} from "../model/IPalette.ts";
-import {InputDetailTypeEnum, TemplateDetailBlockTypeEnum} from "@webis/proof-config-manager-client";
+import {InputDetailTypeEnum, TemplateDetailBlockTypeEnum} from "@kit-iai-proof/proof-config-manager-client";
 
 export const DEFAULT_PALETTE: IPalette[] = [
     {

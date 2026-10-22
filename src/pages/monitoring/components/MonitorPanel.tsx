@@ -5,7 +5,7 @@ import {Background, BackgroundVariant, ReactFlow} from "@xyflow/react";
 import {TEdge} from "../../../model/TEdge.ts";
 import {TBlock} from "../../../model/TBlock.ts";
 import Grid from "@mui/material/Grid2";
-import {ExecutionDetail, ExecutionDetailStatusEnum, ExecutionListingStatusEnum} from "@webis/proof-config-manager-client";
+import {ExecutionDetail, ExecutionDetailStatusEnum, ExecutionListingStatusEnum} from "@kit-iai-proof/proof-config-manager-client";
 import {saveAs} from 'file-saver';
 import {useTranslation} from "react-i18next";
 import {NavigateFunction, useNavigate, useParams} from "react-router-dom";

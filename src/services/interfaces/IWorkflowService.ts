@@ -1,4 +1,4 @@
-import {ExecutionListing, RequestListing as Request, WorkflowDetail, WorkflowPagingModelListing} from "@webis/proof-config-manager-client";
+import {ExecutionListing, RequestListing as Request, WorkflowDetail, WorkflowPagingModelListing} from "@kit-iai-proof/proof-config-manager-client";
 
 export interface IWorkflowService {
 

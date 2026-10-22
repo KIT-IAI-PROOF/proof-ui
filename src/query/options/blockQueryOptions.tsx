@@ -1,7 +1,7 @@
 import {keepPreviousData, queryOptions, UseQueryOptions} from "@tanstack/react-query";
 import {AxiosError} from "axios";
 import {blockService} from "../../services/instances.ts";
-import {BlockDetail, BlockPagingModelListing, RequestListing} from "@webis/proof-config-manager-client";
+import {BlockDetail, BlockPagingModelListing, RequestListing} from "@kit-iai-proof/proof-config-manager-client";
 import {BLOCKS_KEY} from "../../utils/constants.ts";
 
 export const searchBlocksQueryOptions: (blocksRequest: RequestListing) => UseQueryOptions<BlockPagingModelListing, AxiosError, BlockPagingModelListing, (string | RequestListing)[]> = (blocksRequest: RequestListing): UseQueryOptions<BlockPagingModelListing, AxiosError, BlockPagingModelListing, (string | RequestListing)[]> => {

@@ -5,7 +5,7 @@ import {IMonitoringContext} from "../../../provider/MonitoringProvider.tsx";
 import {Info} from "@mui/icons-material";
 import {useTranslation} from "react-i18next";
 import Grid from "@mui/material/Grid2";
-import {BlockDetail, ExecutionDetail, InputDetail, WorkflowDetail} from "@webis/proof-config-manager-client";
+import {BlockDetail, ExecutionDetail, InputDetail, WorkflowDetail} from "@kit-iai-proof/proof-config-manager-client";
 import {MonitoringContext} from "../../../provider/MonitoringContext.tsx";
 import Handle from "./Handle.tsx";
 import {useQuery, UseQueryResult} from "@tanstack/react-query";

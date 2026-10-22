@@ -1,4 +1,4 @@
-import {Configuration, FileControllerApi} from "@webis/proof-config-manager-client";
+import {Configuration, FileControllerApi} from "@kit-iai-proof/proof-config-manager-client";
 import axios from "../utils/axios.ts";
 import {AxiosResponse, RawAxiosRequestConfig} from "axios";
 import {IFileService} from "./interfaces/IFileService.ts";

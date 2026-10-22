@@ -1,5 +1,5 @@
 import {IProgramService} from "./interfaces/IProgramService.ts";
-import {Configuration, ProgramControllerApi, ProgramDetail, ProgramPagingModelListing, RequestListing} from "@webis/proof-config-manager-client";
+import {Configuration, ProgramControllerApi, ProgramDetail, ProgramPagingModelListing, RequestListing} from "@kit-iai-proof/proof-config-manager-client";
 import axios from "../utils/axios.ts";
 import type {AxiosResponse, RawAxiosRequestConfig} from "axios";
 

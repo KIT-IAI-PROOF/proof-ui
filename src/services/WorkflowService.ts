@@ -1,4 +1,4 @@
-import {Configuration, ExecutionListing, RequestListing as Request, WorkflowControllerApi, WorkflowDetail, WorkflowPagingModelListing} from "@webis/proof-config-manager-client";
+import {Configuration, ExecutionListing, RequestListing as Request, WorkflowControllerApi, WorkflowDetail, WorkflowPagingModelListing} from "@kit-iai-proof/proof-config-manager-client";
 import type {AxiosResponse, RawAxiosRequestConfig} from "axios";
 import axios from "../utils/axios";
 import {IWorkflowService} from "./interfaces/IWorkflowService.ts";

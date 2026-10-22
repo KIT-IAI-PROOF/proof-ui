@@ -1,4 +1,4 @@
-import {Configuration, RequestListing as Request, TemplateControllerApi, TemplateDetail, TemplatePagingModelListing, WorkflowDetail} from "@webis/proof-config-manager-client";
+import {Configuration, RequestListing as Request, TemplateControllerApi, TemplateDetail, TemplatePagingModelListing, WorkflowDetail} from "@kit-iai-proof/proof-config-manager-client";
 import type {AxiosResponse, RawAxiosRequestConfig} from "axios";
 import axios from "../utils/axios";
 import {ITemplateService} from "./interfaces/ITemplateService.ts";

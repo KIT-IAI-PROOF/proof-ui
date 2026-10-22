@@ -24,7 +24,7 @@ import AccountTreeRoundedIcon from "@mui/icons-material/AccountTreeRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import {IEditorContext} from "../../provider/EditorProvider.tsx";
 import {useTranslation} from "react-i18next";
-import {InputDetailTypeEnum, WorkflowDetail, WorkflowDetailCommunicationParadigmEnum, WorkflowDetailSimulationStrategyEnum} from "@webis/proof-config-manager-client";
+import {InputDetailTypeEnum, WorkflowDetail, WorkflowDetailCommunicationParadigmEnum, WorkflowDetailSimulationStrategyEnum} from "@kit-iai-proof/proof-config-manager-client";
 import {NavigateFunction, useLocation, useNavigate, useParams} from "react-router-dom";
 import {convertRemoteBlocks, convertRemoteEdges} from "../../utils/storage/outboundConverter.ts";
 import TerminalIcon from "@mui/icons-material/Terminal";

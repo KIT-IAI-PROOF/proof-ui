@@ -1,5 +1,5 @@
 import type {Edge} from "@xyflow/react";
-import type {ConnectionDetail as REdge} from "@webis/proof-config-manager-client";
+import type {ConnectionDetail as REdge} from "@kit-iai-proof/proof-config-manager-client";
 import {ControlPointData} from "../pages/editor/components/ControlPoint.tsx";
 
 type Without<T, K> = Pick<T, Exclude<keyof T, K>>;

@@ -2,7 +2,7 @@ import {Fragment, ReactNode, useContext, useEffect} from "react";
 import {useParams} from "react-router-dom";
 import {IMonitoringContext} from "../../provider/MonitoringProvider";
 import {MonitoringContext} from "../../provider/MonitoringContext.tsx";
-import {ExecutionDetail} from "@webis/proof-config-manager-client";
+import {ExecutionDetail} from "@kit-iai-proof/proof-config-manager-client";
 import {useQuery, UseQueryResult} from "@tanstack/react-query";
 import {AxiosError} from "axios";
 import {executionQueryOptions} from "../../query/options/executionQueryOptions.tsx";

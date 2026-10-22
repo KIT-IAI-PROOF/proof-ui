@@ -2,7 +2,7 @@ import {Accordion, AccordionDetails, AccordionSummary, Checkbox, FormControlLabe
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Grid from "@mui/material/Grid2";
 import {Fragment, ReactNode, useState} from "react";
-import {ExecutionDetail, InputDetail} from "@webis/proof-config-manager-client";
+import {ExecutionDetail, InputDetail} from "@kit-iai-proof/proof-config-manager-client";
 import {useTranslation} from "react-i18next";
 import {Info} from "@mui/icons-material";
 import Progress from "./Progress.tsx";

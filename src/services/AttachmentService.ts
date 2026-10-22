@@ -1,5 +1,5 @@
 import {IAttachmentService} from "./interfaces/IAttachmentService.ts";
-import {AttachmentControllerApi, AttachmentDetail, AttachmentPagingModelListing, Configuration, RequestListing} from "@webis/proof-config-manager-client";
+import {AttachmentControllerApi, AttachmentDetail, AttachmentPagingModelListing, Configuration, RequestListing} from "@kit-iai-proof/proof-config-manager-client";
 import axios from "../utils/axios.ts";
 import {AxiosResponse, RawAxiosRequestConfig} from "axios";
 

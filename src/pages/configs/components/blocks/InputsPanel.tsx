@@ -1,5 +1,5 @@
 import {Accordion, AccordionDetails, AccordionSummary, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Theme, Typography, useTheme} from "@mui/material";
-import {InputDetail, InputDetailCommunicationTypeEnum, InputDetailTypeEnum} from "@webis/proof-config-manager-client";
+import {InputDetail, InputDetailCommunicationTypeEnum, InputDetailTypeEnum} from "@kit-iai-proof/proof-config-manager-client";
 import React, {ReactNode} from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {useTranslation} from "react-i18next";
