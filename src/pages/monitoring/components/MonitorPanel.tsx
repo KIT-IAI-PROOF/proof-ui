@@ -23,7 +23,7 @@ import {executionService, orchestrationService} from "../../../services/instance
 import ExecutionSettingsPanel from "./ExecutionSettingsPanel.tsx";
 import {IWindowContext} from "../../../provider/WindowProvider.tsx";
 import {WindowContext} from "../../../provider/WindowContext.tsx";
-
+import {v4 as uuidv4} from "uuid";
 
 const MonitorPanel: () => ReactNode = (): ReactNode => {
 
@@ -62,8 +62,38 @@ const MonitorPanel: () => ReactNode = (): ReactNode => {
         }
     });
 
+    const executionMutation: UseMutationResult<ExecutionDetail, AxiosError, ExecutionDetail, any> = useMutation({
+        retry: false,
+        mutationFn: async (execution: ExecutionDetail): Promise<ExecutionDetail> => {
+            if (execution.id) return await executionService.updateExecution(execution.id, execution, undefined, sessionKey);
+            else return await executionService.saveExecution({...execution, id: uuidv4()}, undefined, sessionKey);
+        },
+        onMutate: async (): Promise<void> => {
+            return await queryClient.cancelQueries({queryKey: [EXECUTIONS_KEY]});
+        },
+        onSuccess: async (result: ExecutionDetail): Promise<void> => {
+            for (const queryKey of INVALIDATION_KEYS[EXECUTIONS_KEY]) await queryClient.invalidateQueries({
+                queryKey: [queryKey],
+                exact: false
+            });
+            await queryClient.setQueryData([EXECUTIONS_KEY, result.id], result);
+        },
+        onError: (error: AxiosError): void => {
+            getErrorMessage(error, ENTITY_TYPES[EXECUTIONS_KEY], t)
+        }
+    });
+
     const restartExecution = async (): Promise<void> => {
-        if (execution?.id) await orchestrationService.startExecution(undefined, execution?.id)
+        if (!execution) return;
+        const executionToRestart: ExecutionDetail = await executionMutation.mutateAsync({
+            ...execution,
+            id: undefined,
+            status: ExecutionDetailStatusEnum.Unknown
+        });
+        if (executionToRestart.id) {
+            navigate(`/monitoring/${executionToRestart.id}`);
+            await orchestrationService.startExecution(undefined, executionToRestart.id);
+        }
     }
 
     return (
