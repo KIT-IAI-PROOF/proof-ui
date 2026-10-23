@@ -180,7 +180,6 @@ export const ConnectionPanel: ({window}: IProps) => ReactNode = ({window}: IProp
             <Stack
                 direction="row"
                 alignItems="center"
-                justifyContent="space-between"
                 spacing={2}
                 sx={{
                     px: 2,
@@ -190,26 +189,24 @@ export const ConnectionPanel: ({window}: IProps) => ReactNode = ({window}: IProp
                     borderColor: "divider",
                 }}
             >
-                <Stack direction={"row"} spacing={1} width={"300px"}>
-                    <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
-                        {t("dialog.header.connectionPanel.maxValues")}
-                    </Typography>
-                    <Slider
-                        sx={{width: "100px"}}
-                        aria-label="Max values"
-                        value={localValueCount}
-                        step={10}
-                        marks={true}
-                        min={10}
-                        max={100}
-                        valueLabelDisplay={"auto"}
-                        onChange={(_event, newValue) => setLocalValueCount(newValue as number)}
-                        onChangeCommitted={(_event, newValue) => setLocalValueCount(newValue as number)}
-                    />
-                    <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
-                        {localValueCount}
-                    </Typography>
-                </Stack>
+                <Typography paddingRight={1} noWrap={true} variant={"body1"} color={"textSecondary"}>
+                    {t("dialog.header.connectionPanel.maxValues")}
+                </Typography>
+                <Slider
+                    sx={{width: "100px"}}
+                    aria-label="Max values"
+                    value={localValueCount}
+                    step={10}
+                    marks={true}
+                    min={10}
+                    max={100}
+                    valueLabelDisplay={"auto"}
+                    onChange={(_event, newValue) => setLocalValueCount(newValue as number)}
+                    onChangeCommitted={(_event, newValue) => setLocalValueCount(newValue as number)}
+                />
+                <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
+                    {localValueCount}
+                </Typography>
             </Stack>
         </Fragment>
     );
