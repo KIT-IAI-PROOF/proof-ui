@@ -13,6 +13,7 @@ import {IMonitoringContext} from "../../../provider/MonitoringProvider.tsx";
 import {MonitoringContext} from "../../../provider/MonitoringContext.tsx";
 import {TEdge} from "../../../model/TEdge.ts";
 import {TBlock} from "../../../model/TBlock.ts";
+import HandlePanel from "./HandlePanel.tsx";
 
 interface IProps {
     window: IWindow;
@@ -39,7 +40,7 @@ const FloatingWindow: React.FC<IProps> = React.memo(({window}: IProps): ReactNod
         touchAction: "none",
     };
 
-    const getTitle = useCallback((id: string, queue: string, type: "log" | "connection"): string => {
+    const getTitle = useCallback((id: string, queue: string, type: "log" | "connection" | "handle"): string => {
         switch (type) {
             case "log": {
                 if (queue.startsWith("execution.")) return "Orchestrator";
@@ -51,6 +52,15 @@ const FloatingWindow: React.FC<IProps> = React.memo(({window}: IProps): ReactNod
                 const sourceBlock: TBlock | undefined = nodes.find((e: TBlock): boolean => e.id === edge?.data?.source)
                 const targetBlock: TBlock | undefined = nodes.find((e: TBlock): boolean => e.id === edge?.data?.target)
                 return `${t("word.connection")} ${sourceBlock?.data.label} (${sourceBlock?.data.index}) – ${targetBlock?.data.label} (${targetBlock?.data.index})`;
+            }
+            case "handle": {
+                for (const node of nodes) {
+                    const input = node.data.inputs?.find((i) => i.id === id);
+                    if (input) return `Eingang ${node.data.label} (${node.data.index}) – ${input.label}`;
+                    const output = node.data.outputs?.find((o) => o.id === id);
+                    if (output) return `Ausgang ${node.data.label} (${node.data.index}) – ${output.label}`;
+                }
+                return id;
             }
             default:
                 return "";
@@ -110,6 +120,9 @@ const FloatingWindow: React.FC<IProps> = React.memo(({window}: IProps): ReactNod
             }
             {
                 window.type === "connection" && <ConnectionPanel window={window}/>
+            }
+            {
+                window.type === "handle" && <HandlePanel window={window}/>
             }
         </Paper>
     );
