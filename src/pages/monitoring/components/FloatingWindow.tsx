@@ -13,12 +13,10 @@ import {IMonitoringContext} from "../../../provider/MonitoringProvider.tsx";
 import {MonitoringContext} from "../../../provider/MonitoringContext.tsx";
 import {TEdge} from "../../../model/TEdge.ts";
 import {TBlock} from "../../../model/TBlock.ts";
-import HandlePanel from "./HandlePanel.tsx";
 
 interface IProps {
     window: IWindow;
 }
-
 
 const FloatingWindow: React.FC<IProps> = React.memo(({window}: IProps): ReactNode => {
 
@@ -120,9 +118,6 @@ const FloatingWindow: React.FC<IProps> = React.memo(({window}: IProps): ReactNod
             }
             {
                 window.type === "connection" && <ConnectionPanel window={window}/>
-            }
-            {
-                window.type === "handle" && <HandlePanel window={window}/>
             }
         </Paper>
     );
