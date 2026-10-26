@@ -88,7 +88,9 @@ const MonitorPanel: () => ReactNode = (): ReactNode => {
         const executionToRestart: ExecutionDetail = await executionMutation.mutateAsync({
             ...execution,
             id: undefined,
-            status: ExecutionDetailStatusEnum.Unknown
+            startedAt: undefined,
+            stoppedAt: undefined,
+            status: ExecutionDetailStatusEnum.Unknown,
         });
         if (executionToRestart.id) {
             navigate(`/monitoring/${executionToRestart.id}`);
