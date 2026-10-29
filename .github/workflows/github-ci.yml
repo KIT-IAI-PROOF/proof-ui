@@ -85,11 +85,26 @@ jobs:
 
       - name: Build and push image
         run: |
-          TAG="${GITHUB_REF_NAME#v}"
+          VERSION="${GITHUB_REF_NAME#v}"
+          TAG_NAME="${VERSION,,}"
           IMAGE_NAME="ghcr.io/${IMAGE_OWNER}/${{ github.event.repository.name }}"
-          docker build \
+          
+          # Add the latest tag only for release-like versions
+          if [[ ! "$TAG_NAME" =~ (dev|feature|local|test) ]]; then
+            echo "Tag '$TAG_NAME': latest set"
+            docker build \
             -f docker/Dockerfile \
-            -t "${IMAGE_NAME}:${TAG}" \
+            -t "${IMAGE_NAME}:${TAG_NAME}" \
+            -t "${IMAGE_NAME}:latest" \
             .
-
-          docker push "${IMAGE_NAME}:${TAG}"
+          
+            docker push "${IMAGE_NAME}:${TAG_NAME}"
+            docker push "${IMAGE_NAME}:latest"
+          else
+             docker build \
+            -f docker/Dockerfile \
+            -t "${IMAGE_NAME}:${TAG_NAME}" \
+            .
+          
+            docker push "${IMAGE_NAME}:${TAG_NAME}"
+          fi
