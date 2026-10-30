@@ -14,6 +14,8 @@ import {AppContext} from "../../../provider/AppContext.tsx";
 import {MonitoringContext} from "../../../provider/MonitoringContext.tsx";
 import {IMonitoringContext} from "../../../provider/MonitoringProvider.tsx";
 import {useTranslation} from "react-i18next";
+import {IWindowContext} from "../../../provider/WindowProvider.tsx";
+import {WindowContext} from "../../../provider/WindowContext.tsx";
 
 const createBlockNode = (withBlockStatus?: boolean) => {
     const Node = memo(({data, width, height}: NodeProps<TBlock>): ReactNode => {
@@ -22,6 +24,7 @@ const createBlockNode = (withBlockStatus?: boolean) => {
         const theme: Theme = useTheme();
         const {palette} = useContext<IAppContext>(AppContext);
         const {blockStates} = useContext<IMonitoringContext>(MonitoringContext);
+        const {handleOpenWindow} = useContext<IWindowContext>(WindowContext);
         const [tooltipOpenMap, setTooltipOpenMap] = useState<Record<string, boolean>>({});
 
         const handleTooltipOpen = (id: string) => {
@@ -180,7 +183,14 @@ const createBlockNode = (withBlockStatus?: boolean) => {
                                             position={Position.Left}
                                             style={{
                                                 backgroundColor: getTypeColor(handle.type, palette),
-                                                border: getTypeBorder(handle.type, palette)
+                                                border: getTypeBorder(handle.type, palette),
+                                                cursor: "pointer",
+                                            }}
+                                            onClick={(event) => {
+                                                event.stopPropagation();
+                                                if (handle.id) {
+                                                    handleOpenWindow(handle.id, handle.id, "handle");
+                                                }
                                             }}
                                         >
                                         </Handle>
@@ -260,7 +270,14 @@ const createBlockNode = (withBlockStatus?: boolean) => {
                                             type="source"
                                             style={{
                                                 backgroundColor: getTypeColor(handle.type, palette),
-                                                border: getTypeBorder(handle.type, palette)
+                                                border: getTypeBorder(handle.type, palette),
+                                                cursor: "pointer",
+                                            }}
+                                            onClick={(event) => {
+                                                event.stopPropagation();
+                                                if (handle.id) {
+                                                    handleOpenWindow(handle.id, handle.id, "handle");
+                                                }
                                             }}
                                         />
                                     </Tooltip>
