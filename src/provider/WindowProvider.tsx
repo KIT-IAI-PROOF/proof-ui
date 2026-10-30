@@ -10,7 +10,7 @@ interface IProps {
 
 export interface IWindowContext {
     handleDragEnd: (event: DragEndEvent) => void;
-    handleOpenWindow: (id: string, queue: string, type: "log" | "connection") => void;
+    handleOpenWindow: (id: string, queue: string, type: "log" | "connection" | "handle") => void;
     handleCloseWindow: (id: string) => void;
     handleFocusWindow: (id: string) => void;
     windows: IWindow[];
@@ -32,7 +32,7 @@ const WindowProvider: Provider<IProps> = ({children}: IProps): ReactNode => {
         });
     }, []);
 
-    const handleOpenWindow = useCallback((id: string, queue: string, type: "log" | "connection") => {
+    const handleOpenWindow = useCallback((id: string, queue: string, type: "log" | "connection" | "handle") => {
         if (windows.some((window: IWindow) => window.id === id)) {
             handleFocusWindow(id);
             return;
