@@ -1,11 +1,12 @@
-import {Fragment, useContext} from "react";
+import {Fragment, ReactNode, useContext} from "react";
 import {IWindow} from "../../../model/IWindow.ts";
 import FloatingWindow from "./FloatingWindow.tsx";
 import {DndContext, PointerSensor, useSensor, useSensors} from "@dnd-kit/core";
 import {IWindowContext} from "../../../provider/WindowProvider.tsx";
 import {WindowContext} from "../../../provider/WindowContext.tsx";
+import {restrictToViewport} from "../../../utils/dnd.ts";
 
-const FloatingWindows = () => {
+const FloatingWindows = (): ReactNode => {
 
     const {windows, handleDragEnd} = useContext<IWindowContext>(WindowContext)
 
@@ -18,7 +19,11 @@ const FloatingWindows = () => {
     );
 
     return (<Fragment>
-        <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+        <DndContext
+            sensors={sensors}
+            modifiers={[restrictToViewport]}
+            onDragEnd={handleDragEnd}
+        >
             <div style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', pointerEvents: 'none', zIndex: 1500}}>
                 {
                     windows.map((window: IWindow) => (

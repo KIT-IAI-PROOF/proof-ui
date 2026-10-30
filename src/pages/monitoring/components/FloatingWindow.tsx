@@ -19,7 +19,6 @@ interface IProps {
     window: IWindow;
 }
 
-
 const FloatingWindow: React.FC<IProps> = React.memo(({window}: IProps): ReactNode => {
 
     const {t} = useTranslation();

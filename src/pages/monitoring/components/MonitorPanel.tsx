@@ -1,7 +1,7 @@
 import {Fragment, ReactNode, useContext, useState} from "react";
-import {Box, Button, ButtonGroup, Paper, Stack, Theme, Typography, useColorScheme, useMediaQuery, useTheme} from "@mui/material";
+import {Box, Button, ButtonGroup, Paper, Stack, Theme, Tooltip, Typography, useColorScheme, useMediaQuery, useTheme} from "@mui/material";
 import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
-import {Background, BackgroundVariant, ReactFlow} from "@xyflow/react";
+import {Background, BackgroundVariant, ControlButton, Controls, ReactFlow, useReactFlow} from "@xyflow/react";
 import {TEdge} from "../../../model/TEdge.ts";
 import {TBlock} from "../../../model/TBlock.ts";
 import Grid from "@mui/material/Grid2";
@@ -24,6 +24,7 @@ import ExecutionSettingsPanel from "./ExecutionSettingsPanel.tsx";
 import {IWindowContext} from "../../../provider/WindowProvider.tsx";
 import {WindowContext} from "../../../provider/WindowContext.tsx";
 import {v4 as uuidv4} from "uuid";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
 
 const MonitorPanel: () => ReactNode = (): ReactNode => {
 
@@ -31,6 +32,7 @@ const MonitorPanel: () => ReactNode = (): ReactNode => {
     const {mode} = useColorScheme();
     const theme: Theme = useTheme();
     const {t} = useTranslation();
+    const {fitView} = useReactFlow();
     const {executionId} = useParams();
     const queryClient = useQueryClient();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -192,12 +194,6 @@ const MonitorPanel: () => ReactNode = (): ReactNode => {
                                         id={"monitoring"}
                                         key={"monitoring"}
                                         fitView={true}
-                                        zoomOnScroll={false}
-                                        zoomOnDoubleClick={false}
-                                        zoomOnPinch={false}
-                                        draggable={false}
-                                        panOnDrag={false}
-                                        panOnScroll={false}
                                         style={{borderRadius: "5px"}}
                                         nodes={nodes}
                                         edges={edges}
@@ -217,6 +213,20 @@ const MonitorPanel: () => ReactNode = (): ReactNode => {
                                             bgColor={theme.palette.elevated.default}
                                             variant={BackgroundVariant.Dots}
                                         />
+                                        <Controls showZoom={false} showFitView={false} showInteractive={false}>
+                                            <Fragment>
+                                                <ControlButton
+                                                    onClick={() => fitView()}
+                                                >
+                                                    <Tooltip
+                                                        title={t("action.fitView")}
+                                                        placement="right"
+                                                    >
+                                                        <FullscreenIcon/>
+                                                    </Tooltip>
+                                                </ControlButton>
+                                            </Fragment>
+                                        </Controls>
                                     </ReactFlow>
                                 </Box>
                             </Paper>
