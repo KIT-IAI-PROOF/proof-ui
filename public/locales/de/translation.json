@@ -423,7 +423,8 @@
     "shutdownRelevant": "Abschalt-Relevant",
     "timeoutWorker": "Zeitüberschreitung Worker",
     "timeoutInput": "Zeitüberschreitung Eingang",
-    "notStopped": "noch nicht angehalten",
+    "notStopped": "Noch nicht angehalten",
+    "notStarted": "Noch nicht gestartet",
     "valueDifferent": "Der Wert dieses Parameter unterscheidet sich von dem Wert der Vorlage. Wert der Vorlage:"
   },
   "about": {

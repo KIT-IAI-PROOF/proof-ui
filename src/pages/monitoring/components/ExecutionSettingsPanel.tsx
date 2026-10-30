@@ -99,7 +99,7 @@ const ExecutionSettingsPanel: ({execution}: IProps) => ReactNode = ({execution}:
                                     <Typography
                                         variant={"body1"}
                                     >
-                                        {execution?.startedAt && new Date(execution.startedAt).toLocaleString("de-DE")}
+                                        {execution?.startedAt ? new Date(execution.startedAt).toLocaleString("de-DE") : t('word.notStarted')}
                                     </Typography>
                                 </LabeledField>
                                 <LabeledField labelKey={"word.stoppedAt"} tooltipKey={"tooltip.stoppedAt"} sizes={halfPageSizes}>

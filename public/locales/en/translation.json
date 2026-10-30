@@ -423,7 +423,8 @@
     "shutdownRelevant": "Shutdown Relevant",
     "timeoutWorker": "Worker timeout",
     "timeoutInput": "Input timeout",
-    "notStopped": "not stopped (yet)",
+    "notStopped": "Not stopped (yet)",
+    "notStarted": "Not started (yet)",
     "valueDifferent": "The value of this parameter is different from the template. Value of the Template:"
   },
   "about": {
