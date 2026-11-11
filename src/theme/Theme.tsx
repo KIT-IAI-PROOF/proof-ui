@@ -7,6 +7,11 @@ import {deDE as deDECore, enUS as enUSCore} from "@mui/material/locale";
 import {deDE as deDEDG, enUS as enUSDG} from "@mui/x-data-grid/locales";
 import {useTranslation} from "react-i18next";
 
+// noinspection ES6UnusedImports
+import {} from "@mui/x-data-grid/themeAugmentation";
+// noinspection ES6UnusedImports
+import {} from "@mui/x-tree-view/themeAugmentation";
+
 interface IProps {
     children: ReactNode;
 }
