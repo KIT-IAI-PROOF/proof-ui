@@ -329,63 +329,6 @@ export const getRoutes: (t: TFunction) => IRoute[] = (t: TFunction): IRoute[] =>
             ]
         },
         {
-            name: t("page.header.import.index"),
-            displayPath: "/import",
-            routingPath: "/import",
-            description: t("page.description.import"),
-            element: <IFrame/>,
-            icon: <FileUpload color={"primary"}/>,
-            index: false,
-            menu: {
-                1: true,
-                2: true
-            },
-            children: [
-                {
-                    index: true,
-                    name: t("page.header.import.root"),
-                    displayPath: "/import",
-                    routingPath: "/import",
-                    description: "",
-                    element: <Import/>,
-                    icon: <FileUpload color={"primary"}/>,
-                    menu: {
-                        1: true,
-                        2: true
-                    },
-                    children: []
-                },
-                {
-                    index: false,
-                    name: t("page.header.import.fmu"),
-                    displayPath: "/import/fmu",
-                    routingPath: "/import/fmu",
-                    description: "",
-                    element: <FmuImport/>,
-                    icon: <FileUpload color={"primary"}/>,
-                    menu: {
-                        1: true,
-                        2: true
-                    },
-                    children: []
-                },
-                {
-                    index: false,
-                    name: t("page.header.import.workflow"),
-                    displayPath: "/import/workflows",
-                    routingPath: "/import/workflows",
-                    description: "",
-                    element: <WorkflowImport/>,
-                    icon: <FileUpload color={"primary"}/>,
-                    menu: {
-                        1: true,
-                        2: true
-                    },
-                    children: []
-                }
-            ]
-        },
-        {
             name: t("page.header.settings"),
             displayPath: "/settings",
             routingPath: "/settings",
