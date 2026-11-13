@@ -188,7 +188,7 @@ const WorkflowBasicSettingsPanel: ({
                                 if (!hasUnsavedChanges) updateHasUnsavedChanges(true)
                             }}
                         >
-                            <MenuItem
+                            {/* <MenuItem
                                 key={WorkflowDetailSimulationStrategyEnum.Abort}
                                 value={WorkflowDetailSimulationStrategyEnum.Abort}
                             >
@@ -205,19 +205,19 @@ const WorkflowBasicSettingsPanel: ({
                                 value={WorkflowDetailSimulationStrategyEnum.Ignore}
                             >
                                 {WorkflowDetailSimulationStrategyEnum.Ignore}
-                            </MenuItem>
+                            </MenuItem> */}
                             <MenuItem
                                 key={WorkflowDetailSimulationStrategyEnum.WaitAndContinue}
                                 value={WorkflowDetailSimulationStrategyEnum.WaitAndContinue}
                             >
                                 {WorkflowDetailSimulationStrategyEnum.WaitAndContinue}
                             </MenuItem>
-                            <MenuItem
+                            {/* <MenuItem
                                 key={WorkflowDetailSimulationStrategyEnum.WaitAndRetry}
                                 value={WorkflowDetailSimulationStrategyEnum.WaitAndRetry}
                             >
                                 {WorkflowDetailSimulationStrategyEnum.WaitAndRetry}
-                            </MenuItem>
+                            </MenuItem> */}
                         </Select>
                         {simulationStrategyError && (
                             <Typography paddingLeft={2} paddingTop={0.5} variant="caption" color="error">
