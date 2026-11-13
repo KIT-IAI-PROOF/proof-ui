@@ -16,4 +16,8 @@ export interface ITemplateService {
 
     getWorkflowsForTemplate(s: string, signal: any): Promise<WorkflowDetail[]>;
 
+    getContainerImages(signal: AbortSignal | undefined): Promise<string[]>;
+
+    exportTemplate(templateId: string, signal: AbortSignal | undefined): Promise<File>;
+
 }

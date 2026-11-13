@@ -54,6 +54,18 @@ class WorkflowService implements IWorkflowService {
         return response.data;
     }
 
+    async exportWorkflow(workflowId: string, signal: AbortSignal | undefined): Promise<File> {
+        const options: RawAxiosRequestConfig = {
+            signal: signal,
+            responseType: "blob",
+            headers: {
+                Accept: "application/octet-stream",
+            }
+        };
+        const response: AxiosResponse = await this.workflowApi.exportWorkflow(workflowId, options);
+        return response.data;
+    }
+
 }
 
 export default WorkflowService;

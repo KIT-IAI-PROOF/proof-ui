@@ -16,4 +16,6 @@ export interface IWorkflowService {
 
     getExecutionsForWorkflow(workflowId: string, signal: AbortSignal | undefined): Promise<ExecutionListing[]>;
 
+    exportWorkflow(workflowId: string, signal: AbortSignal | undefined): Promise<File>;
+
 }

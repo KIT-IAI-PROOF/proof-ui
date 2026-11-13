@@ -54,6 +54,24 @@ class TemplateService implements ITemplateService {
         return response.data;
     }
 
+    async getContainerImages(signal: AbortSignal | undefined): Promise<string[]> {
+        const options: RawAxiosRequestConfig = {signal: signal};
+        const response: AxiosResponse<string[]> = await this.templateApi.getContainerImages(options);
+        return response.data;
+    }
+
+    async exportTemplate(templateId: string, signal: AbortSignal | undefined): Promise<File> {
+        const options: RawAxiosRequestConfig = {
+            signal: signal,
+            responseType: "blob",
+            headers: {
+                Accept: "application/octet-stream",
+            }
+        };
+        const response: AxiosResponse = await this.templateApi.exportTemplate(templateId, options);
+        return response.data;
+    }
+
 }
 
 export default TemplateService;

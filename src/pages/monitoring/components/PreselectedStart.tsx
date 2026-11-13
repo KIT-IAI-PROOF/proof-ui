@@ -1,4 +1,4 @@
-import {Accordion, AccordionDetails, AccordionSummary, Alert, Box, FormLabel, List, ListItem, ListItemText, Paper, Stack, TextField, Theme, Tooltip, Typography, useTheme} from "@mui/material";
+import {Accordion, AccordionDetails, AccordionSummary, Alert, FormLabel, List, ListItem, ListItemText, Paper, Stack, TextField, Theme, Tooltip, Typography, useTheme} from "@mui/material";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import {Dispatch, Fragment, ReactNode, SetStateAction, SyntheticEvent, useContext, useEffect, useRef, useState} from "react";
 import {IMonitoringContext} from "../../../provider/MonitoringProvider.tsx";
@@ -12,6 +12,7 @@ import {useQuery, UseQueryResult} from "@tanstack/react-query";
 import {AxiosError} from "axios";
 import {workflowQueryOptions} from "../../../query/options/workflowQueryOptions.tsx";
 import {executionsQueryOptions} from "../../../query/options/executionQueryOptions.tsx";
+import LabeledField from "../../../app/components/LabeledField.tsx";
 
 interface IProps {
     workflowId: string;
@@ -100,6 +101,10 @@ const PreselectedStart: ({workflowId, jsonError, setJsonError}: IProps) => React
         updateSimulationEndPoint,
         simulationDuration,
         updateSimulationDuration,
+        simulationTimeoutWorker,
+        updateSimulationTimeoutWorker,
+        simulationTimeoutInput,
+        updateSimulationTimeoutInput,
         missingRequiredFields
     } = useContext<IMonitoringContext>(MonitoringContext);
 
@@ -241,6 +246,8 @@ const PreselectedStart: ({workflowId, jsonError, setJsonError}: IProps) => React
             if (simulationStartPoint === undefined && workflow?.stepBasedConfig?.startPoint) updateSimulationStartPoint(String(workflow.stepBasedConfig.startPoint));
             if (simulationEndPoint === undefined && workflow?.stepBasedConfig?.endPoint) updateSimulationEndPoint(String(workflow.stepBasedConfig.endPoint));
             if (simulationDuration === undefined && workflow?.stepBasedConfig?.duration) updateSimulationDuration(String(workflow.stepBasedConfig.duration));
+            if (simulationTimeoutWorker === undefined && workflow?.stepBasedConfig?.workerTimeout) updateSimulationTimeoutWorker(String(workflow.stepBasedConfig.workerTimeout));
+            if (simulationTimeoutInput === undefined && workflow?.stepBasedConfig?.inputTimeout) updateSimulationTimeoutInput(String(workflow.stepBasedConfig.inputTimeout));
 
             const currentInputIds: Set<string> = new Set(workflow?.blocks?.flatMap((block: BlockDetail) => block.inputs?.map((input: InputDetail) => input.id!) ?? []) ?? []);
 
@@ -334,15 +341,35 @@ const PreselectedStart: ({workflowId, jsonError, setJsonError}: IProps) => React
 
     return (
         <Fragment>
+            <Grid size={12} paddingLeft={1}>
+                <Stack direction="row" spacing={4} flexWrap="wrap" alignItems="center">
+                    <Stack direction="row" spacing={0.5} alignItems="center">
+                        <Typography variant="subtitle1">{t("word.workflowLabel")}:</Typography>
+                        <Tooltip title={t("tooltip.workflowLabel")}>
+                            <Info color="action" fontSize="small" sx={{cursor: "pointer"}}/>
+                        </Tooltip>
+                        <Typography variant="body1" color="text.secondary">{workflow?.label}</Typography>
+                    </Stack>
+                    <Stack direction="row" spacing={0.5} alignItems="center">
+                        <Typography variant="subtitle1">{t("word.id")}:</Typography>
+                        <Tooltip title={t("tooltip.id")}>
+                            <Info color="action" fontSize="small" sx={{cursor: "pointer"}}/>
+                        </Tooltip>
+                        <Typography variant="body1" color="text.secondary">{workflowId}</Typography>
+                    </Stack>
+                </Stack>
+            </Grid>
             <Paper
                 elevation={0}
                 style={{background: theme.palette.background.default}}>
                 <Grid
-                    padding={3}
-                    spacing={1}
                     container={true}
+                    display={"flex"}
+                    alignItems={"center"}
+                    paddingX={3}
+                    spacing={1}
                 >
-                    <Grid size={12} paddingBottom={2}>
+                    <Grid size={12} paddingY={1}>
                         {
                             missingRequiredFields.some(field =>
                                 field.startsWith("executionRunning") ||
@@ -440,74 +467,7 @@ const PreselectedStart: ({workflowId, jsonError, setJsonError}: IProps) => React
                                 </Alert>
                             )}
                     </Grid>
-                    <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                        <Stack direction={"row"} alignItems={"center"}>
-                            <Typography
-                                variant={"body1"}
-                                color={"primary"}
-                            >
-                                {t("word.id")}
-                            </Typography>
-                            <Tooltip title={t("tooltip.id")}>
-                                <Info
-                                    color={"primary"}
-                                    fontSize={"small"}
-                                    sx={{ml: 1, cursor: "pointer"}}
-                                />
-                            </Tooltip>
-                        </Stack>
-                    </Grid>
-                    <Grid size={{xs: 9, lg: 10, xl: 10}}>
-                        <TextField
-                            value={workflowId ?? ""}
-                            size={"small"}
-                            disabled={true}
-                            fullWidth={true}
-                        />
-                    </Grid>
-                    <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                        <Stack direction={"row"} alignItems={"center"}>
-                            <Typography
-                                variant={"body1"}
-                                color={"primary"}
-                            >
-                                {t("word.workflowLabel")}
-                            </Typography>
-                            <Tooltip title={t("tooltip.workflowLabel")}>
-                                <Info
-                                    color={"primary"}
-                                    fontSize={"small"}
-                                    sx={{ml: 1, cursor: "pointer"}}
-                                />
-                            </Tooltip>
-                        </Stack>
-                    </Grid>
-                    <Grid size={{xs: 9, lg: 10, xl: 10}}>
-                        <TextField
-                            value={workflow?.label ?? ""}
-                            size={"small"}
-                            disabled={true}
-                            fullWidth={true}
-                        />
-                    </Grid>
-                    <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                        <Stack direction={"row"} alignItems={"center"}>
-                            <Typography
-                                variant={"body1"}
-                                color={"primary"}
-                            >
-                                {t("word.label")} *
-                            </Typography>
-                            <Tooltip title={t("tooltip.label")}>
-                                <Info
-                                    color={"primary"}
-                                    fontSize={"small"}
-                                    sx={{ml: 1, cursor: "pointer"}}
-                                />
-                            </Tooltip>
-                        </Stack>
-                    </Grid>
-                    <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                    <LabeledField labelKey={"word.label"} tooltipKey={"tooltip.label"} required>
                         <TextField
                             value={executionLabel ?? ""}
                             size={"small"}
@@ -521,32 +481,16 @@ const PreselectedStart: ({workflowId, jsonError, setJsonError}: IProps) => React
                                     : ""
                             }
                         />
-                    </Grid>
-                    <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                        <Stack direction={"row"} alignItems={"center"}>
-                            <Typography
-                                variant={"body1"}
-                                color={"primary"}
-                            >
-                                {t("word.description")}
-                            </Typography>
-                            <Tooltip title={t("tooltip.description")}>
-                                <Info
-                                    color={"primary"}
-                                    fontSize={"small"}
-                                    sx={{ml: 1, cursor: "pointer"}}
-                                />
-                            </Tooltip>
-                        </Stack>
-                    </Grid>
-                    <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                    </LabeledField>
+                    <LabeledField labelKey={"word.description"} tooltipKey={"tooltip.description"} required={false}>
                         <TextField
                             value={executionDescription ?? ""}
                             size={"small"}
                             fullWidth={true}
                             onChange={(e) => updateExecutionDescription(e.target.value)}
                         />
-                    </Grid>
+                    </LabeledField>
+
                 </Grid>
                 <Grid
                     paddingLeft={3}
@@ -555,7 +499,7 @@ const PreselectedStart: ({workflowId, jsonError, setJsonError}: IProps) => React
                     container={true}
                     spacing={1}
                 >
-                    <Grid pt={3} size={12}>
+                    <Grid pt={2} size={12}>
                         <Accordion
                             expanded={startParamsExpanded}
                             onChange={(_event: SyntheticEvent, isExpanded: boolean) => setStartParamsExpanded(isExpanded)}
@@ -586,7 +530,7 @@ const PreselectedStart: ({workflowId, jsonError, setJsonError}: IProps) => React
                                     <Grid
                                         size={12}
                                         key={block.id}
-                                        paddingBottom={2}
+                                        paddingBottom={1}
                                     >
                                         <Accordion
                                             expanded={expandedBlockAccordions.has(block.id!)}
@@ -612,7 +556,8 @@ const PreselectedStart: ({workflowId, jsonError, setJsonError}: IProps) => React
                                                     </Tooltip>
                                                 }
                                             >
-                                                <Stack alignItems={"center"} direction={"row"} spacing={1} flexWrap={"wrap"}>
+                                                <Stack alignItems={"center"} direction={"row"} spacing={1}
+                                                       flexWrap={"wrap"}>
                                                     <Typography
                                                         variant="h6"
                                                         color="primary"
@@ -635,7 +580,7 @@ const PreselectedStart: ({workflowId, jsonError, setJsonError}: IProps) => React
                                                 </Stack>
                                             </AccordionSummary>
                                             <AccordionDetails>
-                                                <Box>
+                                                <Stack spacing={1}>
                                                     {/* Required Inputs Accordion */}
                                                     {
                                                         block.inputs!.filter((handle: InputDetail): boolean | undefined => handle.communicationType?.includes("_STATIC") && handle.required).length! > 0 &&
@@ -657,13 +602,17 @@ const PreselectedStart: ({workflowId, jsonError, setJsonError}: IProps) => React
                                                                     {t("word.requiredInputs")}
                                                                 </Typography>
                                                                 <Tooltip title={t("tooltip.requiredInputs")}>
-                                                                    <Info sx={{ml: 1, cursor: "pointer"}} fontSize="small"/>
+                                                                    <Info sx={{ml: 1, cursor: "pointer"}}
+                                                                          fontSize="small"/>
                                                                 </Tooltip>
                                                             </AccordionSummary>
                                                             <AccordionDetails sx={{pt: 0}}>
                                                                 {
                                                                     block.inputs!.filter((handle: InputDetail): boolean | undefined => handle.communicationType?.includes("_STATIC") && handle.required)
-                                                                        .map(handle => <Handle jsonError={jsonError} setJsonError={setJsonError} key={handle.id} handle={handle}/>)
+                                                                        .map(handle => <Handle jsonError={jsonError}
+                                                                                               setJsonError={setJsonError}
+                                                                                               key={handle.id}
+                                                                                               handle={handle}/>)
                                                                 }
                                                             </AccordionDetails>
                                                         </Accordion>
@@ -690,13 +639,17 @@ const PreselectedStart: ({workflowId, jsonError, setJsonError}: IProps) => React
                                                                     {t("word.optionalInputs")}
                                                                 </Typography>
                                                                 <Tooltip title={t("tooltip.optionalInputs")}>
-                                                                    <Info sx={{ml: 1, cursor: "pointer"}} fontSize="small"/>
+                                                                    <Info sx={{ml: 1, cursor: "pointer"}}
+                                                                          fontSize="small"/>
                                                                 </Tooltip>
                                                             </AccordionSummary>
                                                             <AccordionDetails sx={{pt: 0}}>
                                                                 {
                                                                     block.inputs!.filter((handle: InputDetail): boolean | undefined => handle.communicationType?.includes("_STATIC") && !handle.required)
-                                                                        .map(handle => <Handle key={handle.id} jsonError={jsonError} setJsonError={setJsonError} handle={handle}/>)
+                                                                        .map(handle => <Handle key={handle.id}
+                                                                                               jsonError={jsonError}
+                                                                                               setJsonError={setJsonError}
+                                                                                               handle={handle}/>)
                                                                 }
                                                             </AccordionDetails>
                                                         </Accordion>
@@ -742,13 +695,16 @@ const PreselectedStart: ({workflowId, jsonError, setJsonError}: IProps) => React
                                                                             >
                                                                                 {t("word.nonStaticInputValues")}
                                                                             </Typography>
-                                                                            <Tooltip title={t("tooltip.nonStaticInputValues")}>
-                                                                                <Info sx={{ml: 1, cursor: "pointer"}} fontSize="small"/>
+                                                                            <Tooltip
+                                                                                title={t("tooltip.nonStaticInputValues")}>
+                                                                                <Info sx={{ml: 1, cursor: "pointer"}}
+                                                                                      fontSize="small"/>
                                                                             </Tooltip>
                                                                         </Stack>
                                                                     </Grid>
                                                                     <Grid size={{xs: 4, lg: 5}} sx={{pl: 1}}>
-                                                                        <Stack direction={"row"} alignItems={"center"} spacing={2}>
+                                                                        <Stack direction={"row"} alignItems={"center"}
+                                                                               spacing={2}>
                                                                             <Typography
                                                                                 variant="subtitle1"
                                                                                 color="secondary"
@@ -756,12 +712,14 @@ const PreselectedStart: ({workflowId, jsonError, setJsonError}: IProps) => React
                                                                                 {t("word.startValue")}
                                                                             </Typography>
                                                                             <Tooltip title={t("tooltip.startValue")}>
-                                                                                <Info sx={{ml: 1, cursor: "pointer"}} fontSize="small"/>
+                                                                                <Info sx={{ml: 1, cursor: "pointer"}}
+                                                                                      fontSize="small"/>
                                                                             </Tooltip>
                                                                         </Stack>
                                                                     </Grid>
                                                                     <Grid size={{xs: 4, lg: 5}} sx={{pl: 2}}>
-                                                                        <Stack direction={"row"} alignItems={"center"} spacing={2}>
+                                                                        <Stack direction={"row"} alignItems={"center"}
+                                                                               spacing={2}>
                                                                             <Typography
                                                                                 variant="subtitle1"
                                                                                 color="secondary"
@@ -769,7 +727,8 @@ const PreselectedStart: ({workflowId, jsonError, setJsonError}: IProps) => React
                                                                                 {t("word.defaultValue")}
                                                                             </Typography>
                                                                             <Tooltip title={t("tooltip.defaultValue")}>
-                                                                                <Info sx={{ml: 1, cursor: "pointer"}} fontSize="small"/>
+                                                                                <Info sx={{ml: 1, cursor: "pointer"}}
+                                                                                      fontSize="small"/>
                                                                             </Tooltip>
                                                                         </Stack>
                                                                     </Grid>
@@ -778,13 +737,16 @@ const PreselectedStart: ({workflowId, jsonError, setJsonError}: IProps) => React
                                                             <AccordionDetails sx={{pt: 0}}>
                                                                 {
                                                                     block.inputs!.filter((handle: InputDetail): boolean | undefined => !handle.communicationType?.includes("_STATIC"))
-                                                                        .map(handle => <Handle key={handle.id} jsonError={jsonError} setJsonError={setJsonError} handle={handle}
+                                                                        .map(handle => <Handle key={handle.id}
+                                                                                               jsonError={jsonError}
+                                                                                               setJsonError={setJsonError}
+                                                                                               handle={handle}
                                                                                                showLeftColumn={true}/>)
                                                                 }
                                                             </AccordionDetails>
                                                         </Accordion>
                                                     }
-                                                </Box>
+                                                </Stack>
                                             </AccordionDetails>
                                         </Accordion>
                                     </Grid>
@@ -819,75 +781,31 @@ const PreselectedStart: ({workflowId, jsonError, setJsonError}: IProps) => React
                                 </Stack>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <Grid container={true} spacing={1}>
-                                    <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                        <Stack direction={"row"} alignItems={"center"}>
-                                            <Typography
-                                                variant={"body1"}
-                                                color={"primary"}
-                                            >
-                                                {t("word.simulationStartPoint")}
-                                            </Typography>
-                                            <Tooltip title={t("tooltip.simulationStartPoint")}>
-                                                <Info
-                                                    color={"primary"}
-                                                    fontSize={"small"}
-                                                    sx={{ml: 1, cursor: "pointer"}}
-                                                />
-                                            </Tooltip>
-                                        </Stack>
-                                    </Grid>
-                                    <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                                <Grid
+                                    container={true}
+                                    display={"flex"}
+                                    alignItems={"center"}
+                                    spacing={0.5}
+                                >
+                                    <LabeledField labelKey={"word.simulationStartPoint"}
+                                                  tooltipKey={"tooltip.simulationStartPoint"} required={false}>
                                         <TextField
                                             value={simulationStartPoint ?? workflow?.stepBasedConfig?.startPoint ?? ""}
                                             size={"small"}
                                             fullWidth={true}
                                             onChange={(e) => updateSimulationStartPoint(e.target.value)}
                                         />
-                                    </Grid>
-                                    <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                        <Stack direction={"row"} alignItems={"center"}>
-                                            <Typography
-                                                variant={"body1"}
-                                                color={"primary"}
-                                            >
-                                                {t("word.simulationEndPoint")}
-                                            </Typography>
-                                            <Tooltip title={t("tooltip.simulationEndPoint")}>
-                                                <Info
-                                                    color={"primary"}
-                                                    fontSize={"small"}
-                                                    sx={{ml: 1, cursor: "pointer"}}
-                                                />
-                                            </Tooltip>
-                                        </Stack>
-                                    </Grid>
-                                    <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                                    </LabeledField>
+                                    <LabeledField labelKey={"word.simulationEndPoint"}
+                                                  tooltipKey={"tooltip.simulationEndPoint"} required={false}>
                                         <TextField
                                             value={simulationEndPoint ?? workflow?.stepBasedConfig?.endPoint ?? ""}
                                             size={"small"}
                                             fullWidth={true}
                                             onChange={(e) => updateSimulationEndPoint(e.target.value)}
                                         />
-                                    </Grid>
-                                    <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                        <Stack direction={"row"} alignItems={"center"}>
-                                            <Typography
-                                                variant={"body1"}
-                                                color={"primary"}
-                                            >
-                                                {t("word.duration")}
-                                            </Typography>
-                                            <Tooltip title={t("tooltip.duration")}>
-                                                <Info
-                                                    color={"primary"}
-                                                    fontSize={"small"}
-                                                    sx={{ml: 1, cursor: "pointer"}}
-                                                />
-                                            </Tooltip>
-                                        </Stack>
-                                    </Grid>
-                                    <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                                    </LabeledField>
+                                    <LabeledField labelKey={"word.duration"} tooltipKey={"tooltip.duration"} required={false}>
                                         <Stack direction={"row"} alignItems={"center"} spacing={2}>
                                             <TextField
                                                 value={simulationDuration ?? workflow?.stepBasedConfig?.duration ?? ""}
@@ -897,7 +815,29 @@ const PreselectedStart: ({workflowId, jsonError, setJsonError}: IProps) => React
                                             />
                                             <FormLabel color={"primary"} sx={{fontSize: "0.875rem"}}>ms</FormLabel>
                                         </Stack>
-                                    </Grid>
+                                    </LabeledField>
+                                    <LabeledField labelKey={"word.timeoutWorker"} tooltipKey={"tooltip.timeoutWorker"}>
+                                        <Stack direction={"row"} alignItems={"center"} spacing={2}>
+                                            <TextField
+                                                value={simulationTimeoutWorker ?? workflow?.stepBasedConfig?.workerTimeout ?? ""}
+                                                size={"small"}
+                                                fullWidth={true}
+                                                onChange={(e) => updateSimulationTimeoutWorker(e.target.value)}
+                                            />
+                                            <FormLabel color={"primary"} sx={{fontSize: "0.875rem"}}>s</FormLabel>
+                                        </Stack>
+                                    </LabeledField>
+                                    <LabeledField labelKey={"word.timeoutInput"} tooltipKey={"tooltip.timeoutInput"}>
+                                        <Stack direction={"row"} alignItems={"center"} spacing={2}>
+                                            <TextField
+                                                value={simulationTimeoutInput ?? workflow?.stepBasedConfig?.inputTimeout ?? ""}
+                                                size={"small"}
+                                                fullWidth={true}
+                                                onChange={(e) => updateSimulationTimeoutInput(e.target.value)}
+                                            />
+                                            <FormLabel color={"primary"} sx={{fontSize: "0.875rem"}}>s</FormLabel>
+                                        </Stack>
+                                    </LabeledField>
                                 </Grid>
                             </AccordionDetails>
                         </Accordion>

@@ -14,7 +14,7 @@ const OutputsPanel = ({outputs}: IProps) => {
     const {t} = useTranslation();
 
     return (
-        <Stack spacing={2} padding={2}>
+        <Stack spacing={1} paddingX={2}>
             {
                 outputs?.map((handle: OutputDetail, index): ReactNode => {
                     return (
@@ -22,10 +22,14 @@ const OutputsPanel = ({outputs}: IProps) => {
                             defaultExpanded={true}
                             key={handle.id || `Id ${index + 1}`}
                             disableGutters={true}
-                            style={{
+                            sx={{
                                 background: theme.palette.elevated.paper,
-                                borderRadius: "5px"
-                            }}>
+                                borderRadius: 2,
+                                '&:before': {
+                                    display: 'none'
+                                },
+                            }}
+                        >
                             <AccordionSummary
                                 sx={{
                                     overflow: "hidden",

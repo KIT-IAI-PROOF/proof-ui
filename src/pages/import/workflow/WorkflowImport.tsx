@@ -6,7 +6,7 @@ import {WorkflowDetail} from "@kit-iai-proof/proof-config-manager-client";
 import {QueryClient, useMutation, UseMutationResult, useQueryClient} from "@tanstack/react-query";
 import {AxiosError} from "axios";
 import {v4 as uuidv4} from "uuid";
-import {ENTITY_TYPES, INVALIDATION_KEYS, WORKFLOWS_KEY} from "../../../utils/constants.ts";
+import {ENTITY_TYPES, INVALIDATION_KEYS, PAGE_CONTAINER_PADDING, WORKFLOWS_KEY} from "../../../utils/constants.ts";
 import {getErrorMessage} from "../../../utils/error.ts";
 import {workflowService} from "../../../services/instances.ts";
 import {AppContext} from "../../../provider/AppContext.tsx";
@@ -60,10 +60,7 @@ const WorkflowImport: () => ReactNode = (): ReactNode => {
     return (
         <Fragment>
             <Box
-                padding={2}
-                paddingTop={7}
-                paddingLeft={10}
-                paddingBottom={15}
+                {...PAGE_CONTAINER_PADDING}
             >
                 <Paper elevation={0}>
                     <Box padding={3}>

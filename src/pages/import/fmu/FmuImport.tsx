@@ -18,6 +18,7 @@ import Grid from "@mui/material/Grid2";
 import {usePersistedState} from "../../../hooks/usePersistedState.ts";
 import ConfirmDialog from "../../../app/components/ConfirmDialog.tsx";
 import {useTranslation} from "react-i18next";
+import {PAGE_CONTAINER_PADDING} from "../../../utils/constants.ts";
 import {attachmentService, blockService, fmuImporterService, programService} from "../../../services/instances.ts";
 
 const FmuImport: () => ReactNode = (): ReactNode => {
@@ -171,10 +172,7 @@ const FmuImport: () => ReactNode = (): ReactNode => {
     return (
         <Fragment>
             <Box
-                padding={2}
-                paddingTop={7}
-                paddingLeft={10}
-                paddingBottom={15}
+                {...PAGE_CONTAINER_PADDING}
             >
                 <Paper elevation={0}>
                     <Box padding={3}>

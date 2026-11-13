@@ -1,12 +1,11 @@
 import {ChangeEvent, Fragment, ReactNode, useContext, useEffect, useState} from "react";
-import {Box, Button, Divider, Paper, Stack, TextField, Theme, Tooltip, Typography, useTheme} from "@mui/material";
+import {Box, Button, Divider, Paper, Stack, TextField, Theme, Typography, useTheme} from "@mui/material";
 import {NavigateFunction, useLocation, useNavigate, useParams} from "react-router-dom";
-import Grid from "@mui/material/Grid2";
 import {useTranslation} from "react-i18next";
-import {EditNoteRounded, Info, UploadRounded} from "@mui/icons-material";
+import {EditNoteRounded, UploadRounded} from "@mui/icons-material";
 import {IAppContext} from "../../../provider/AppProvider.tsx";
 import {useMutation, UseMutationResult, useQuery, useQueryClient, UseQueryResult} from "@tanstack/react-query";
-import {ATTACHMENTS_KEY, ENTITY_TYPES, INVALIDATION_KEYS} from "../../../utils/constants.ts";
+import {ATTACHMENTS_KEY, ENTITY_TYPES, INVALIDATION_KEYS, PAGE_CONTAINER_PADDING} from "../../../utils/constants.ts";
 import PageHeader from "../../../app/components/PageHeader.tsx";
 import ConfirmDialog from "../../../app/components/ConfirmDialog.tsx";
 import {AppContext} from "../../../provider/AppContext.tsx";
@@ -17,6 +16,8 @@ import {v4 as uuidv4} from "uuid";
 import {getErrorMessage} from "../../../utils/error.ts";
 import {attachmentService} from "../../../services/instances.ts";
 import {attachmentQueryOptions} from "../../../query/options/attachmentQueryOptions.tsx";
+import LabeledFieldsGrid from "../../../app/components/LabeledFieldsGrid.tsx";
+import LabeledField from "../../../app/components/LabeledField.tsx";
 
 const AttachmentConfigsDetail: () => ReactNode = (): ReactNode => {
 
@@ -26,7 +27,13 @@ const AttachmentConfigsDetail: () => ReactNode = (): ReactNode => {
     const navigate: NavigateFunction = useNavigate();
     const location = useLocation();
     const queryClient = useQueryClient();
-    const {hasUnsavedChanges, updateError, sessionKey, updateHasUnsavedChanges, updateAllowNavigation,} = useContext<IAppContext>(AppContext);
+    const {
+        hasUnsavedChanges,
+        updateError,
+        sessionKey,
+        updateHasUnsavedChanges,
+        updateAllowNavigation,
+    } = useContext<IAppContext>(AppContext);
 
     const [file, setFile] = useState<File | undefined>(undefined);
     const [label, setLabel] = useState<string | undefined>(undefined);
@@ -37,11 +44,17 @@ const AttachmentConfigsDetail: () => ReactNode = (): ReactNode => {
 
     const {data: attachment}: UseQueryResult<AttachmentDetail, AxiosError> = useQuery(attachmentQueryOptions(attachmentId));
 
-    const attachmentMutation: UseMutationResult<AttachmentDetail, AxiosError, { attachment: AttachmentDetail, file: File | undefined }, any> = useMutation({
+    const attachmentMutation: UseMutationResult<AttachmentDetail, AxiosError, {
+        attachment: AttachmentDetail,
+        file: File | undefined
+    }, any> = useMutation({
         retry: false,
         mutationFn: async ({attachment, file}): Promise<AttachmentDetail> => {
             if (attachment.id) return await attachmentService.updateAttachmentWithFile(attachment.id, attachment, file, undefined, sessionKey);
-            else return await attachmentService.createAttachmentWithFile({...attachment, id: uuidv4()}, file, undefined, sessionKey);
+            else return await attachmentService.createAttachmentWithFile({
+                ...attachment,
+                id: uuidv4()
+            }, file, undefined, sessionKey);
         },
         onMutate: async (): Promise<void> => {
             return await queryClient.cancelQueries({queryKey: [ATTACHMENTS_KEY]});
@@ -70,7 +83,7 @@ const AttachmentConfigsDetail: () => ReactNode = (): ReactNode => {
             });
         },
         onError: (error: AxiosError): void => {
-            updateError(getErrorMessage(error, ENTITY_TYPES[ATTACHMENTS_KEY], t))
+            updateError(getErrorMessage(error, ENTITY_TYPES[ATTACHMENTS_KEY], t));
         }
     });
 
@@ -125,10 +138,7 @@ const AttachmentConfigsDetail: () => ReactNode = (): ReactNode => {
     return (
         <Fragment>
             <Box
-                padding={2}
-                paddingTop={7}
-                paddingLeft={10}
-                paddingBottom={15}
+                {...PAGE_CONTAINER_PADDING}
             >
                 <Paper elevation={0}>
                     <Box padding={3}>
@@ -180,62 +190,19 @@ const AttachmentConfigsDetail: () => ReactNode = (): ReactNode => {
                             }
                         />
                         <Divider/>
-                        <Grid
-                            container={true}
-                            padding={1}
-                            paddingTop={5}
-                            spacing={2}
-                            paddingBottom={5}
-                        >
-                            {
-                                attachmentId &&
-                                <Fragment>
-                                    <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                        <Stack direction={"row"} alignItems={"center"}>
-                                            <Typography
-                                                variant={"body1"}
-                                                color={"primary"}
-                                            >
-                                                {t("word.id")}
-                                            </Typography>
-                                            <Tooltip title={t("tooltip.id")}>
-                                                <Info
-                                                    color={"primary"}
-                                                    fontSize={"small"}
-                                                    sx={{ml: 1, cursor: "pointer"}}
-                                                />
-                                            </Tooltip>
-                                        </Stack>
-                                    </Grid>
-                                    <Grid size={{xs: 9, lg: 10, xl: 10}}>
-                                        <TextField
-                                            fullWidth={true}
-                                            value={attachment?.id ?? ""}
-                                            size={"small"}
-                                            label={t("word.id")}
-                                            variant="outlined"
-                                            disabled/>
-                                    </Grid>
-                                </Fragment>
+                        <LabeledFieldsGrid>
+                            {attachmentId &&
+                                <LabeledField labelKey={"word.id"} tooltipKey={"tooltip.id"}>
+                                    <TextField
+                                        fullWidth={true}
+                                        value={attachment?.id ?? ""}
+                                        size={"small"}
+                                        label={t("word.id")}
+                                        variant="outlined"
+                                        disabled/>
+                                </LabeledField>
                             }
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.label")} *
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.label")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            <LabeledField labelKey={"word.label"} tooltipKey={"tooltip.label"} required={true}>
                                 <TextField
                                     required={true}
                                     fullWidth={true}
@@ -250,25 +217,8 @@ const AttachmentConfigsDetail: () => ReactNode = (): ReactNode => {
                                         setLabel(label);
                                         if (!hasUnsavedChanges) updateHasUnsavedChanges(true);
                                     }}/>
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.description")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.description")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.description"} tooltipKey={"tooltip.description"}>
                                 <TextField
                                     fullWidth={true}
                                     value={description ?? ""}
@@ -280,25 +230,8 @@ const AttachmentConfigsDetail: () => ReactNode = (): ReactNode => {
                                         setDescription(description);
                                         if (!hasUnsavedChanges) updateHasUnsavedChanges(true);
                                     }}/>
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                                    <Typography
-                                        variant={"body1"}
-                                        color={"primary"}
-                                    >
-                                        {t("word.fileName")}
-                                    </Typography>
-                                    <Tooltip title={t("tooltip.fileName")}>
-                                        <Info
-                                            color={"primary"}
-                                            fontSize={"small"}
-                                            sx={{ml: 1, cursor: "pointer"}}
-                                        />
-                                    </Tooltip>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.fileName"} tooltipKey={"tooltip.fileName"}>
                                 <TextField
                                     fullWidth={true}
                                     disabled={true}
@@ -307,27 +240,8 @@ const AttachmentConfigsDetail: () => ReactNode = (): ReactNode => {
                                     label={t("word.fileName")}
                                     variant={"outlined"}
                                 />
-                            </Grid>
-                            <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                                    <Stack direction={"row"} alignItems={"center"}>
-                                        <Typography
-                                            variant={"body1"}
-                                            color={"primary"}
-                                        >
-                                            {t("word.file")} *
-                                        </Typography>
-                                        <Tooltip title={t("tooltip.file")}>
-                                            <Info
-                                                color={"primary"}
-                                                fontSize={"small"}
-                                                sx={{ml: 1, cursor: "pointer"}}
-                                            />
-                                        </Tooltip>
-                                    </Stack>
-                                </Stack>
-                            </Grid>
-                            <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                            </LabeledField>
+                            <LabeledField labelKey={"word.file"} tooltipKey={"tooltip.file"} required={true}>
                                 <Stack direction={"row"} alignItems={"center"}>
                                     <input
                                         id={"file"}
@@ -360,27 +274,10 @@ const AttachmentConfigsDetail: () => ReactNode = (): ReactNode => {
                                         </Stack>
                                     </label>
                                 </Stack>
-                            </Grid>
+                            </LabeledField>
                             {(attachmentId && attachment) &&
                                 <Fragment>
-                                    <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                        <Stack direction={"row"} alignItems={"center"}>
-                                            <Typography
-                                                variant={"body1"}
-                                                color={"primary"}
-                                            >
-                                                {t("word.lastModifiedBy")}
-                                            </Typography>
-                                            <Tooltip title={t("tooltip.lastModifiedBy")}>
-                                                <Info
-                                                    color={"primary"}
-                                                    fontSize={"small"}
-                                                    sx={{ml: 1, cursor: "pointer"}}
-                                                />
-                                            </Tooltip>
-                                        </Stack>
-                                    </Grid>
-                                    <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                                    <LabeledField labelKey={"word.lastModifiedBy"} tooltipKey={"tooltip.lastModifiedBy"}>
                                         <TextField
                                             fullWidth={true}
                                             value={attachment.lastModifiedBy ?? ""}
@@ -388,25 +285,9 @@ const AttachmentConfigsDetail: () => ReactNode = (): ReactNode => {
                                             label={t("word.lastModifiedBy")}
                                             variant="outlined"
                                             disabled/>
-                                    </Grid>
-                                    <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                        <Stack direction={"row"} alignItems={"center"}>
-                                            <Typography
-                                                variant={"body1"}
-                                                color={"primary"}
-                                            >
-                                                {t("word.lastModifiedDate")}
-                                            </Typography>
-                                            <Tooltip title={t("tooltip.lastModifiedDate")}>
-                                                <Info
-                                                    color={"primary"}
-                                                    fontSize={"small"}
-                                                    sx={{ml: 1, cursor: "pointer"}}
-                                                />
-                                            </Tooltip>
-                                        </Stack>
-                                    </Grid>
-                                    <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                                    </LabeledField>
+                                    <LabeledField labelKey={"word.lastModifiedDate"}
+                                                  tooltipKey={"tooltip.lastModifiedDate"}>
                                         <TextField
                                             fullWidth={true}
                                             value={attachment.lastModifiedDate ? dayjs.unix(Number(attachment.lastModifiedDate)).format("DD.MM.YYYY HH:mm [Uhr]") : ""}
@@ -414,25 +295,8 @@ const AttachmentConfigsDetail: () => ReactNode = (): ReactNode => {
                                             label={t("word.lastModifiedDate")}
                                             variant="outlined"
                                             disabled/>
-                                    </Grid>
-                                    <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                        <Stack direction={"row"} alignItems={"center"}>
-                                            <Typography
-                                                variant={"body1"}
-                                                color={"primary"}
-                                            >
-                                                {t("word.createdBy")}
-                                            </Typography>
-                                            <Tooltip title={t("tooltip.createdBy")}>
-                                                <Info
-                                                    color={"primary"}
-                                                    fontSize={"small"}
-                                                    sx={{ml: 1, cursor: "pointer"}}
-                                                />
-                                            </Tooltip>
-                                        </Stack>
-                                    </Grid>
-                                    <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                                    </LabeledField>
+                                    <LabeledField labelKey={"word.createdBy"} tooltipKey={"tooltip.createdBy"}>
                                         <TextField
                                             fullWidth={true}
                                             value={attachment.createdBy ?? ""}
@@ -440,25 +304,8 @@ const AttachmentConfigsDetail: () => ReactNode = (): ReactNode => {
                                             label={t("word.createdBy")}
                                             variant="outlined"
                                             disabled/>
-                                    </Grid>
-                                    <Grid size={{xs: 3, lg: 2, xl: 2}}>
-                                        <Stack direction={"row"} alignItems={"center"}>
-                                            <Typography
-                                                variant={"body1"}
-                                                color={"primary"}
-                                            >
-                                                {t("word.creationDate")}
-                                            </Typography>
-                                            <Tooltip title={t("tooltip.creationDate")}>
-                                                <Info
-                                                    color={"primary"}
-                                                    fontSize={"small"}
-                                                    sx={{ml: 1, cursor: "pointer"}}
-                                                />
-                                            </Tooltip>
-                                        </Stack>
-                                    </Grid>
-                                    <Grid size={{xs: 9, lg: 10, xl: 10}}>
+                                    </LabeledField>
+                                    <LabeledField labelKey={"word.creationDate"} tooltipKey={"tooltip.creationDate"}>
                                         <TextField
                                             fullWidth={true}
                                             value={attachment.creationDate ? dayjs.unix(Number(attachment.creationDate)).format("DD.MM.YYYY HH:mm [Uhr]") : ""}
@@ -466,10 +313,10 @@ const AttachmentConfigsDetail: () => ReactNode = (): ReactNode => {
                                             label={t("word.creationDate")}
                                             variant="outlined"
                                             disabled/>
-                                    </Grid>
+                                    </LabeledField>
                                 </Fragment>
                             }
-                        </Grid>
+                        </LabeledFieldsGrid>
                     </Box>
                 </Paper>
             </Box>

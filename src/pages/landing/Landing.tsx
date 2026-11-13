@@ -5,6 +5,7 @@ import {IRoute} from "../../model/IRoute.ts";
 import RoutePanel from "./components/RoutePanel.tsx";
 import {useTranslation} from "react-i18next";
 import Grid from "@mui/material/Grid2";
+import {PAGE_CONTAINER_PADDING} from "../../utils/constants.ts";
 
 const Landing: () => ReactNode = (): ReactNode => {
 
@@ -13,9 +14,7 @@ const Landing: () => ReactNode = (): ReactNode => {
     return (
         <Fragment>
             <Box
-                padding={2}
-                paddingTop={7}
-                paddingLeft={10}>
+                {...PAGE_CONTAINER_PADDING}>
                 <Paper>
                     <Box padding={3}>
                         <Typography

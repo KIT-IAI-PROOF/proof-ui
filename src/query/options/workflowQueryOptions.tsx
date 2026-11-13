@@ -50,7 +50,7 @@ export const executionsForWorkflowQueryOptions: (workflowId: string | undefined)
             enabled: !!workflowId,
             retry: 2,
             queryFn: async ({queryKey, signal}: any): Promise<ExecutionListing[]> => {
-                return await workflowService.getExecutionsForWorkflow(queryKey[1], signal);
+                return await workflowService.getExecutionsForWorkflow(queryKey[2], signal);
             }
         }
     )
