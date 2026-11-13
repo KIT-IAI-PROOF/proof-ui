@@ -304,18 +304,18 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                             if (!hasUnsavedChanges) updateHasUnsavedChanges(true)
                                         }}
                                     >
-                                        <MenuItem
+                                        {/* <MenuItem
                                             value={TemplateDetailSyncStrategyEnum.AllValues}>
                                             {TemplateDetailSyncStrategyEnum.AllValues}
-                                        </MenuItem>
+                                        </MenuItem> */}
                                         <MenuItem
                                             value={TemplateDetailSyncStrategyEnum.WaitForSync}>
                                             {TemplateDetailSyncStrategyEnum.WaitForSync}
                                         </MenuItem>
-                                        <MenuItem
+                                        {/* <MenuItem
                                             value={TemplateDetailSyncStrategyEnum.Instant}>
                                             {TemplateDetailSyncStrategyEnum.Instant}
-                                        </MenuItem>
+                                        </MenuItem> */}
                                     </Select>
                                     <FormHelperText>
                                         {template?.syncStrategy !== block?.syncStrategy ? `${t("word.valueDifferent")} ${template?.syncStrategy}` : ""}
