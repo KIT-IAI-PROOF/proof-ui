@@ -45,6 +45,12 @@ importers:
       '@fontsource/roboto':
         specifier: ^5.2.10
         version: 5.2.10
+      '@kit-iai-proof/proof-config-manager-client':
+        specifier: 1.4.0-dev0
+        version: 1.4.0-dev0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+      '@kit-iai-proof/proof-orchestrator-client':
+        specifier: 1.4.0-dev0
+        version: 1.4.0-dev0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       '@mui/icons-material':
         specifier: ^6.5.0
         version: 6.5.0(@mui/material@6.5.0(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1)(supports-color@7.2.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1)(supports-color@7.2.0))(@types/react@18.3.28)(react@18.3.1)(supports-color@7.2.0))(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.28)(react@18.3.1)
@@ -78,12 +84,6 @@ importers:
       '@uiw/react-json-view':
         specifier: 2.0.0-alpha.42
         version: 2.0.0-alpha.42(@babel/runtime@7.29.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@webis/proof-config-manager-client':
-        specifier: 1.5.1-dev2
-        version: 1.5.1-dev2(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
-      '@webis/proof-orchestrator-client':
-        specifier: 4.8.12-dev1
-        version: 4.8.12-dev1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       '@xyflow/react':
         specifier: ^12.10.2
         version: 12.10.2(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -117,6 +117,9 @@ importers:
       oidc-client-ts:
         specifier: ^3.5.0
         version: 3.5.0
+      papaparse:
+        specifier: ^5.7.1
+        version: 5.7.1
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -169,6 +172,9 @@ importers:
       '@types/lodash':
         specifier: ^4.17.24
         version: 4.17.24
+      '@types/papaparse':
+        specifier: ^5.5.2
+        version: 5.5.2
       '@types/react':
         specifier: ^18.3.28
         version: 18.3.28
@@ -685,6 +691,12 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@kit-iai-proof/proof-config-manager-client@1.4.0-dev0':
+    resolution: {integrity: sha512-PrG1ZmwdCywY2YDu7cJTr7ZhhtzIOPfMbA7PzPnfCskKWUaI4wDmAx1oYOVJNnosG6uambTvHkTcPy32HVP5RA==, tarball: https://npm.pkg.github.com/download/@kit-iai-proof/proof-config-manager-client/1.4.0-dev0/52c2cc891160e25da75149fac38aec4a36061e7b}
+
+  '@kit-iai-proof/proof-orchestrator-client@1.4.0-dev0':
+    resolution: {integrity: sha512-NUG89ceTgnrQRxKi76KOO2JA2kIdGFv/IQ0rnn8mQIpZyreJvuJE5mpyB4HZ6AQuGl8iCUq4TkbMpRcuXQzyTQ==, tarball: https://npm.pkg.github.com/download/@kit-iai-proof/proof-orchestrator-client/1.4.0-dev0/f640e83714cdcc68b0aab523db367be2af2e8d97}
 
   '@lezer/common@1.5.1':
     resolution: {integrity: sha512-6YRVG9vBkaY7p1IVxL4s44n5nUnaNnGM2/AckNgYOnxTG2kWh1vR8BMxPseWPjRNpb5VtXnMpeYAEAADoRV1Iw==}
@@ -1284,6 +1296,9 @@ packages:
   '@types/node@25.5.0':
     resolution: {integrity: sha512-jp2P3tQMSxWugkCUKLRPVUpGaL5MVFwF8RDuSRztfwgN1wmqJeMSbKlnEtQqU8UrhTmzEmZdu2I6v2dpp7XIxw==}
 
+  '@types/papaparse@5.5.2':
+    resolution: {integrity: sha512-gFnFp/JMzLHCwRf7tQHrNnfhN4eYBVYYI897CGX4MY1tzY9l2aLkVyx2IlKZ/SAqDbB3I1AOZW5gTMGGsqWliA==}
+
   '@types/parse-json@4.0.2':
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
 
@@ -1436,12 +1451,6 @@ packages:
         optional: true
       babel-plugin-react-compiler:
         optional: true
-
-  '@webis/proof-config-manager-client@1.5.1-dev2':
-    resolution: {integrity: sha1-IQW90DuJYb8+YBLxirMRmahv+1I=, tarball: https://iai-artifactory.iai.kit.edu/artifactory/api/npm/webis-npm/@webis/proof-config-manager-client/-/@webis/proof-config-manager-client-1.5.1-dev2.tgz}
-
-  '@webis/proof-orchestrator-client@4.8.12-dev1':
-    resolution: {integrity: sha1-QT+BNnJNUOW7ZX/3eSBr8UlihMY=, tarball: https://iai-artifactory.iai.kit.edu/artifactory/api/npm/webis-npm/@webis/proof-orchestrator-client/-/@webis/proof-orchestrator-client-4.8.12-dev1.tgz}
 
   '@xyflow/react@12.10.2':
     resolution: {integrity: sha512-CgIi6HwlcHXwlkTpr0fxLv/0sRVNZ8IdwKLzzeCscaYBwpvfcH1QFOCeaTCuEn1FQEs/B8CjnTSjhs8udgmBgQ==}
@@ -2615,6 +2624,9 @@ packages:
 
   pako@1.0.11:
     resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
+
+  papaparse@5.7.1:
+    resolution: {integrity: sha512-qOR+UDWv6D3hMxnWWOk0ZpBdCkd+kw5Yh7aXOaNSQU8A+73EA2bhW7EiUix/hY0yulUi5FRvt7PpYSI2VDvY0g==}
 
   parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
@@ -4079,6 +4091,20 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
+  '@kit-iai-proof/proof-config-manager-client@1.4.0-dev0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)':
+    dependencies:
+      axios: 1.18.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+    transitivePeerDependencies:
+      - debug
+      - supports-color
+
+  '@kit-iai-proof/proof-orchestrator-client@1.4.0-dev0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)':
+    dependencies:
+      axios: 1.18.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+    transitivePeerDependencies:
+      - debug
+      - supports-color
+
   '@lezer/common@1.5.1': {}
 
   '@lezer/highlight@1.2.3':
@@ -4602,6 +4628,10 @@ snapshots:
     dependencies:
       undici-types: 7.18.2
 
+  '@types/papaparse@5.5.2':
+    dependencies:
+      '@types/node': 25.5.0
+
   '@types/parse-json@4.0.2': {}
 
   '@types/prop-types@15.7.15': {}
@@ -4781,20 +4811,6 @@ snapshots:
     dependencies:
       '@rolldown/pluginutils': 1.0.1
       vite: 8.0.14(@types/node@25.5.0)(jiti@2.6.1)(yaml@2.8.3)
-
-  '@webis/proof-config-manager-client@1.5.1-dev2(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)':
-    dependencies:
-      axios: 1.18.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
-    transitivePeerDependencies:
-      - debug
-      - supports-color
-
-  '@webis/proof-orchestrator-client@4.8.12-dev1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)':
-    dependencies:
-      axios: 1.18.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
-    transitivePeerDependencies:
-      - debug
-      - supports-color
 
   '@xyflow/react@12.10.2(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
@@ -6192,6 +6208,8 @@ snapshots:
       p-limit: 3.1.0
 
   pako@1.0.11: {}
+
+  papaparse@5.7.1: {}
 
   parent-module@1.0.1:
     dependencies:

@@ -1,5 +1,5 @@
 import {Fragment, ReactNode, useCallback, useContext, useMemo, useRef, useState} from "react";
-import {Box, Chip, Slider, Stack, Typography} from "@mui/material";
+import {Box, Button, Chip, Slider, Stack, Typography} from "@mui/material";
 import {IWindow} from "../../../model/IWindow.ts";
 import {IMonitoringContext} from "../../../provider/MonitoringProvider.tsx";
 import {MonitoringContext} from "../../../provider/MonitoringContext.tsx";
@@ -9,12 +9,16 @@ import Grid from "@mui/material/Grid2";
 import {useTranslation} from "react-i18next";
 import dayjs from "dayjs";
 import {TBlock} from "../../../model/TBlock.ts";
+import Papa from "papaparse";
+import {saveAs} from "file-saver";
+import {getCsvFilename} from "../../../utils/csv.ts";
 
 interface IProps {
-    window: IWindow
+    window: IWindow;
+    title: string;
 }
 
-export const ConnectionPanel: ({window}: IProps) => ReactNode = ({window}: IProps): ReactNode => {
+export const ConnectionPanel = ({window, title}: IProps): ReactNode => {
 
     const {t} = useTranslation();
     const {connectionStates, edges, nodes} = useContext<IMonitoringContext>(MonitoringContext);
@@ -46,6 +50,29 @@ export const ConnectionPanel: ({window}: IProps) => ReactNode = ({window}: IProp
     const sourceValues = useMemo((): IValueUpdate[] => getValuesForBlock(edge?.source, edge?.data?.output), [edge?.data?.output, edge?.source, getValuesForBlock]);
     const targetValues = useMemo((): IValueUpdate[] => getValuesForBlock(edge?.target, edge?.data?.input), [edge?.data?.input, edge?.target, getValuesForBlock]);
 
+    const handleExport = (): void => {
+        const rows = Array.from({length: Math.max(sourceValues.length, targetValues.length)}, (_, index) => {
+            const output = sourceValues[index];
+            const input = targetValues[index];
+
+            return [
+                output?.timestamp,
+                output?.communicationPoint,
+                output?.status,
+                output?.value,
+                input?.timestamp,
+                input?.communicationPoint,
+                input?.status,
+                input?.value,
+            ];
+        });
+        const csv = Papa.unparse([
+            ["output_timestamp", "output_cp", "output_status", "output_value", "input_timestamp", "input_cp", "input_status", "input_value"],
+            ...rows,
+        ]);
+        saveAs(new Blob([csv], {type: "text/csv;charset=utf-8"}), getCsvFilename(title));
+    };
+
     return (
         <Fragment>
             <Grid
@@ -69,7 +96,8 @@ export const ConnectionPanel: ({window}: IProps) => ReactNode = ({window}: IProp
                             sourceValues.length > 0 ? <Stack spacing={1}>
                                     {
                                         sourceValues.map((connectionState: IValueUpdate, index: number) => (
-                                            <Stack direction={"row"} spacing={1} key={connectionState.messageId ?? connectionState.offset ?? index}>
+                                            <Stack direction={"row"} spacing={1}
+                                                   key={connectionState.messageId ?? connectionState.offset ?? index}>
                                                 <Chip
                                                     sx={{backgroundColor: "#303030", color: "inherit"}}
                                                     size={"small"}
@@ -126,7 +154,8 @@ export const ConnectionPanel: ({window}: IProps) => ReactNode = ({window}: IProp
                             targetValues.length > 0 ? <Stack spacing={1}>
                                     {
                                         targetValues.map((connectionState: IValueUpdate, index: number) => (
-                                            <Stack direction={"row"} spacing={1} key={connectionState.messageId ?? connectionState.offset ?? index}>
+                                            <Stack direction={"row"} spacing={1}
+                                                   key={connectionState.messageId ?? connectionState.offset ?? index}>
                                                 <Chip
                                                     sx={{backgroundColor: "#303030", color: "inherit"}}
                                                     size={"small"}
@@ -207,6 +236,15 @@ export const ConnectionPanel: ({window}: IProps) => ReactNode = ({window}: IProp
                 <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
                     {localValueCount}
                 </Typography>
+                <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={handleExport}
+                    disabled={sourceValues.length === 0 && targetValues.length === 0}
+                    sx={{whiteSpace: "nowrap"}}
+                >
+                    CSV {t("action.export")}
+                </Button>
             </Stack>
         </Fragment>
     );

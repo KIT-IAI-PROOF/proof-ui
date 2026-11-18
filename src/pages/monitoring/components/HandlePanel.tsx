@@ -1,17 +1,21 @@
 import {Fragment, ReactNode, useContext, useMemo, useRef, useState} from "react";
-import {Box, Chip, Slider, Stack, Typography} from "@mui/material";
+import {Box, Button, Chip, Slider, Stack, Typography} from "@mui/material";
 import {IWindow} from "../../../model/IWindow.ts";
 import {IMonitoringContext} from "../../../provider/MonitoringProvider.tsx";
 import {MonitoringContext} from "../../../provider/MonitoringContext.tsx";
 import {IValueUpdate} from "../../../model/IValueUpdate.ts";
 import {useTranslation} from "react-i18next";
 import dayjs from "dayjs";
+import Papa from "papaparse";
+import {saveAs} from "file-saver";
+import {getCsvFilename} from "../../../utils/csv.ts";
 
 interface IProps {
     window: IWindow;
+    title: string;
 }
 
-export const HandlePanel: ({window}: IProps) => ReactNode = ({window}: IProps): ReactNode => {
+export const HandlePanel = ({window, title}: IProps): ReactNode => {
 
     const {t} = useTranslation();
     const {connectionStates, nodes} = useContext<IMonitoringContext>(MonitoringContext);
@@ -21,11 +25,11 @@ export const HandlePanel: ({window}: IProps) => ReactNode = ({window}: IProps): 
     const handleInfo = useMemo(() => {
         for (const node of nodes) {
             const input = node.data.inputs?.find((inp) => inp.id === window.id);
-            if (input) return {label: input.label, block: node};
+            if (input) return {label: input.label, block: node, direction: "input" as const};
             const output = node.data.outputs?.find((out) => out.id === window.id);
-            if (output) return {label: output.label, block: node};
+            if (output) return {label: output.label, block: node, direction: "output" as const};
         }
-        return {label: undefined, block: undefined};
+        return {label: undefined, block: undefined, direction: undefined};
     }, [nodes, window.id]);
 
     const values = useMemo((): IValueUpdate[] => {
@@ -35,6 +39,22 @@ export const HandlePanel: ({window}: IProps) => ReactNode = ({window}: IProps): 
             .sort((a: IValueUpdate, b: IValueUpdate): number => (b.offset ?? 0) - (a.offset ?? 0))
             .slice(0, localValueCount);
     }, [connectionStates, localValueCount, window.id]);
+
+    const handleExport = (): void => {
+        const direction = handleInfo.direction;
+        if (!direction || values.length === 0) return;
+
+        const csv = Papa.unparse([
+            [`${direction}_timestamp`, `${direction}_cp`, `${direction}_status`, `${direction}_value`],
+            ...values.map((value: IValueUpdate) => [
+                value.timestamp,
+                value.communicationPoint,
+                value.status,
+                value.value,
+            ]),
+        ]);
+        saveAs(new Blob([csv], {type: "text/csv;charset=utf-8"}), getCsvFilename(title));
+    };
 
     return (
         <Fragment>
@@ -141,6 +161,15 @@ export const HandlePanel: ({window}: IProps) => ReactNode = ({window}: IProps): 
                 <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
                     {localValueCount}
                 </Typography>
+                <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={handleExport}
+                    disabled={values.length === 0 || !handleInfo.direction}
+                    sx={{whiteSpace: "nowrap"}}
+                >
+                    CSV {t("action.export")}
+                </Button>
             </Stack>
         </Fragment>
     );

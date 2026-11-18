@@ -66,6 +66,8 @@ const FloatingWindow: React.FC<IProps> = React.memo(({window}: IProps): ReactNod
         }
     }, [edges, nodes, t]);
 
+    const title = getTitle(window.id, window.queue, window.type);
+
     return (
         <Paper
             ref={setNodeRef}
@@ -101,7 +103,7 @@ const FloatingWindow: React.FC<IProps> = React.memo(({window}: IProps): ReactNod
                 }}
             >
                 <Typography variant="subtitle2" noWrap sx={{fontWeight: 600}}>
-                    {getTitle(window.id, window.queue, window.type)}
+                    {title}
                 </Typography>
                 <IconButton
                     size="small"
@@ -118,10 +120,10 @@ const FloatingWindow: React.FC<IProps> = React.memo(({window}: IProps): ReactNod
                 window.type === "log" && <LogPanel window={window}/>
             }
             {
-                window.type === "connection" && <ConnectionPanel window={window}/>
+                window.type === "connection" && <ConnectionPanel window={window} title={title}/>
             }
             {
-                window.type === "handle" && <HandlePanel window={window}/>
+                window.type === "handle" && <HandlePanel window={window} title={title}/>
             }
         </Paper>
     );
