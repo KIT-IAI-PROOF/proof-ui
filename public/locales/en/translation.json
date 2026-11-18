@@ -301,6 +301,9 @@
     "timeoutInput": "Time in [s] how long a worker waits at most for a required input value before returning defaultValue/timeout"
   },
   "word": {
+    "delimiter": "Delimiter",
+    "tabulator": "Tab",
+    "space": "Space",
     "connection": "Connection",
     "baseName": "Base name",
     "textColor": "Text color",

@@ -1,5 +1,5 @@
 import {Fragment, ReactNode, useContext, useMemo, useRef, useState} from "react";
-import {Box, Button, Chip, Slider, Stack, Typography} from "@mui/material";
+import {Box, Button, Chip, MenuItem, Slider, Stack, TextField, Typography} from "@mui/material";
 import {IWindow} from "../../../model/IWindow.ts";
 import {IMonitoringContext} from "../../../provider/MonitoringProvider.tsx";
 import {MonitoringContext} from "../../../provider/MonitoringContext.tsx";
@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import Papa from "papaparse";
 import {saveAs} from "file-saver";
 import {getCsvFilename} from "../../../utils/csv.ts";
+import {CSV_DELIMITER} from "../../../utils/constants.ts";
 
 interface IProps {
     window: IWindow;
@@ -16,11 +17,11 @@ interface IProps {
 }
 
 export const HandlePanel = ({window, title}: IProps): ReactNode => {
-
     const {t} = useTranslation();
     const {connectionStates, nodes} = useContext<IMonitoringContext>(MonitoringContext);
     const [localValueCount, setLocalValueCount] = useState<number>(20);
     const endRef = useRef<HTMLDivElement | null>(null);
+    const [selectedCSVDelimiter, setSelectedCSVDelimiter] = useState<string>(CSV_DELIMITER.comma);
 
     const handleInfo = useMemo(() => {
         for (const node of nodes) {
@@ -52,7 +53,7 @@ export const HandlePanel = ({window, title}: IProps): ReactNode => {
                 value.status,
                 value.value,
             ]),
-        ]);
+        ], {delimiter: selectedCSVDelimiter});
         saveAs(new Blob([csv], {type: "text/csv;charset=utf-8"}), getCsvFilename(title));
     };
 
@@ -134,7 +135,7 @@ export const HandlePanel = ({window, title}: IProps): ReactNode => {
             <Stack
                 direction="row"
                 alignItems="center"
-                spacing={2}
+                justifyContent="space-between"
                 sx={{
                     px: 2,
                     py: 1,
@@ -143,33 +144,61 @@ export const HandlePanel = ({window, title}: IProps): ReactNode => {
                     borderColor: "divider",
                 }}
             >
-                <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
-                    {t("dialog.header.connectionPanel.maxValues")}
-                </Typography>
-                <Slider
-                    sx={{width: "100px"}}
-                    aria-label="Max values"
-                    value={localValueCount}
-                    step={10}
-                    marks={true}
-                    min={10}
-                    max={100}
-                    valueLabelDisplay={"auto"}
-                    onChange={(_event, newValue) => setLocalValueCount(newValue as number)}
-                    onChangeCommitted={(_event, newValue) => setLocalValueCount(newValue as number)}
-                />
-                <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
-                    {localValueCount}
-                </Typography>
-                <Button
-                    size="small"
-                    variant="outlined"
-                    onClick={handleExport}
-                    disabled={values.length === 0 || !handleInfo.direction}
-                    sx={{whiteSpace: "nowrap"}}
+                <Stack
+                    spacing={2}
+                    direction="row"
+                    alignItems="center"
                 >
-                    CSV {t("action.export")}
-                </Button>
+                    <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
+                        {t("dialog.header.connectionPanel.maxValues")}
+                    </Typography>
+                    <Slider
+                        sx={{width: "100px"}}
+                        aria-label="Max values"
+                        value={localValueCount}
+                        step={10}
+                        marks={true}
+                        min={10}
+                        max={100}
+                        valueLabelDisplay={"auto"}
+                        onChange={(_event, newValue) => setLocalValueCount(newValue as number)}
+                        onChangeCommitted={(_event, newValue) => setLocalValueCount(newValue as number)}
+                    />
+                    <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
+                        {localValueCount}
+                    </Typography>
+                </Stack>
+                <Stack
+                    spacing={2}
+                    direction="row"
+                    alignItems="center"
+                >
+                    <TextField
+                        select
+                        size="small"
+                        label={t("word.delimiter")}
+                        value={selectedCSVDelimiter}
+                        onChange={(event) => setSelectedCSVDelimiter(event.target.value)}
+                        sx={{minWidth: 120}}
+                    >
+                        {Object.values(CSV_DELIMITER).map((delimiter) => (
+                            <MenuItem key={delimiter} value={delimiter}>
+                                {delimiter === "\t"
+                                    ? t("word.tabulator")
+                                    : delimiter === " " ? t("word.space") : delimiter}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                    <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={handleExport}
+                        disabled={values.length === 0 || !handleInfo.direction}
+                        sx={{height: 40, whiteSpace: "nowrap"}}
+                    >
+                        CSV {t("action.export")}
+                    </Button>
+                </Stack>
             </Stack>
         </Fragment>
     );
