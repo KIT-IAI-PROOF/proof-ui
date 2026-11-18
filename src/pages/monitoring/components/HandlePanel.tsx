@@ -1,5 +1,5 @@
 import {Fragment, ReactNode, useContext, useMemo, useRef, useState} from "react";
-import {Box, Button, Chip, Slider, Stack, Typography} from "@mui/material";
+import {Box, Chip, Slider, Stack, Typography} from "@mui/material";
 import {IWindow} from "../../../model/IWindow.ts";
 import {IMonitoringContext} from "../../../provider/MonitoringProvider.tsx";
 import {MonitoringContext} from "../../../provider/MonitoringContext.tsx";
@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import Papa from "papaparse";
 import {saveAs} from "file-saver";
 import {getCsvFilename} from "../../../utils/csv.ts";
+import CsvExportControls from "./CsvExportControls.tsx";
 
 interface IProps {
     window: IWindow;
@@ -16,7 +17,6 @@ interface IProps {
 }
 
 export const HandlePanel = ({window, title}: IProps): ReactNode => {
-
     const {t} = useTranslation();
     const {connectionStates, nodes} = useContext<IMonitoringContext>(MonitoringContext);
     const [localValueCount, setLocalValueCount] = useState<number>(20);
@@ -40,7 +40,7 @@ export const HandlePanel = ({window, title}: IProps): ReactNode => {
             .slice(0, localValueCount);
     }, [connectionStates, localValueCount, window.id]);
 
-    const handleExport = (): void => {
+    const handleExport = (delimiter: string): void => {
         const direction = handleInfo.direction;
         if (!direction || values.length === 0) return;
 
@@ -52,7 +52,7 @@ export const HandlePanel = ({window, title}: IProps): ReactNode => {
                 value.status,
                 value.value,
             ]),
-        ]);
+        ], {delimiter});
         saveAs(new Blob([csv], {type: "text/csv;charset=utf-8"}), getCsvFilename(title));
     };
 
@@ -134,7 +134,7 @@ export const HandlePanel = ({window, title}: IProps): ReactNode => {
             <Stack
                 direction="row"
                 alignItems="center"
-                spacing={2}
+                justifyContent="space-between"
                 sx={{
                     px: 2,
                     py: 1,
@@ -143,33 +143,34 @@ export const HandlePanel = ({window, title}: IProps): ReactNode => {
                     borderColor: "divider",
                 }}
             >
-                <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
-                    {t("dialog.header.connectionPanel.maxValues")}
-                </Typography>
-                <Slider
-                    sx={{width: "100px"}}
-                    aria-label="Max values"
-                    value={localValueCount}
-                    step={10}
-                    marks={true}
-                    min={10}
-                    max={100}
-                    valueLabelDisplay={"auto"}
-                    onChange={(_event, newValue) => setLocalValueCount(newValue as number)}
-                    onChangeCommitted={(_event, newValue) => setLocalValueCount(newValue as number)}
-                />
-                <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
-                    {localValueCount}
-                </Typography>
-                <Button
-                    size="small"
-                    variant="outlined"
-                    onClick={handleExport}
-                    disabled={values.length === 0 || !handleInfo.direction}
-                    sx={{whiteSpace: "nowrap"}}
+                <Stack
+                    spacing={2}
+                    direction="row"
+                    alignItems="center"
                 >
-                    CSV {t("action.export")}
-                </Button>
+                    <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
+                        {t("dialog.header.connectionPanel.maxValues")}
+                    </Typography>
+                    <Slider
+                        sx={{width: "100px"}}
+                        aria-label="Max values"
+                        value={localValueCount}
+                        step={10}
+                        marks={true}
+                        min={10}
+                        max={100}
+                        valueLabelDisplay={"auto"}
+                        onChange={(_event, newValue) => setLocalValueCount(newValue as number)}
+                        onChangeCommitted={(_event, newValue) => setLocalValueCount(newValue as number)}
+                    />
+                    <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
+                        {localValueCount}
+                    </Typography>
+                </Stack>
+                <CsvExportControls
+                    disabled={values.length === 0 || !handleInfo.direction}
+                    onExport={handleExport}
+                />
             </Stack>
         </Fragment>
     );

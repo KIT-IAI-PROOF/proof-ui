@@ -1,5 +1,5 @@
 import {Fragment, ReactNode, useCallback, useContext, useMemo, useRef, useState} from "react";
-import {Box, Button, Chip, Slider, Stack, Typography} from "@mui/material";
+import {Box, Chip, Slider, Stack, Typography} from "@mui/material";
 import {IWindow} from "../../../model/IWindow.ts";
 import {IMonitoringContext} from "../../../provider/MonitoringProvider.tsx";
 import {MonitoringContext} from "../../../provider/MonitoringContext.tsx";
@@ -12,6 +12,7 @@ import {TBlock} from "../../../model/TBlock.ts";
 import Papa from "papaparse";
 import {saveAs} from "file-saver";
 import {getCsvFilename} from "../../../utils/csv.ts";
+import CsvExportControls from "./CsvExportControls.tsx";
 
 interface IProps {
     window: IWindow;
@@ -50,7 +51,7 @@ export const ConnectionPanel = ({window, title}: IProps): ReactNode => {
     const sourceValues = useMemo((): IValueUpdate[] => getValuesForBlock(edge?.source, edge?.data?.output), [edge?.data?.output, edge?.source, getValuesForBlock]);
     const targetValues = useMemo((): IValueUpdate[] => getValuesForBlock(edge?.target, edge?.data?.input), [edge?.data?.input, edge?.target, getValuesForBlock]);
 
-    const handleExport = (): void => {
+    const handleExport = (delimiter: string): void => {
         const rows = Array.from({length: Math.max(sourceValues.length, targetValues.length)}, (_, index) => {
             const output = sourceValues[index];
             const input = targetValues[index];
@@ -69,7 +70,7 @@ export const ConnectionPanel = ({window, title}: IProps): ReactNode => {
         const csv = Papa.unparse([
             ["output_timestamp", "output_cp", "output_status", "output_value", "input_timestamp", "input_cp", "input_status", "input_value"],
             ...rows,
-        ]);
+        ], {delimiter});
         saveAs(new Blob([csv], {type: "text/csv;charset=utf-8"}), getCsvFilename(title));
     };
 
@@ -209,7 +210,7 @@ export const ConnectionPanel = ({window, title}: IProps): ReactNode => {
             <Stack
                 direction="row"
                 alignItems="center"
-                spacing={2}
+                justifyContent="space-between"
                 sx={{
                     px: 2,
                     py: 1,
@@ -218,33 +219,34 @@ export const ConnectionPanel = ({window, title}: IProps): ReactNode => {
                     borderColor: "divider",
                 }}
             >
-                <Typography paddingRight={1} noWrap={true} variant={"body1"} color={"textSecondary"}>
-                    {t("dialog.header.connectionPanel.maxValues")}
-                </Typography>
-                <Slider
-                    sx={{width: "100px"}}
-                    aria-label="Max values"
-                    value={localValueCount}
-                    step={10}
-                    marks={true}
-                    min={10}
-                    max={100}
-                    valueLabelDisplay={"auto"}
-                    onChange={(_event, newValue) => setLocalValueCount(newValue as number)}
-                    onChangeCommitted={(_event, newValue) => setLocalValueCount(newValue as number)}
-                />
-                <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
-                    {localValueCount}
-                </Typography>
-                <Button
-                    size="small"
-                    variant="outlined"
-                    onClick={handleExport}
-                    disabled={sourceValues.length === 0 && targetValues.length === 0}
-                    sx={{whiteSpace: "nowrap"}}
+                <Stack
+                    spacing={2}
+                    direction="row"
+                    alignItems="center"
                 >
-                    CSV {t("action.export")}
-                </Button>
+                    <Typography paddingRight={1} noWrap={true} variant={"body1"} color={"textSecondary"}>
+                        {t("dialog.header.connectionPanel.maxValues")}
+                    </Typography>
+                    <Slider
+                        sx={{width: "100px"}}
+                        aria-label="Max values"
+                        value={localValueCount}
+                        step={10}
+                        marks={true}
+                        min={10}
+                        max={100}
+                        valueLabelDisplay={"auto"}
+                        onChange={(_event, newValue) => setLocalValueCount(newValue as number)}
+                        onChangeCommitted={(_event, newValue) => setLocalValueCount(newValue as number)}
+                    />
+                    <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
+                        {localValueCount}
+                    </Typography>
+                </Stack>
+                <CsvExportControls
+                    disabled={sourceValues.length === 0 && targetValues.length === 0}
+                    onExport={handleExport}
+                />
             </Stack>
         </Fragment>
     );
