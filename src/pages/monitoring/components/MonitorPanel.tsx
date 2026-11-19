@@ -120,7 +120,7 @@ const MonitorPanel: () => ReactNode = (): ReactNode => {
                                         color={"primary"}
                                         fontSize={"large"}
                                     />
-                                    <Typography variant={"h4"}>{t("page.header.monitoring.detail")}</Typography>
+                                    <Typography variant={"h4"}>{t("page.header.monitoring.detail") + " - " + execution?.label}</Typography>
                                 </Stack>
                             </Grid>
                             <Grid size={{xs: 12, lg: "auto"}}>
