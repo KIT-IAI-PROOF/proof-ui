@@ -71,9 +71,10 @@ const ExecutionSettingsPanel: ({execution}: IProps) => ReactNode = ({execution}:
                                 justifyContent="flex-end"
                             >
                                 <Typography
-                                    variant={"h3"}
+                                    variant={"h3"} 
+                                    sx={{ fontSize: "1.1rem" }}
                                 >
-                                    {execution?.id}
+                                    ID: {execution?.id}
                                 </Typography>
                             </Grid>
                         </AccordionSummary>
