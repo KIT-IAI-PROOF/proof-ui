@@ -51,7 +51,7 @@ const ExecutionSettingsPanel: ({execution}: IProps) => ReactNode = ({execution}:
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon/>}
                         >
-                            <Grid size={{xs: 3, lg: 3}}>
+                            <Grid size={3}>
                                 <Typography
                                     variant={"h3"}
                                 >
@@ -65,7 +65,11 @@ const ExecutionSettingsPanel: ({execution}: IProps) => ReactNode = ({execution}:
                                     </Tooltip>
                                 </Typography>
                             </Grid>
-                            <Grid size={{xs: 9, lg: 10}}>
+                            <Grid
+                                size={9}
+                                display="flex"
+                                justifyContent="flex-end"
+                            >
                                 <Typography
                                     variant={"h3"}
                                 >
