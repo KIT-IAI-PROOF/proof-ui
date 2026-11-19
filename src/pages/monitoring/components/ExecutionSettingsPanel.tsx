@@ -2,6 +2,7 @@ import {Accordion, AccordionDetails, AccordionSummary, Checkbox, FormControlLabe
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Grid from "@mui/material/Grid2";
 import {Fragment, ReactNode, useState} from "react";
+import { format } from 'date-fns';
 import {ExecutionDetail, InputDetail} from "@kit-iai-proof/proof-config-manager-client";
 import {useTranslation} from "react-i18next";
 import {Info} from "@mui/icons-material";
@@ -11,6 +12,10 @@ import LabeledField, {LabeledFieldSizes} from "../../../app/components/LabeledFi
 interface IProps {
     execution: ExecutionDetail
 }
+
+const formatDateTime = (date: Date | string) => {
+    return format(new Date(date), 'dd/MM/yyyy, HH:mm:ss');
+};
 
 const ExecutionSettingsPanel: ({execution}: IProps) => ReactNode = ({execution}: IProps): ReactNode => {
 
@@ -99,14 +104,14 @@ const ExecutionSettingsPanel: ({execution}: IProps) => ReactNode = ({execution}:
                                     <Typography
                                         variant={"body1"}
                                     >
-                                        {execution?.startedAt ? new Date(execution.startedAt).toLocaleString("de-DE") : t('word.notStarted')}
+                                        {execution?.startedAt ? formatDateTime(execution.startedAt) : t('word.notStarted')}
                                     </Typography>
                                 </LabeledField>
                                 <LabeledField labelKey={"word.stoppedAt"} tooltipKey={"tooltip.stoppedAt"} sizes={halfPageSizes}>
                                     <Typography
                                         variant={"body1"}
                                     >
-                                        {execution?.stoppedAt ? new Date(execution.stoppedAt).toLocaleString("de-DE") : t('word.notStopped')}
+                                        {execution?.stoppedAt ? formatDateTime(execution.stoppedAt) : t('word.notStopped')}
                                     </Typography>
                                 </LabeledField>
                                 <Grid size={12} paddingTop={1}>
