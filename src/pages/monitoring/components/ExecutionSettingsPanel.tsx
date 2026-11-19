@@ -14,7 +14,7 @@ interface IProps {
 }
 
 const formatDateTime = (date: Date | string) => {
-    return format(new Date(date), 'dd/MM/yyyy, HH:mm:ss');
+    return format(new Date(date), 'dd.MM.yyyy, HH:mm:ss');
 };
 
 const ExecutionSettingsPanel: ({execution}: IProps) => ReactNode = ({execution}: IProps): ReactNode => {
