@@ -4,6 +4,8 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
+    Autocomplete,
+    AutocompleteRenderInputParams,
     Box,
     Button,
     Divider,
@@ -38,7 +40,7 @@ import {BlockDetail, TemplateDetail, TemplateDetailSyncStrategyEnum} from "@kit-
 import {AxiosError} from "axios";
 import {v4 as uuidv4} from "uuid";
 import {getErrorMessage} from "../../../utils/error.ts";
-import {blockService} from "../../../services/instances.ts";
+import {blockService, templateService} from "../../../services/instances.ts";
 import {blockQueryOptions} from "../../../query/options/blockQueryOptions.tsx";
 import {templateQueryOptions} from "../../../query/options/templateQueryOptions.tsx";
 import LabeledFieldsGrid from "../../../app/components/LabeledFieldsGrid.tsx";
@@ -123,6 +125,14 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
         setShutdownRelevant(block?.shutdownRelevant ?? true);
     }, [block?.color, block?.description, block?.label, block?.syncStrategy, block?.shutdownRelevant, block?.containerImage, block?.textColor]);
 
+
+    const {data: images} = useQuery({
+        queryKey: ['image'],
+        queryFn: async ({signal}) => {
+            return await templateService.getContainerImages(signal);
+        }
+    });
+    
     return (
         <Fragment>
             <Box
@@ -234,28 +244,34 @@ const BlockConfigsDetail: () => ReactNode = (): ReactNode => {
                                     }}/>
                             </LabeledField>
                             <LabeledField labelKey={"word.image"} tooltipKey={"tooltip.image"}>
-                                <TextField
-                                    fullWidth={true}
-                                    value={image ?? ""}
+                                <Autocomplete
                                     size={"small"}
-                                    label={t("word.image")}
-                                    variant="outlined"
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': {
-                                                borderColor: (template?.containerImage !== block?.containerImage)
-                                                    ? 'orange'
-                                                    : undefined,
-                                            },
-                                        },
-                                    }}
-                                    onChange={(e) => {
-                                        setImage(e.target.value)
+                                    fullWidth={true}
+                                    freeSolo={true}
+                                    multiple={false}
+                                    value={image ?? ""}
+                                    options={images ?? []}
+                                    onInputChange={(_event: SyntheticEvent<Element, Event>, value: string | null): void => {
+                                        setImage(value ?? "");
                                         if (!hasUnsavedChanges) updateHasUnsavedChanges(true)
                                     }}
-                                    helperText={
-                                        template?.containerImage !== block?.containerImage ? `${t("word.valueDifferent")} ${template?.containerImage}` : ""
-                                    }
+                                    renderInput={(params: AutocompleteRenderInputParams) => <TextField
+                                        {...params}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    borderColor: (template?.containerImage !== block?.containerImage)
+                                                        ? 'orange'
+                                                        : undefined,
+                                                },
+                                            },
+                                        }}
+                                        label={t("word.image")}
+                                        required={true}
+                                        helperText={
+                                            template?.containerImage !== block?.containerImage ? `${t("word.valueDifferent")} ${template?.containerImage}` : ""
+                                        }
+                                    />}
                                 />
                             </LabeledField>
                             <LabeledField labelKey={"word.blockType"} tooltipKey={"tooltip.blockType"}>
