@@ -27,7 +27,7 @@ const CsvExportControls = ({disabled, onExport}: IProps): ReactNode => {
                 onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
                     setSelectedCSVSeparator(event.target.value);
                 }}
-                sx={{minWidth: 120}}
+                sx={{ minWidth: `calc(${t("word.separator").length}ch)` }}
             >
                 {Object.values(CSV_SEPARATOR).map((separator: string): ReactNode => (
                     <MenuItem key={separator} value={separator}>
