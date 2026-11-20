@@ -49,6 +49,7 @@
     "restart": "Restart",
     "run": "Start Workflow",
     "save": "Save",
+    "start": "Start",
     "search": "Search",
     "selectBlock": "Select Block",
     "selectBlockPlaceholder": "Choose a block to add step size definition",

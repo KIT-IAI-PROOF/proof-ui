@@ -49,6 +49,7 @@
     "restart": "Neu starten",
     "run": "Workflow starten",
     "save": "Speichern",
+    "start": "Start",
     "search": "Suchen",
     "selectBlock": "Block auswählen",
     "selectBlockPlaceholder": "Wählen Sie einen Block für die Schrittgrößendefinition aus",

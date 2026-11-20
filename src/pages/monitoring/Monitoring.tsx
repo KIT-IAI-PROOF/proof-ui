@@ -12,7 +12,7 @@ import {DEFAULT_FILTER, DEFAULT_MONITORING_SORTING, DEFAULT_PAGINATION, ENTITY_T
 import {AuthContextProps, useAuth} from "react-oidc-context";
 import {IAppContext} from "../../provider/AppProvider.tsx";
 import {AppContext} from "../../provider/AppContext.tsx";
-import {RestartAlt, UploadRounded} from "@mui/icons-material";
+import {PlayArrow, RestartAlt, UploadRounded} from "@mui/icons-material";
 import dayjs from "dayjs";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
@@ -171,7 +171,7 @@ const Monitoring: () => ReactNode = (): ReactNode => {
                             <Box>
                                 <IconButton
                                     color="error"
-                                    disabled={params.row.status && STOPPED_STATES.includes(params.row.status)}
+                                    disabled={!!params.row.status && (STOPPED_STATES.includes(params.row.status) || params.row.status === ExecutionListingStatusEnum.Unknown)}
                                     onClick={async (e): Promise<void> => {
                                         e.stopPropagation()
                                         if (params.row.id) await orchestrationService.abortExecution(undefined, params.row.id)
@@ -182,18 +182,18 @@ const Monitoring: () => ReactNode = (): ReactNode => {
                             </Box>
                         </Tooltip>
                         <Tooltip
-                            title={t('action.restart')}
+                            title={params.row.status === ExecutionListingStatusEnum.Unknown ? t('action.start') : t('action.restart')}
                         >
                             <Box>
                                 <IconButton
-                                    disabled={params.row.status && !STOPPED_STATES.includes(params.row.status)}
+                                    disabled={!!params.row.status && params.row.status !== ExecutionListingStatusEnum.Unknown && !STOPPED_STATES.includes(params.row.status)}
                                     color="primary"
                                     onClick={async (e): Promise<void> => {
                                         e.stopPropagation()
                                         if (params.row.id) await orchestrationService.startExecution(undefined, params.row.id)
                                     }}
                                 >
-                                    <RestartAlt/>
+                                    {params.row.status === ExecutionListingStatusEnum.Unknown ? <PlayArrow/> : <RestartAlt/>}
                                 </IconButton>
                             </Box>
                         </Tooltip>
