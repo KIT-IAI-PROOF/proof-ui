@@ -87,7 +87,7 @@ export const ConnectionPanel: ({window}: IProps) => ReactNode = ({window}: IProp
                     </Tabs>
                 </Box>
             }
-            <Box sx={{flex: "1 1 0", minHeight: 0, minWidth: 0, overflowY: "auto", overflowX: showFlowChart && hasFloatValues ? "hidden" : "auto", backgroundColor: "#121212"}}>
+            <Box sx={{flex: "1 1 0", minHeight: 0, minWidth: 0, overflowY: "auto", overflowX: showFlowChart && hasFloatValues ? "hidden" : "auto"}}>
                 {showFlowChart && hasFloatValues ?
                     <LineDiagram dataLabel={sourceName ?? targetName} chartData={chartData}/> : <Grid
                         container={true}

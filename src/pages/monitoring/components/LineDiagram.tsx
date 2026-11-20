@@ -1,4 +1,7 @@
 import {Box, Slider, Typography} from "@mui/material";
+import {axisClasses} from '@mui/x-charts/ChartsAxis';
+import {chartsGridClasses} from '@mui/x-charts/ChartsGrid';
+import {legendClasses} from '@mui/x-charts/ChartsLegend';
 import {LineChart} from '@mui/x-charts/LineChart';
 import {useDrawingArea} from '@mui/x-charts/hooks';
 import type {AxisValueFormatterContext} from '@mui/x-charts/models';
@@ -17,6 +20,9 @@ interface IPlotWidth {
     left: number;
     width: number;
 }
+
+const chartForegroundColor = "#fff";
+const axisTextStyle = {fill: chartForegroundColor};
 
 const PlotWidthObserver = ({onChange}: { onChange: (area: IPlotWidth) => void }) => {
     const {left, width} = useDrawingArea();
@@ -62,24 +68,35 @@ export const LineDiagram: ({dataLabel, chartData}: IProps) => ReactNode = ({data
     });
 
     return (
-        <Box ref={containerRef} sx={{backgroundColor: "#121212", height: "100%", minHeight: 336}}>
+        <Box ref={containerRef} sx={{
+            backgroundColor: "#121212",
+            height: "100%",
+            minHeight: 336,
+            [`& .${legendClasses.root}`]: {color: chartForegroundColor},
+            [`& .${chartsGridClasses.line}`]: {stroke: "#626262"},
+            [`& .${axisClasses.root}`]: {
+                [`& .${axisClasses.line}, & .${axisClasses.tick}`]: {stroke: chartForegroundColor}
+            }
+        }}>
             <LineChart
                 dataset={visibleChartData}
                 xAxis={[{
                     scaleType: "point",
                     dataKey: "cp",
                     label: "CP",
+                    labelStyle: axisTextStyle,
+                    tickLabelStyle: axisTextStyle,
                     valueFormatter: (value: string, context: AxisValueFormatterContext<'point'>) =>
                         context.location === 'tooltip' ? `CP: ${value}` : String(value)
                 }]}
-                yAxis={[{label: dataLabel}]}
+                yAxis={[{label: dataLabel, labelStyle: axisTextStyle, tickLabelStyle: axisTextStyle}]}
                 series={series}
                 height={chartHeight}
                 grid={{vertical: true, horizontal: true}}
             >
                 <PlotWidthObserver onChange={setPlotWidth}/>
             </LineChart>
-            <Typography variant="caption" color="text.secondary"
+            <Typography variant="caption" color={chartForegroundColor}
                         sx={{
                             display: "block",
                             textAlign: "left",
