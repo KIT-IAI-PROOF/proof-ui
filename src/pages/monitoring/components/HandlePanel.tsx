@@ -40,7 +40,7 @@ export const HandlePanel = ({window, title}: IProps): ReactNode => {
             .slice(0, localValueCount);
     }, [connectionStates, localValueCount, window.id]);
 
-    const handleExport = (delimiter: string): void => {
+    const handleExport = (separator: string): void => {
         const direction = handleInfo.direction;
         if (!direction || values.length === 0) return;
 
@@ -52,7 +52,7 @@ export const HandlePanel = ({window, title}: IProps): ReactNode => {
                 value.status,
                 value.value,
             ]),
-        ], {delimiter});
+        ], {delimiter: separator});
         saveAs(new Blob([csv], {type: "text/csv;charset=utf-8"}), getCsvFilename(title));
     };
 

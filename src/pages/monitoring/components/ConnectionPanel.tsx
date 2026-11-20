@@ -51,7 +51,7 @@ export const ConnectionPanel = ({window, title}: IProps): ReactNode => {
     const sourceValues = useMemo((): IValueUpdate[] => getValuesForBlock(edge?.source, edge?.data?.output), [edge?.data?.output, edge?.source, getValuesForBlock]);
     const targetValues = useMemo((): IValueUpdate[] => getValuesForBlock(edge?.target, edge?.data?.input), [edge?.data?.input, edge?.target, getValuesForBlock]);
 
-    const handleExport = (delimiter: string): void => {
+    const handleExport = (separator: string): void => {
         const rows = Array.from({length: Math.max(sourceValues.length, targetValues.length)}, (_, index) => {
             const output = sourceValues[index];
             const input = targetValues[index];
@@ -70,7 +70,7 @@ export const ConnectionPanel = ({window, title}: IProps): ReactNode => {
         const csv = Papa.unparse([
             ["output_timestamp", "output_cp", "output_status", "output_value", "input_timestamp", "input_cp", "input_status", "input_value"],
             ...rows,
-        ], {delimiter});
+        ], {delimiter: separator});
         saveAs(new Blob([csv], {type: "text/csv;charset=utf-8"}), getCsvFilename(title));
     };
 

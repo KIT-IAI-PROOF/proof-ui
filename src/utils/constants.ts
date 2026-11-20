@@ -40,4 +40,4 @@ export const STEPBASEDCONFIG_DEFAULT = {startTime: 0, endTime: 1000, startPoint:
 // whitespace around page content across the whole app at once.
 export const PAGE_CONTAINER_PADDING = {paddingY: 5, paddingLeft: 8.5};
 
-export const CSV_DELIMITER = { comma: ",", semikolon: ";", space: " ", tabulator: "\t", hashsing: "#", pipe: "|"};
+export const CSV_SEPARATOR = { comma: ",", semikolon: ";", space: " ", tabulator: "\t", hashsing: "#", pipe: "|"};

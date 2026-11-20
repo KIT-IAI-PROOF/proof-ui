@@ -1,17 +1,17 @@
 import {ChangeEvent, ReactNode, useState} from "react";
 import {Button, MenuItem, Stack, TextField} from "@mui/material";
 import {useTranslation} from "react-i18next";
-import {CSV_DELIMITER} from "../../../utils/constants.ts";
+import {CSV_SEPARATOR} from "../../../utils/constants.ts";
 
 interface IProps {
     disabled: boolean;
-    onExport: (delimiter: string) => void;
+    onExport: (separator: string) => void;
 }
 
 const CsvExportControls = ({disabled, onExport}: IProps): ReactNode => {
 
     const {t} = useTranslation();
-    const [selectedCSVDelimiter, setSelectedCSVDelimiter] = useState<string>(CSV_DELIMITER.comma);
+    const [selectedCSVSeparator, setSelectedCSVSeparator] = useState<string>(CSV_SEPARATOR.comma);
 
     return (
         <Stack
@@ -22,25 +22,25 @@ const CsvExportControls = ({disabled, onExport}: IProps): ReactNode => {
             <TextField
                 select={true}
                 size={"small"}
-                label={t("word.delimiter")}
-                value={selectedCSVDelimiter}
+                label={t("word.separator")}
+                value={selectedCSVSeparator}
                 onChange={(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-                    setSelectedCSVDelimiter(event.target.value);
+                    setSelectedCSVSeparator(event.target.value);
                 }}
                 sx={{minWidth: 120}}
             >
-                {Object.values(CSV_DELIMITER).map((delimiter: string): ReactNode => (
-                    <MenuItem key={delimiter} value={delimiter}>
-                        {delimiter === "\t"
+                {Object.values(CSV_SEPARATOR).map((separator: string): ReactNode => (
+                    <MenuItem key={separator} value={separator}>
+                        {separator === "\t"
                             ? t("word.tabulator")
-                            : delimiter === " " ? t("word.space") : delimiter}
+                            : separator === " " ? t("word.space") : separator}
                     </MenuItem>
                 ))}
             </TextField>
             <Button
                 size={"small"}
                 variant={"outlined"}
-                onClick={(): void => onExport(selectedCSVDelimiter)}
+                onClick={(): void => onExport(selectedCSVSeparator)}
                 disabled={disabled}
                 sx={{
                     height: 40,
