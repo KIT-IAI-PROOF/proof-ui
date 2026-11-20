@@ -521,8 +521,7 @@ const TemplateConfigsDetail: () => ReactNode = (): ReactNode => {
                                         required={true}
                                         error={imageError}
                                         helperText={imageError ? t("word.required") : ""}
-                                    />
-                                    }
+                                    />}
                                 />
                             </LabeledField>
                             <LabeledField labelKey={"word.blockType"} tooltipKey={"tooltip.blockType"}>

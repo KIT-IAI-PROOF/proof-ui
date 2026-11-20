@@ -7,8 +7,10 @@ import {deDE as deDECore, enUS as enUSCore} from "@mui/material/locale";
 import {deDE as deDEDG, enUS as enUSDG} from "@mui/x-data-grid/locales";
 import {useTranslation} from "react-i18next";
 
-import type {} from "@mui/x-data-grid/themeAugmentation";
-import type {} from "@mui/x-tree-view/themeAugmentation";
+// noinspection ES6UnusedImports
+import {} from "@mui/x-data-grid/themeAugmentation";
+// noinspection ES6UnusedImports
+import {} from "@mui/x-tree-view/themeAugmentation";
 
 interface IProps {
     children: ReactNode;
@@ -145,6 +147,16 @@ const Theme: ({children}: IProps) => ReactNode = ({children}: IProps): ReactNode
                             },
                         }
                     }
+                },
+                MuiAutocomplete: {
+                    defaultProps: {
+                        slotProps: {
+                            paper: {
+                                variant: "elevation",
+                                elevation: 8,
+                            },
+                        },
+                    },
                 },
                 MuiAccordionSummary: {
                     styleOverrides: {
