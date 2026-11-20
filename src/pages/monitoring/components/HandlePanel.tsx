@@ -6,26 +6,29 @@ import {MonitoringContext} from "../../../provider/MonitoringContext.tsx";
 import {IValueUpdate} from "../../../model/IValueUpdate.ts";
 import {useTranslation} from "react-i18next";
 import dayjs from "dayjs";
+import Papa from "papaparse";
+import {saveAs} from "file-saver";
+import {getCsvEndpointName, getCsvFilename} from "../../../utils/csv.ts";
+import CsvExportControls from "./CsvExportControls.tsx";
 
 interface IProps {
     window: IWindow;
 }
 
-export const HandlePanel: ({window}: IProps) => ReactNode = ({window}: IProps): ReactNode => {
-
+export const HandlePanel = ({window}: IProps): ReactNode => {
     const {t} = useTranslation();
-    const {connectionStates, nodes} = useContext<IMonitoringContext>(MonitoringContext);
+    const {connectionStates, nodes, execution} = useContext<IMonitoringContext>(MonitoringContext);
     const [localValueCount, setLocalValueCount] = useState<number>(20);
     const endRef = useRef<HTMLDivElement | null>(null);
 
     const handleInfo = useMemo(() => {
         for (const node of nodes) {
             const input = node.data.inputs?.find((inp) => inp.id === window.id);
-            if (input) return {label: input.label, block: node};
+            if (input) return {label: input.label, block: node, direction: "input" as const};
             const output = node.data.outputs?.find((out) => out.id === window.id);
-            if (output) return {label: output.label, block: node};
+            if (output) return {label: output.label, block: node, direction: "output" as const};
         }
-        return {label: undefined, block: undefined};
+        return {label: undefined, block: undefined, direction: undefined};
     }, [nodes, window.id]);
 
     const values = useMemo((): IValueUpdate[] => {
@@ -35,6 +38,25 @@ export const HandlePanel: ({window}: IProps) => ReactNode = ({window}: IProps): 
             .sort((a: IValueUpdate, b: IValueUpdate): number => (b.offset ?? 0) - (a.offset ?? 0))
             .slice(0, localValueCount);
     }, [connectionStates, localValueCount, window.id]);
+
+    const handleExport = (separator: string): void => {
+        const direction = handleInfo.direction;
+        if (!direction || values.length === 0) return;
+
+        const csv = Papa.unparse([
+            [`${direction}_timestamp`, `${direction}_cp`, `${direction}_status`, `${direction}_value`],
+            ...values.map((value: IValueUpdate) => [
+                value.timestamp,
+                value.communicationPoint,
+                value.status,
+                value.value,
+            ]),
+        ], {delimiter: separator});
+        const endpoint = getCsvEndpointName(handleInfo.block, handleInfo.label || window.id, handleInfo.block?.id);
+        const title = `${direction === "input" ? "Input" : "Output"} ${endpoint}`;
+        const filename = getCsvFilename(title, execution?.id, execution?.stoppedAt);
+        saveAs(new Blob([csv], {type: "text/csv;charset=utf-8"}), filename);
+    };
 
     return (
         <Fragment>
@@ -114,7 +136,7 @@ export const HandlePanel: ({window}: IProps) => ReactNode = ({window}: IProps): 
             <Stack
                 direction="row"
                 alignItems="center"
-                spacing={2}
+                justifyContent="space-between"
                 sx={{
                     px: 2,
                     py: 1,
@@ -123,24 +145,34 @@ export const HandlePanel: ({window}: IProps) => ReactNode = ({window}: IProps): 
                     borderColor: "divider",
                 }}
             >
-                <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
-                    {t("dialog.header.connectionPanel.maxValues")}
-                </Typography>
-                <Slider
-                    sx={{width: "100px"}}
-                    aria-label="Max values"
-                    value={localValueCount}
-                    step={10}
-                    marks={true}
-                    min={10}
-                    max={100}
-                    valueLabelDisplay={"auto"}
-                    onChange={(_event, newValue) => setLocalValueCount(newValue as number)}
-                    onChangeCommitted={(_event, newValue) => setLocalValueCount(newValue as number)}
+                <Stack
+                    spacing={2}
+                    direction="row"
+                    alignItems="center"
+                >
+                    <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
+                        {t("dialog.header.connectionPanel.maxValues")}
+                    </Typography>
+                    <Slider
+                        sx={{width: "100px"}}
+                        aria-label="Max values"
+                        value={localValueCount}
+                        step={10}
+                        marks={true}
+                        min={10}
+                        max={100}
+                        valueLabelDisplay={"auto"}
+                        onChange={(_event, newValue) => setLocalValueCount(newValue as number)}
+                        onChangeCommitted={(_event, newValue) => setLocalValueCount(newValue as number)}
+                    />
+                    <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
+                        {localValueCount}
+                    </Typography>
+                </Stack>
+                <CsvExportControls
+                    disabled={values.length === 0 || !handleInfo.direction}
+                    onExport={handleExport}
                 />
-                <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
-                    {localValueCount}
-                </Typography>
             </Stack>
         </Fragment>
     );

@@ -39,3 +39,5 @@ export const STEPBASEDCONFIG_DEFAULT = {startTime: 0, endTime: 1000, startPoint:
 // Outer padding of each page's top-level Box (wraps the page's Paper). Adjust here to change the
 // whitespace around page content across the whole app at once.
 export const PAGE_CONTAINER_PADDING = {paddingY: 5, paddingLeft: 8.5};
+
+export const CSV_SEPARATOR = { comma: ",", semikolon: ";", space: " ", tabulator: "\t", hashsing: "#", pipe: "|"};
