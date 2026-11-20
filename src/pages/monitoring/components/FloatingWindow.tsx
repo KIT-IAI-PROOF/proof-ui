@@ -120,10 +120,10 @@ const FloatingWindow: React.FC<IProps> = React.memo(({window}: IProps): ReactNod
                 window.type === "log" && <LogPanel window={window}/>
             }
             {
-                window.type === "connection" && <ConnectionPanel window={window} title={title}/>
+                window.type === "connection" && <ConnectionPanel window={window}/>
             }
             {
-                window.type === "handle" && <HandlePanel window={window} title={title}/>
+                window.type === "handle" && <HandlePanel window={window}/>
             }
         </Paper>
     );

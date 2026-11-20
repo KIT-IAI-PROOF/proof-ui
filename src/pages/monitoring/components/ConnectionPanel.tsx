@@ -8,36 +8,29 @@ import {IValueUpdate} from "../../../model/IValueUpdate.ts";
 import Grid from "@mui/material/Grid2";
 import {useTranslation} from "react-i18next";
 import dayjs from "dayjs";
-import {TBlock} from "../../../model/TBlock.ts";
 import Papa from "papaparse";
 import {saveAs} from "file-saver";
-import {getCsvFilename} from "../../../utils/csv.ts";
+import {getCsvEndpointName, getCsvFilename} from "../../../utils/csv.ts";
 import CsvExportControls from "./CsvExportControls.tsx";
 
 interface IProps {
     window: IWindow;
-    title: string;
 }
 
-export const ConnectionPanel = ({window, title}: IProps): ReactNode => {
+export const ConnectionPanel = ({window}: IProps): ReactNode => {
 
     const {t} = useTranslation();
-    const {connectionStates, edges, nodes} = useContext<IMonitoringContext>(MonitoringContext);
+    const {connectionStates, edges, nodes, execution} = useContext<IMonitoringContext>(MonitoringContext);
     const [localValueCount, setLocalValueCount] = useState<number>(20);
 
     const endRef = useRef<HTMLDivElement | null>(null);
 
     const edge: TEdge | undefined = useMemo(() => edges.find((e: TEdge): boolean => e.id === window.id), [edges, window]);
 
-    const targetName: string | undefined = useMemo(() => {
-        const targetNode = nodes.find((n: TBlock): boolean => n.id === edge?.target);
-        return targetNode?.data.inputs?.find((input): boolean => input.id === edge?.data?.input)?.label
-    }, [nodes, edge]);
-
-    const sourceName: string | undefined = useMemo(() => {
-        const sourceNode = nodes.find((n: TBlock): boolean => n.id === edge?.source);
-        return sourceNode?.data.outputs?.find((output): boolean => output.id === edge?.data?.output)?.label
-    }, [nodes, edge]);
+    const sourceNode = nodes.find((node) => node.id === edge?.source);
+    const targetNode = nodes.find((node) => node.id === edge?.target);
+    const sourceName = sourceNode?.data.outputs?.find((output) => output.id === edge?.data?.output)?.label;
+    const targetName = targetNode?.data.inputs?.find((input) => input.id === edge?.data?.input)?.label;
 
     const getValuesForBlock = useCallback((blockId: string | undefined, handleId: string | undefined): IValueUpdate[] => {
         if (!blockId) return [];
@@ -71,7 +64,10 @@ export const ConnectionPanel = ({window, title}: IProps): ReactNode => {
             ["output_timestamp", "output_cp", "output_status", "output_value", "input_timestamp", "input_cp", "input_status", "input_value"],
             ...rows,
         ], {delimiter: separator});
-        saveAs(new Blob([csv], {type: "text/csv;charset=utf-8"}), getCsvFilename(title));
+        const source = getCsvEndpointName(sourceNode, sourceName || edge?.data?.output || "Output", edge?.source);
+        const target = getCsvEndpointName(targetNode, targetName || edge?.data?.input || "Input", edge?.target);
+        const filename = getCsvFilename(`Connection ${source} - ${target}`, execution?.id, execution?.stoppedAt);
+        saveAs(new Blob([csv], {type: "text/csv;charset=utf-8"}), filename);
     };
 
     return (

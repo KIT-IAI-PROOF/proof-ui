@@ -8,17 +8,16 @@ import {useTranslation} from "react-i18next";
 import dayjs from "dayjs";
 import Papa from "papaparse";
 import {saveAs} from "file-saver";
-import {getCsvFilename} from "../../../utils/csv.ts";
+import {getCsvEndpointName, getCsvFilename} from "../../../utils/csv.ts";
 import CsvExportControls from "./CsvExportControls.tsx";
 
 interface IProps {
     window: IWindow;
-    title: string;
 }
 
-export const HandlePanel = ({window, title}: IProps): ReactNode => {
+export const HandlePanel = ({window}: IProps): ReactNode => {
     const {t} = useTranslation();
-    const {connectionStates, nodes} = useContext<IMonitoringContext>(MonitoringContext);
+    const {connectionStates, nodes, execution} = useContext<IMonitoringContext>(MonitoringContext);
     const [localValueCount, setLocalValueCount] = useState<number>(20);
     const endRef = useRef<HTMLDivElement | null>(null);
 
@@ -53,7 +52,10 @@ export const HandlePanel = ({window, title}: IProps): ReactNode => {
                 value.value,
             ]),
         ], {delimiter: separator});
-        saveAs(new Blob([csv], {type: "text/csv;charset=utf-8"}), getCsvFilename(title));
+        const endpoint = getCsvEndpointName(handleInfo.block, handleInfo.label || window.id, handleInfo.block?.id);
+        const title = `${direction === "input" ? "Input" : "Output"} ${endpoint}`;
+        const filename = getCsvFilename(title, execution?.id, execution?.stoppedAt);
+        saveAs(new Blob([csv], {type: "text/csv;charset=utf-8"}), filename);
     };
 
     return (
