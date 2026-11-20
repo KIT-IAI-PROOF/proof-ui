@@ -129,8 +129,7 @@ const MonitoringStart: () => ReactNode = (): ReactNode => {
         return missing.length === 0;
     };
 
-    const startExecution = async () => {
-        if (!validateRequiredFields()) return;
+    const createExecutionPayload: () => any = (): any => {
         // Create a copy of workflow with updated simulation config
         const workflowWithSimConfig = workflow ? {
             ...workflow,
@@ -144,20 +143,38 @@ const MonitoringStart: () => ReactNode = (): ReactNode => {
             }
         } : undefined;
 
+        return {
+            options: {
+                override: false,
+                manual: false
+            },
+            workflow: workflowWithSimConfig,
+            execParameters: execParameters,
+            label: executionLabel,
+            description: executionDescription,
+            status: ExecutionDetailStatusEnum.Unknown,
+            ...(execStartValues && Object.keys(execStartValues).length > 0 && {execStartValues: execStartValues}),
+            ...(execDefaultValues && Object.keys(execDefaultValues).length > 0 && {execDefaultValues: execDefaultValues})
+        } as any;
+    };
+
+    const createExecution = async (): Promise<void> => {
+        if (!validateRequiredFields()) return;
+
         await executionMutation
-            .mutateAsync({
-                options: {
-                    override: false,
-                    manual: false
-                },
-                workflow: workflowWithSimConfig,
-                execParameters: execParameters,
-                label: executionLabel,
-                description: executionDescription,
-                status: ExecutionDetailStatusEnum.Unknown,
-                ...(execStartValues && Object.keys(execStartValues).length > 0 && {execStartValues: execStartValues}),
-                ...(execDefaultValues && Object.keys(execDefaultValues).length > 0 && {execDefaultValues: execDefaultValues})
-            } as any)
+            .mutateAsync(createExecutionPayload())
+            .then((result: ExecutionDetail): void => {
+                if (result.id) {
+                    navigate(`/monitoring`)
+                }
+            })
+    }
+
+    const startExecution = async (): Promise<void> => {
+        if (!validateRequiredFields()) return;
+
+        await executionMutation
+            .mutateAsync(createExecutionPayload())
             .then(async (result: ExecutionDetail): Promise<void> => {
                 if (result.id) {
                     navigate(`/monitoring/${result.id}`)
@@ -200,6 +217,16 @@ const MonitoringStart: () => ReactNode = (): ReactNode => {
                                     direction={"row"}
                                     justifyContent={"flex-end"}>
                                     <ButtonGroup>
+                                        <Button
+                                            color={"primary"}
+                                            variant={"outlined"}
+                                            disabled={!workflowId || Object.values(jsonError).some((error: string | undefined): boolean => error !== undefined)}
+                                            onClick={async (): Promise<void> => {
+                                                await createExecution();
+                                            }}
+                                        >
+                                            {t("action.create")}
+                                        </Button>
                                         <Button
                                             color={"primary"}
                                             variant={"outlined"}
