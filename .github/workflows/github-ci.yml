@@ -2,8 +2,6 @@ name: PROOF UI CI/CD
 
 on:
   push:
-    tags:
-      - "*"
 
 env:
   GITHUB_TOKEN: ${{ secrets.PROOF_PACKAGE_CI_TOKEN }}
