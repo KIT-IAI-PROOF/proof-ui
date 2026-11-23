@@ -301,6 +301,9 @@
     "timeoutInput": "Zeit in [s], wie lange ein Worker maximal auf einen erforderlichen Eingabewert wartet, bevor defaultValue/Timeout zurückgegeben wird"
   },
   "word": {
+    "separator": "Trennzeichen",
+    "tabulator": "Tabulator",
+    "space": "Leerzeichen",
     "connection": "Verbindung",
     "baseName": "Basis Name",
     "textColor": "Textfarbe",
