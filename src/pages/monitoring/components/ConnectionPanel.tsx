@@ -66,7 +66,7 @@ export const ConnectionPanel = ({window}: IProps): ReactNode => {
         ], {delimiter: separator});
         const source = getCsvEndpointName(sourceNode, sourceName || edge?.data?.output || "Output", edge?.source);
         const target = getCsvEndpointName(targetNode, targetName || edge?.data?.input || "Input", edge?.target);
-        const filename = getCsvFilename(`Connection ${source} - ${target}`, execution?.id, execution?.stoppedAt);
+        const filename = getCsvFilename(`Connection_${source} - ${target}`, execution?.id, execution?.stoppedAt);
         saveAs(new Blob([csv], {type: "text/csv;charset=utf-8"}), filename);
     };
 

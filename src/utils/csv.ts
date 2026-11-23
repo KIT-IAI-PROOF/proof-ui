@@ -12,5 +12,5 @@ export const getCsvFilename = (title: string, executionId?: string, stoppedAt?: 
     const stopped = stoppedAt ? dayjs(stoppedAt) : undefined;
     const timestamp = stopped?.isValid() ? stopped.format("YYYY-MM-DD_HH-mm-ss") : undefined;
     const name = title.replace(/[<>"/\\|?*]/g, "_").replace(/\s+/g, " ").trim() || "export";
-    return `${name}${executionId ?? ""}${timestamp ?? ""}.csv`;
+    return `${name}_${executionId ?? ""}_${timestamp ?? ""}.csv`;
 };

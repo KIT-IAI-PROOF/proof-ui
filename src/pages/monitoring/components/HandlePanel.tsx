@@ -53,7 +53,7 @@ export const HandlePanel = ({window}: IProps): ReactNode => {
             ]),
         ], {delimiter: separator});
         const endpoint = getCsvEndpointName(handleInfo.block, handleInfo.label || window.id, handleInfo.block?.id);
-        const title = `${direction === "input" ? "Input" : "Output"} ${endpoint}`;
+        const title = `${direction === "input" ? "Input" : "Output"}_${endpoint}`;
         const filename = getCsvFilename(title, execution?.id, execution?.stoppedAt);
         saveAs(new Blob([csv], {type: "text/csv;charset=utf-8"}), filename);
     };
