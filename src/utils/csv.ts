@@ -5,7 +5,7 @@ export const getCsvEndpointName = (block: TBlock | undefined, executionId: strin
     const label = block?.data.label || blockId;
     const index = block?.data.index;
     const blockName = index == null ? label : `${label}(${index})`;
-    return `${blockName}:${executionId}`;
+    return `${blockName}#${executionId}`;
 };
 
 export const getCsvFilename = (title: string, executionId?: string, stoppedAt?: string): string => {
