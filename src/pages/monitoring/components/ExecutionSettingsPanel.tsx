@@ -2,7 +2,7 @@ import {Accordion, AccordionDetails, AccordionSummary, Checkbox, FormControlLabe
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Grid from "@mui/material/Grid2";
 import {Fragment, ReactNode, useState} from "react";
-import { format } from 'date-fns';
+import dayjs from "dayjs";
 import {ExecutionDetail, InputDetail} from "@kit-iai-proof/proof-config-manager-client";
 import {useTranslation} from "react-i18next";
 import {Info} from "@mui/icons-material";
@@ -14,7 +14,7 @@ interface IProps {
 }
 
 const formatDateTime = (date: Date | string) => {
-    return format(new Date(date), 'dd.MM.yyyy, HH:mm:ss');
+    return dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
 };
 
 const ExecutionSettingsPanel: ({execution}: IProps) => ReactNode = ({execution}: IProps): ReactNode => {
