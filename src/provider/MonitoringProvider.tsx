@@ -36,6 +36,7 @@ export interface IMonitoringContext {
     edgeTypes: EdgeTypes;
     nodes: TBlock[];
     edges: TEdge[];
+    execution: ExecutionDetail | undefined;
     execParameters: { [key: string]: string; };
     execStartValues: { [key: string]: string; };
     execDefaultValues: { [key: string]: string; };
@@ -309,6 +310,7 @@ const MonitoringProvider: Provider<IProps> = ({children}: IProps): ReactNode => 
                 edgeTypes: edgeTypes,
                 nodes: nodes,
                 edges: edges,
+                execution,
                 missingRequiredFields: missingRequiredFields,
                 blockStates: blockStates,
                 connectionStates: connectionStates,
