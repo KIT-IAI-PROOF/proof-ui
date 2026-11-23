@@ -10,7 +10,7 @@ env:
 
 jobs:
   build:
-    if: github.ref_type == 'tag'
+    #if: github.ref_type == 'tag'
     # if: github.ref_type != 'tag' && !startsWith(github.event.head_commit.message, 'WIP')
     runs-on: ubuntu-latest
 
