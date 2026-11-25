@@ -5,7 +5,7 @@ import {Background, BackgroundVariant, ControlButton, Controls, ReactFlow, useRe
 import {TEdge} from "../../../model/TEdge.ts";
 import {TBlock} from "../../../model/TBlock.ts";
 import Grid from "@mui/material/Grid2";
-import {ExecutionDetail, ExecutionDetailStatusEnum, ExecutionListingStatusEnum} from "@kit-iai-proof/proof-config-manager-client";
+import {ExecutionDetail, ExecutionDetailStatusEnum} from "@kit-iai-proof/proof-config-manager-client";
 import {saveAs} from 'file-saver';
 import {useTranslation} from "react-i18next";
 import {NavigateFunction, useNavigate, useParams} from "react-router-dom";
@@ -18,6 +18,7 @@ import {AxiosError} from "axios";
 import {executionQueryOptions} from "../../../query/options/executionQueryOptions.tsx";
 import {ENTITY_TYPES, EXECUTIONS_KEY, INVALIDATION_KEYS, PAGE_CONTAINER_PADDING} from "../../../utils/constants.ts";
 import {getErrorMessage} from "../../../utils/error.ts";
+import {isCreatedNotStarted, isFinalExecutionState} from "../../../utils/execution.ts";
 import ConfirmDialog from "../../../app/components/ConfirmDialog.tsx";
 import {executionService, orchestrationService} from "../../../services/instances.ts";
 import ExecutionSettingsPanel from "./ExecutionSettingsPanel.tsx";
@@ -103,8 +104,6 @@ const MonitorPanel: () => ReactNode = (): ReactNode => {
     // An execution that was simply created from the UI (status Unknown) hasn't been started
     // yet. In that case the inactive RESTART button becomes an active START button that kicks
     // off the existing execution directly, without creating a new one first.
-    const isCreatedNotStarted: boolean = execution?.status === ExecutionDetailStatusEnum.Unknown;
-
     return (
         <Fragment>
             <Box{...PAGE_CONTAINER_PADDING}>
@@ -140,10 +139,10 @@ const MonitorPanel: () => ReactNode = (): ReactNode => {
                                         <Button
                                             color={"primary"}
                                             variant={"outlined"}
-                                            disabled={!isCreatedNotStarted && execution?.status !== ExecutionListingStatusEnum.Stopped && execution?.status !== ExecutionListingStatusEnum.Aborted && execution?.status !== ExecutionListingStatusEnum.ShutDown}
+                                            disabled={!isCreatedNotStarted(execution?.status) && !isFinalExecutionState(execution?.status)}
                                             onClick={async (): Promise<void> => {
                                                 if (execution?.id) {
-                                                    if (isCreatedNotStarted) {
+                                                    if (isCreatedNotStarted(execution?.status)) {
                                                         await orchestrationService.startExecution(undefined, execution.id);
                                                     } else {
                                                         await restartExecution();
@@ -151,12 +150,12 @@ const MonitorPanel: () => ReactNode = (): ReactNode => {
                                                 }
                                             }}
                                         >
-                                            {isCreatedNotStarted ? t('action.start') : t('action.restart')}
+                                            {isCreatedNotStarted(execution?.status) ? t('action.start') : t('action.restart')}
                                         </Button>
                                         <Button
                                             color={"primary"}
                                             variant={"outlined"}
-                                            disabled={isCreatedNotStarted || execution?.status === ExecutionDetailStatusEnum.Stopped || execution?.status === ExecutionDetailStatusEnum.Aborted || execution?.status === ExecutionDetailStatusEnum.ShutDown}
+                                            disabled={isCreatedNotStarted(execution?.status) || isFinalExecutionState(execution?.status)}
                                             onClick={async (): Promise<void> => {
                                                 if (execution?.id) await orchestrationService.abortExecution(undefined, execution.id)
                                             }}
