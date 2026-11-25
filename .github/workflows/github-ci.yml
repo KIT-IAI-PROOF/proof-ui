@@ -2,15 +2,13 @@ name: PROOF UI CI/CD
 
 on:
   push:
-    tags:
-      - "*"
 
 env:
   GITHUB_TOKEN: ${{ secrets.PROOF_PACKAGE_CI_TOKEN }}
 
 jobs:
   build:
-    if: github.ref_type == 'tag'
+    #if: github.ref_type == 'tag'
     # if: github.ref_type != 'tag' && !startsWith(github.event.head_commit.message, 'WIP')
     runs-on: ubuntu-latest
 
