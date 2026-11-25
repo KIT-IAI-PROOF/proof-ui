@@ -3,7 +3,7 @@ import {OidcClientSettings, User, WebStorageStateStore} from "oidc-client-ts";
 
 export const authConfig: AuthProviderProps = {
     //authority: "http://localhost:8080/realms/proof",
-    authority: "https://proof-resur-keycloak.cloud.iai.kit.edu/realms/proof ",
+    authority: "https://proof-resur-keycloak.cloud.iai.kit.edu/realms/proof",
     client_id: "proof-public",
     redirect_uri: window.location.href,
     post_logout_redirect_uri: window.location.href,
