@@ -10,15 +10,19 @@ import {useTranslation} from "react-i18next";
 import dayjs from "dayjs";
 import {TBlock} from "../../../model/TBlock.ts";
 import {LineDiagram} from "./LineDiagram.tsx";
+import Papa from "papaparse";
+import {saveAs} from "file-saver";
+import {getCsvEndpointName, getCsvFilename} from "../../../utils/csv.ts";
+import CsvExportControls from "./CsvExportControls.tsx";
 
 interface IProps {
-    window: IWindow
+    window: IWindow;
 }
 
-export const ConnectionPanel: ({window}: IProps) => ReactNode = ({window}: IProps): ReactNode => {
+export const ConnectionPanel = ({window}: IProps): ReactNode => {
 
     const {t} = useTranslation();
-    const {connectionStates, edges, nodes} = useContext<IMonitoringContext>(MonitoringContext);
+    const {connectionStates, edges, nodes, execution} = useContext<IMonitoringContext>(MonitoringContext);
     const [localValueCount, setLocalValueCount] = useState<number>(20);
     const [showFlowChart, setShowFlowChart] = useState<boolean>(false);
 
@@ -26,15 +30,10 @@ export const ConnectionPanel: ({window}: IProps) => ReactNode = ({window}: IProp
 
     const edge: TEdge | undefined = useMemo(() => edges.find((e: TEdge): boolean => e.id === window.id), [edges, window]);
 
-    const targetName: string | undefined = useMemo(() => {
-        const targetNode = nodes.find((n: TBlock): boolean => n.id === edge?.target);
-        return targetNode?.data.inputs?.find((input): boolean => input.id === edge?.data?.input)?.label
-    }, [nodes, edge]);
-
-    const sourceName: string | undefined = useMemo(() => {
-        const sourceNode = nodes.find((n: TBlock): boolean => n.id === edge?.source);
-        return sourceNode?.data.outputs?.find((output): boolean => output.id === edge?.data?.output)?.label
-    }, [nodes, edge]);
+    const sourceNode = nodes.find((node) => node.id === edge?.source);
+    const targetNode = nodes.find((node) => node.id === edge?.target);
+    const sourceName = sourceNode?.data.outputs?.find((output) => output.id === edge?.data?.output)?.label;
+    const targetName = targetNode?.data.inputs?.find((input) => input.id === edge?.data?.input)?.label;
 
     const getValuesForBlock = useCallback((blockId: string | undefined, handleId: string | undefined): IValueUpdate[] => {
         if (!blockId) return [];
@@ -65,6 +64,31 @@ export const ConnectionPanel: ({window}: IProps) => ReactNode = ({window}: IProp
     }, [sourceValues, targetValues]);
 
     const hasFloatValues = chartData.length > 0;
+    const handleExport = (separator: string): void => {
+        const rows = Array.from({length: Math.max(sourceValues.length, targetValues.length)}, (_, index) => {
+            const output = sourceValues[index];
+            const input = targetValues[index];
+
+            return [
+                output?.timestamp,
+                output?.communicationPoint,
+                output?.status,
+                output?.value,
+                input?.timestamp,
+                input?.communicationPoint,
+                input?.status,
+                input?.value,
+            ];
+        });
+        const csv = Papa.unparse([
+            ["output_timestamp", "output_cp", "output_status", "output_value", "input_timestamp", "input_cp", "input_status", "input_value"],
+            ...rows,
+        ], {delimiter: separator});
+        const source = getCsvEndpointName(sourceNode, sourceName || edge?.data?.output || "Output", edge?.source);
+        const target = getCsvEndpointName(targetNode, targetName || edge?.data?.input || "Input", edge?.target);
+        const filename = getCsvFilename(`Connection_${source} - ${target}`, execution?.id, execution?.stoppedAt);
+        saveAs(new Blob([csv], {type: "text/csv;charset=utf-8"}), filename);
+    };
 
     return (
         <Fragment>
@@ -227,7 +251,7 @@ export const ConnectionPanel: ({window}: IProps) => ReactNode = ({window}: IProp
             <Stack
                 direction="row"
                 alignItems="center"
-                spacing={2}
+                justifyContent="space-between"
                 sx={{
                     px: 2,
                     py: 1,
@@ -237,24 +261,34 @@ export const ConnectionPanel: ({window}: IProps) => ReactNode = ({window}: IProp
                     borderColor: "divider",
                 }}
             >
-                <Typography paddingRight={1} noWrap={true} variant={"body1"} color={"textSecondary"}>
-                    {t("dialog.header.connectionPanel.maxValues")}
-                </Typography>
-                <Slider
-                    sx={{width: "100px"}}
-                    aria-label="Max values"
-                    value={localValueCount}
-                    step={10}
-                    marks={true}
-                    min={10}
-                    max={100}
-                    valueLabelDisplay={"auto"}
-                    onChange={(_event, newValue) => setLocalValueCount(newValue as number)}
-                    onChangeCommitted={(_event, newValue) => setLocalValueCount(newValue as number)}
+                <Stack
+                    spacing={2}
+                    direction="row"
+                    alignItems="center"
+                >
+                    <Typography paddingRight={1} noWrap={true} variant={"body1"} color={"textSecondary"}>
+                        {t("dialog.header.connectionPanel.maxValues")}
+                    </Typography>
+                    <Slider
+                        sx={{width: "100px"}}
+                        aria-label="Max values"
+                        value={localValueCount}
+                        step={10}
+                        marks={true}
+                        min={10}
+                        max={100}
+                        valueLabelDisplay={"auto"}
+                        onChange={(_event, newValue) => setLocalValueCount(newValue as number)}
+                        onChangeCommitted={(_event, newValue) => setLocalValueCount(newValue as number)}
+                    />
+                    <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
+                        {localValueCount}
+                    </Typography>
+                </Stack>
+                <CsvExportControls
+                    disabled={sourceValues.length === 0 && targetValues.length === 0}
+                    onExport={handleExport}
                 />
-                <Typography paddingRight={2} noWrap={true} variant={"body1"} color={"textSecondary"}>
-                    {localValueCount}
-                </Typography>
             </Stack>
         </Fragment>
     );
