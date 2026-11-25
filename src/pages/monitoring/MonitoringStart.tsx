@@ -220,7 +220,6 @@ const MonitoringStart: () => ReactNode = (): ReactNode => {
                                         <Button
                                             color={"primary"}
                                             variant={"outlined"}
-                                            disabled={!workflowId || Object.values(jsonError).some((error: string | undefined): boolean => error !== undefined)}
                                             onClick={async (): Promise<void> => {
                                                 await createExecution();
                                             }}
