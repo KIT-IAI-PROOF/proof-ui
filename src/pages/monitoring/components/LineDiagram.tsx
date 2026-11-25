@@ -4,8 +4,8 @@ import {chartsGridClasses} from '@mui/x-charts/ChartsGrid';
 import {legendClasses} from '@mui/x-charts/ChartsLegend';
 import {LineChart} from '@mui/x-charts/LineChart';
 import {useDrawingArea} from '@mui/x-charts/hooks';
-import type {AxisValueFormatterContext} from '@mui/x-charts/models';
 import {ReactNode, useEffect, useRef, useState} from "react";
+import {AxisValueFormatterContext} from "@mui/x-charts/models/axis";
 
 interface IProps {
     dataLabel: string | undefined
@@ -86,7 +86,7 @@ export const LineDiagram: ({dataLabel, chartData}: IProps) => ReactNode = ({data
                     label: "CP",
                     labelStyle: axisTextStyle,
                     tickLabelStyle: axisTextStyle,
-                    valueFormatter: (value: string, context: AxisValueFormatterContext<'point'>) =>
+                    valueFormatter: (value: string, context: AxisValueFormatterContext) =>
                         context.location === 'tooltip' ? `CP: ${value}` : String(value)
                 }]}
                 yAxis={[{label: dataLabel, labelStyle: axisTextStyle, tickLabelStyle: axisTextStyle}]}
