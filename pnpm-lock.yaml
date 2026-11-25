@@ -46,11 +46,11 @@ importers:
         specifier: ^5.2.10
         version: 5.2.10
       '@kit-iai-proof/proof-config-manager-client':
-        specifier: 1.4.0-dev0
-        version: 1.4.0-dev0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+        specifier: ^1.4.0
+        version: 1.4.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       '@kit-iai-proof/proof-orchestrator-client':
-        specifier: 1.4.0-dev0
-        version: 1.4.0-dev0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
+        specifier: ^1.4.0
+        version: 1.4.2(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
       '@mui/icons-material':
         specifier: ^6.5.0
         version: 6.5.0(@mui/material@6.5.0(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1)(supports-color@7.2.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.28)(react@18.3.1)(supports-color@7.2.0))(@types/react@18.3.28)(react@18.3.1)(supports-color@7.2.0))(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.28)(react@18.3.1)
@@ -705,11 +705,11 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@kit-iai-proof/proof-config-manager-client@1.4.0-dev0':
-    resolution: {integrity: sha512-PrG1ZmwdCywY2YDu7cJTr7ZhhtzIOPfMbA7PzPnfCskKWUaI4wDmAx1oYOVJNnosG6uambTvHkTcPy32HVP5RA==, tarball: https://npm.pkg.github.com/download/@kit-iai-proof/proof-config-manager-client/1.4.0-dev0/52c2cc891160e25da75149fac38aec4a36061e7b}
+  '@kit-iai-proof/proof-config-manager-client@1.4.0':
+    resolution: {integrity: sha512-xfTP2oChfmmw1pVTs/JX0+HFM71lmgb5Bpu2X4OlohessK4yra47oV672LsHkPS4QBeSy861g+u901ExMoZubw==, tarball: https://npm.pkg.github.com/download/@kit-iai-proof/proof-config-manager-client/1.4.0/184a8b21f37efe26084fe23955d80a10fca7742a}
 
-  '@kit-iai-proof/proof-orchestrator-client@1.4.0-dev0':
-    resolution: {integrity: sha512-NUG89ceTgnrQRxKi76KOO2JA2kIdGFv/IQ0rnn8mQIpZyreJvuJE5mpyB4HZ6AQuGl8iCUq4TkbMpRcuXQzyTQ==, tarball: https://npm.pkg.github.com/download/@kit-iai-proof/proof-orchestrator-client/1.4.0-dev0/f640e83714cdcc68b0aab523db367be2af2e8d97}
+  '@kit-iai-proof/proof-orchestrator-client@1.4.2':
+    resolution: {integrity: sha512-Fc0ZIn6rRTDaGlHWkL7/y5qlo/zc0mw3ONPfSjKZuvG9mupKXwIbwEb5iS1zR/TC1KRrpFGUFrGjokg/rUv8Tw==, tarball: https://npm.pkg.github.com/download/@kit-iai-proof/proof-orchestrator-client/1.4.2/61e80a4d0bc30ab43da66362df90c2b45a33af01}
 
   '@lezer/common@1.5.1':
     resolution: {integrity: sha512-6YRVG9vBkaY7p1IVxL4s44n5nUnaNnGM2/AckNgYOnxTG2kWh1vR8BMxPseWPjRNpb5VtXnMpeYAEAADoRV1Iw==}
@@ -4305,14 +4305,14 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@kit-iai-proof/proof-config-manager-client@1.4.0-dev0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)':
+  '@kit-iai-proof/proof-config-manager-client@1.4.0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
       axios: 1.18.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
     transitivePeerDependencies:
       - debug
       - supports-color
 
-  '@kit-iai-proof/proof-orchestrator-client@1.4.0-dev0(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)':
+  '@kit-iai-proof/proof-orchestrator-client@1.4.2(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
       axios: 1.18.1(debug@4.4.3(supports-color@7.2.0))(supports-color@7.2.0)
     transitivePeerDependencies:
@@ -4480,7 +4480,7 @@ snapshots:
       clsx: 2.1.1
       prop-types: 15.8.1
       react: 18.3.1
-      react-is: 19.2.4
+      react-is: 19.3.1
     optionalDependencies:
       '@types/react': 18.3.28
 

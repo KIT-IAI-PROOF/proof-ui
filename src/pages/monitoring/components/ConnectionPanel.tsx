@@ -87,21 +87,24 @@ export const ConnectionPanel: ({window}: IProps) => ReactNode = ({window}: IProp
                     </Tabs>
                 </Box>
             }
-            <Box sx={{flex: "1 1 0", minHeight: 0, minWidth: 0, overflowY: "auto", overflowX: showFlowChart && hasFloatValues ? "hidden" : "auto"}}>
+            <Box
+                sx={{
+                    overflowY: "auto",
+                    overflowX: showFlowChart && hasFloatValues ? "hidden" : "auto",
+                    minWidth: 0,
+                    p: 2,
+                    backgroundColor: "#121212",
+                    color: "white",
+                    flexGrow: 1,
+                    fontFamily: 'Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace',
+                    fontSize: "0.8125rem",
+                    lineHeight: 1.5,
+                }}
+            >
                 {showFlowChart && hasFloatValues ?
                     <LineDiagram dataLabel={sourceName ?? targetName} chartData={chartData}/> : <Grid
                         container={true}
                         spacing={1}
-                        sx={{
-                            overflowY: "auto",
-                            p: 2,
-                            backgroundColor: "#121212",
-                            color: "white",
-                            flexGrow: 1,
-                            fontFamily: 'Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace',
-                            fontSize: "0.8125rem",
-                            lineHeight: 1.5,
-                        }}
                     >
                         <Grid size={6}>
                             <Typography paddingBottom={2}>{sourceName}</Typography>
