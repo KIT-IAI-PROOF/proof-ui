@@ -8,7 +8,6 @@ import {IValueUpdate} from "../../../model/IValueUpdate.ts";
 import Grid from "@mui/material/Grid2";
 import {useTranslation} from "react-i18next";
 import dayjs from "dayjs";
-import {TBlock} from "../../../model/TBlock.ts";
 import {LineDiagram} from "./LineDiagram.tsx";
 import Papa from "papaparse";
 import {saveAs} from "file-saver";
