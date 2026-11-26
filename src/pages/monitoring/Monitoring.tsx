@@ -6,18 +6,19 @@ import {DataGrid, GridColDef, GridFilterModel, GridPaginationModel, GridRenderCe
 import {useTranslation} from "react-i18next";
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import Grid from "@mui/material/Grid2";
-import {ExecutionListing, ExecutionListingStatusEnum, ExecutionPagingModelListing} from "@kit-iai-proof/proof-config-manager-client";
+import {ExecutionListing, ExecutionPagingModelListing} from "@kit-iai-proof/proof-config-manager-client";
 import {QueryClient, useIsFetching, useMutation, UseMutationResult, useQuery, useQueryClient, UseQueryResult} from "@tanstack/react-query";
 import {DEFAULT_FILTER, DEFAULT_MONITORING_SORTING, DEFAULT_PAGINATION, ENTITY_TYPES, EXECUTIONS_KEY, INVALIDATION_KEYS, PAGE_CONTAINER_PADDING} from "../../utils/constants.ts";
 import {AuthContextProps, useAuth} from "react-oidc-context";
 import {IAppContext} from "../../provider/AppProvider.tsx";
 import {AppContext} from "../../provider/AppContext.tsx";
-import {RestartAlt, UploadRounded} from "@mui/icons-material";
+import {PlayArrow, RestartAlt, UploadRounded} from "@mui/icons-material";
 import dayjs from "dayjs";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import {AxiosError} from "axios";
 import {isAdmin} from "../../utils/auth.ts";
+import {isCreatedNotStarted, isFinalExecutionState} from "../../utils/execution.ts";
 import ConfirmDialog from "../../app/components/ConfirmDialog.tsx";
 import {executionService, orchestrationService} from "../../services/instances.ts";
 import {getErrorMessage} from "../../utils/error.ts";
@@ -28,12 +29,6 @@ import MonitoringTableFooter from "./components/MonitoringTableFooter.tsx";
 import {usePersistedState} from "../../hooks/usePersistedState.ts";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import {saveAs} from "file-saver";
-
-const STOPPED_STATES: ExecutionListingStatusEnum[] = [
-    ExecutionListingStatusEnum.Stopped,
-    ExecutionListingStatusEnum.Aborted,
-    ExecutionListingStatusEnum.ShutDown
-];
 
 const Monitoring: () => ReactNode = (): ReactNode => {
 
@@ -171,7 +166,7 @@ const Monitoring: () => ReactNode = (): ReactNode => {
                             <Box>
                                 <IconButton
                                     color="error"
-                                    disabled={params.row.status && STOPPED_STATES.includes(params.row.status)}
+                                    disabled={!!params.row.status && (isFinalExecutionState(params.row.status) || isCreatedNotStarted(params.row.status))}
                                     onClick={async (e): Promise<void> => {
                                         e.stopPropagation()
                                         if (params.row.id) await orchestrationService.abortExecution(undefined, params.row.id)
@@ -182,18 +177,18 @@ const Monitoring: () => ReactNode = (): ReactNode => {
                             </Box>
                         </Tooltip>
                         <Tooltip
-                            title={t('action.restart')}
+                            title={isCreatedNotStarted(params.row.status) ? t('action.start') : t('action.restart')}
                         >
                             <Box>
                                 <IconButton
-                                    disabled={params.row.status && !STOPPED_STATES.includes(params.row.status)}
+                                    disabled={!!params.row.status && !isCreatedNotStarted(params.row.status) && !isFinalExecutionState(params.row.status)}
                                     color="primary"
                                     onClick={async (e): Promise<void> => {
                                         e.stopPropagation()
                                         if (params.row.id) await orchestrationService.startExecution(undefined, params.row.id)
                                     }}
                                 >
-                                    <RestartAlt/>
+                                    {isCreatedNotStarted(params.row.status) ? <PlayArrow/> : <RestartAlt/>}
                                 </IconButton>
                             </Box>
                         </Tooltip>
@@ -298,7 +293,7 @@ const Monitoring: () => ReactNode = (): ReactNode => {
     });
 
     const handleBulkStop: () => Promise<void> = async (): Promise<void> => {
-        const targets: ExecutionListing[] = selectedExecutions().filter((execution: ExecutionListing): boolean => !STOPPED_STATES.includes(execution.status as ExecutionListingStatusEnum));
+        const targets: ExecutionListing[] = selectedExecutions().filter((execution: ExecutionListing): boolean => !isFinalExecutionState(execution.status));
         await Promise.allSettled(targets.map((execution: ExecutionListing): Promise<void> => orchestrationService.abortExecution(undefined, execution.id!)));
         await invalidateExecutions();
         setRowSelectionModel([]);
