@@ -4,7 +4,7 @@ import {Box, Chip, Stack, Theme, Tooltip, Typography, useTheme} from "@mui/mater
 import {TBlock} from "../../../model/TBlock.ts";
 import {darken, lighten} from "@mui/material/styles";
 import {getTypeBorder, getTypeColor} from "../../../utils/palette.ts";
-import {InputDetail, OutputDetail} from "@kit-iai-proof/proof-config-manager-client";
+import {BlockDetailStatusEnum, InputDetail, OutputDetail} from "@kit-iai-proof/proof-config-manager-client";
 import CodeMirror from "@uiw/react-codemirror";
 import {oneDark} from "@codemirror/theme-one-dark";
 import {githubLight} from '@uiw/codemirror-theme-github';
@@ -16,6 +16,24 @@ import {IMonitoringContext} from "../../../provider/MonitoringProvider.tsx";
 import {useTranslation} from "react-i18next";
 import {IWindowContext} from "../../../provider/WindowProvider.tsx";
 import {WindowContext} from "../../../provider/WindowContext.tsx";
+
+const ERROR_STATUSES: BlockDetailStatusEnum[] = [
+    BlockDetailStatusEnum.ErrorInit,
+    BlockDetailStatusEnum.ErrorStep,
+    BlockDetailStatusEnum.ErrorFinalize
+];
+
+const CLEANUP_STATUSES: BlockDetailStatusEnum[] = [
+    BlockDetailStatusEnum.Stopped,
+    BlockDetailStatusEnum.ShutDown,
+    BlockDetailStatusEnum.Suspended
+];
+
+const isErrorStatus = (status?: BlockDetailStatusEnum): boolean =>
+    !!status && ERROR_STATUSES.includes(status);
+
+const isCleanupStatus = (status?: BlockDetailStatusEnum): boolean =>
+    !!status && CLEANUP_STATUSES.includes(status);
 
 const createBlockNode = (withBlockStatus?: boolean) => {
     const Node = memo(({data, width, height}: NodeProps<TBlock>): ReactNode => {
@@ -35,12 +53,33 @@ const createBlockNode = (withBlockStatus?: boolean) => {
             setTooltipOpenMap(prev => ({...prev, [id]: false}));
         };
 
-        const blockState = blockStates
-            .filter((blockState) => blockState.blockId === data.id)
+        const blockStatesForBlock = blockStates.filter(
+            (blockState) => blockState.blockId === data.id
+        );
+
+        // the most recently published status (highest stream offset) for this block
+        const newestBlockState = blockStatesForBlock
             .reduce<typeof blockStates[number] | undefined>((highest, current) => {
                 if (!highest) return current;
                 return (current.offset ?? -1) > (highest.offset ?? -1) ? current : highest;
             }, undefined);
+
+        // Once a block has errored, the orchestrator may afterwards emit plain
+        // lifecycle/cleanup statuses (SHUT_DOWN, STOPPED, ...) during the routine
+        // shutdown. Those should NOT overwrite the more meaningful error state.
+        const hasErrorState = blockStatesForBlock.some(
+            (blockState) => isErrorStatus(blockState.status)
+        );
+
+        let blockState = newestBlockState;
+        if (hasErrorState && isCleanupStatus(newestBlockState?.status)) {
+            blockState = blockStatesForBlock
+                .filter((bs) => isErrorStatus(bs.status))
+                .reduce<typeof blockStates[number] | undefined>((highest, current) => {
+                    if (!highest) return current;
+                    return (current.offset ?? -1) > (highest.offset ?? -1) ? current : highest;
+                }, undefined);
+        }
 
         return (
             <Fragment>
