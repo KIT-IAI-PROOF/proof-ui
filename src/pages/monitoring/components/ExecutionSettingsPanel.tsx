@@ -56,7 +56,7 @@ const ExecutionSettingsPanel: ({execution}: IProps) => ReactNode = ({execution}:
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon/>}
                         >
-                            <Grid size={12}>
+                            <Grid size={3}>
                                 <Typography
                                     variant={"h3"}
                                 >
@@ -70,23 +70,21 @@ const ExecutionSettingsPanel: ({execution}: IProps) => ReactNode = ({execution}:
                                     </Tooltip>
                                 </Typography>
                             </Grid>
+                            <Grid
+                                size={9}
+                                display="flex"
+                                justifyContent="flex-end"
+                            >
+                                <Typography
+                                    variant={"h3"} 
+                                    sx={{ fontSize: "1.1rem" }}
+                                >
+                                    ID: {execution?.id}
+                                </Typography>
+                            </Grid>
                         </AccordionSummary>
                         <AccordionDetails>
                             <Grid container={true} paddingX={1} spacing={0.5}>
-                                <LabeledField labelKey={"word.id"} tooltipKey={"tooltip.id"} sizes={halfPageSizes}>
-                                    <Typography
-                                        variant={"body1"}
-                                    >
-                                        {execution?.id}
-                                    </Typography>
-                                </LabeledField>
-                                <LabeledField labelKey={"word.label"} tooltipKey={"tooltip.label"} sizes={halfPageSizes}>
-                                    <Typography
-                                        variant={"body1"}
-                                    >
-                                        {execution?.label}
-                                    </Typography>
-                                </LabeledField>
                                 <LabeledField labelKey={"word.description"} tooltipKey={"tooltip.description"} sizes={halfPageSizes}>
                                     <Typography
                                         variant={"body1"}>
