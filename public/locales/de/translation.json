@@ -429,7 +429,9 @@
     "timeoutInput": "Zeitüberschreitung Eingang",
     "notStopped": "Noch nicht angehalten",
     "notStarted": "Noch nicht gestartet",
-    "valueDifferent": "Der Wert dieses Parameter unterscheidet sich von dem Wert der Vorlage. Wert der Vorlage:"
+    "valueDifferent": "Der Wert dieses Parameter unterscheidet sich von dem Wert der Vorlage. Wert der Vorlage:",
+    "values": "Werte",
+    "flowChart": "Diagramm"
   },
   "about": {
     "kit": "Karlsruher Institut für Technologie (KIT)",

@@ -429,7 +429,9 @@
     "timeoutInput": "Input timeout",
     "notStopped": "Not stopped (yet)",
     "notStarted": "Not started (yet)",
-    "valueDifferent": "The value of this parameter is different from the template. Value of the Template:"
+    "valueDifferent": "The value of this parameter is different from the template. Value of the Template:",
+    "values": "Values",
+    "flowChart": "Flow-Chart"
   },
   "about": {
     "kit": "Karlsruhe Institute of Technology (KIT)",

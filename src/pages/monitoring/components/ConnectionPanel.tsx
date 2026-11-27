@@ -1,5 +1,5 @@
 import {Fragment, ReactNode, useCallback, useContext, useMemo, useRef, useState} from "react";
-import {Box, Chip, Slider, Stack, Typography} from "@mui/material";
+import {Box, Chip, Slider, Stack, Tab, Tabs, Typography} from "@mui/material";
 import {IWindow} from "../../../model/IWindow.ts";
 import {IMonitoringContext} from "../../../provider/MonitoringProvider.tsx";
 import {MonitoringContext} from "../../../provider/MonitoringContext.tsx";
@@ -8,6 +8,7 @@ import {IValueUpdate} from "../../../model/IValueUpdate.ts";
 import Grid from "@mui/material/Grid2";
 import {useTranslation} from "react-i18next";
 import dayjs from "dayjs";
+import {LineDiagram} from "./LineDiagram.tsx";
 import Papa from "papaparse";
 import {saveAs} from "file-saver";
 import {getCsvEndpointName, getCsvFilename} from "../../../utils/csv.ts";
@@ -22,6 +23,7 @@ export const ConnectionPanel = ({window}: IProps): ReactNode => {
     const {t} = useTranslation();
     const {connectionStates, edges, nodes, execution} = useContext<IMonitoringContext>(MonitoringContext);
     const [localValueCount, setLocalValueCount] = useState<number>(20);
+    const [showFlowChart, setShowFlowChart] = useState<boolean>(false);
 
     const endRef = useRef<HTMLDivElement | null>(null);
 
@@ -44,6 +46,23 @@ export const ConnectionPanel = ({window}: IProps): ReactNode => {
     const sourceValues = useMemo((): IValueUpdate[] => getValuesForBlock(edge?.source, edge?.data?.output), [edge?.data?.output, edge?.source, getValuesForBlock]);
     const targetValues = useMemo((): IValueUpdate[] => getValuesForBlock(edge?.target, edge?.data?.input), [edge?.data?.input, edge?.target, getValuesForBlock]);
 
+    const chartData = useMemo(() => {
+        const points = new Map<number, { cp: number; input: number | null; output: number | null }>();
+        const addValues = (items: IValueUpdate[], key: "input" | "output") => {
+            items.filter((item) => item.dataType === "float" && Number.isFinite(Number(item.communicationPoint)))
+                .forEach((item) => {
+                    const cp = Number(item.communicationPoint);
+                    const point = points.get(cp) ?? {cp, input: null, output: null};
+                    point[key] = item.value == null ? null : Number(item.value);
+                    points.set(cp, point);
+                });
+        };
+        addValues(sourceValues, "input");
+        addValues(targetValues, "output");
+        return [...points.values()].sort((a, b) => a.cp - b.cp);
+    }, [sourceValues, targetValues]);
+
+    const hasFloatValues = chartData.length > 0;
     const handleExport = (separator: string): void => {
         const rows = Array.from({length: Math.max(sourceValues.length, targetValues.length)}, (_, index) => {
             const output = sourceValues[index];
@@ -72,11 +91,30 @@ export const ConnectionPanel = ({window}: IProps): ReactNode => {
 
     return (
         <Fragment>
-            <Grid
-                container={true}
-                spacing={1}
+            {hasFloatValues &&
+                <Box sx={{borderBottom: 1, borderColor: 'divider', flexShrink: 0}}>
+                    <Tabs
+                        value={showFlowChart}
+                        onChange={() => setShowFlowChart(!showFlowChart)}
+                        sx={{
+                            minHeight: 36,
+                            "& .MuiTab-root": {
+                                minWidth: 0,
+                                minHeight: 36,
+                                py: 0
+                            },
+                        }}
+                    >
+                        <Tab value={false} label={t("word.values")}/>
+                        <Tab value={true} label={t("word.flowChart")}/>
+                    </Tabs>
+                </Box>
+            }
+            <Box
                 sx={{
                     overflowY: "auto",
+                    overflowX: showFlowChart && hasFloatValues ? "hidden" : "auto",
+                    minWidth: 0,
                     p: 2,
                     backgroundColor: "#121212",
                     color: "white",
@@ -86,123 +124,129 @@ export const ConnectionPanel = ({window}: IProps): ReactNode => {
                     lineHeight: 1.5,
                 }}
             >
-                <Grid size={6}>
-                    <Typography paddingBottom={2}>{sourceName}</Typography>
-                    <Box>
-                        {
-                            sourceValues.length > 0 ? <Stack spacing={1}>
-                                    {
-                                        sourceValues.map((connectionState: IValueUpdate, index: number) => (
-                                            <Stack direction={"row"} spacing={1}
-                                                   key={connectionState.messageId ?? connectionState.offset ?? index}>
-                                                <Chip
-                                                    sx={{backgroundColor: "#303030", color: "inherit"}}
-                                                    size={"small"}
-                                                    label={
-                                                        <Typography variant="body2">
-                                                            {dayjs.unix(connectionState.timestamp / 1000).format("HH:mm:ss.SSS")}
+                {showFlowChart && hasFloatValues ?
+                    <LineDiagram dataLabel={sourceName ?? targetName} chartData={chartData}/> : <Grid
+                        container={true}
+                        spacing={1}
+                    >
+                        <Grid size={6}>
+                            <Typography paddingBottom={2}>{sourceName}</Typography>
+                            <Box>
+                                {
+                                    sourceValues.length > 0 ? <Stack spacing={1}>
+                                            {
+                                                sourceValues.map((connectionState: IValueUpdate, index: number) => (
+                                                    <Stack direction={"row"} spacing={1}
+                                                           key={connectionState.messageId ?? connectionState.offset ?? index}>
+                                                        <Chip
+                                                            sx={{backgroundColor: "#303030", color: "inherit"}}
+                                                            size={"small"}
+                                                            label={
+                                                                <Typography variant="body2">
+                                                                    {dayjs.unix(connectionState.timestamp / 1000).format("HH:mm:ss.SSS")}
+                                                                </Typography>
+                                                            }
+                                                        />
+                                                        <Chip
+                                                            sx={{backgroundColor: "#252525", color: "inherit"}}
+                                                            size={"small"}
+                                                            label={
+                                                                <Typography variant="body2">
+                                                                    {connectionState.communicationPoint !== undefined ? `CP ${connectionState.communicationPoint}` : `Value ${index + 1}`}
+                                                                </Typography>
+                                                            }
+                                                        />
+                                                        <Chip
+                                                            sx={{backgroundColor: "#252525", color: "inherit"}}
+                                                            size={"small"}
+                                                            label={
+                                                                <Typography variant="body2">
+                                                                    {connectionState.status !== undefined ? `${connectionState.status}` : `${index + 1}`}
+                                                                </Typography>
+                                                            }
+                                                        />
+                                                        <Typography
+                                                            variant={"body2"}
+                                                            component={"pre"}
+                                                            sx={{
+                                                                margin: 0,
+                                                                whiteSpace: "pre-wrap",
+                                                                wordBreak: "break-word"
+                                                            }}
+                                                        >
+                                                            {connectionState.value}
                                                         </Typography>
-                                                    }
-                                                />
-                                                <Chip
-                                                    sx={{backgroundColor: "#252525", color: "inherit"}}
-                                                    size={"small"}
-                                                    label={
-                                                        <Typography variant="body2">
-                                                            {connectionState.communicationPoint !== undefined ? `CP ${connectionState.communicationPoint}` : `Value ${index + 1}`}
+                                                    </Stack>
+                                                ))
+                                            }
+                                        </Stack>
+                                        : <Typography>
+                                            No values received for this connection yet.
+                                        </Typography>
+                                }
+                                <div ref={endRef}/>
+                            </Box>
+                        </Grid>
+                        <Grid size={6}>
+                            <Typography paddingBottom={2}>{targetName}</Typography>
+                            <Box>
+                                {
+                                    targetValues.length > 0 ? <Stack spacing={1}>
+                                            {
+                                                targetValues.map((connectionState: IValueUpdate, index: number) => (
+                                                    <Stack direction={"row"} spacing={1}
+                                                           key={connectionState.messageId ?? connectionState.offset ?? index}>
+                                                        <Chip
+                                                            sx={{backgroundColor: "#303030", color: "inherit"}}
+                                                            size={"small"}
+                                                            label={
+                                                                <Typography variant="body2">
+                                                                    {dayjs.unix(connectionState.timestamp / 1000).format("HH:mm:ss:SSS")}
+                                                                </Typography>
+                                                            }
+                                                        />
+                                                        <Chip
+                                                            sx={{backgroundColor: "#252525", color: "inherit"}}
+                                                            size={"small"}
+                                                            label={
+                                                                <Typography variant="body2">
+                                                                    {connectionState.communicationPoint !== undefined ? `CP ${connectionState.communicationPoint}` : `Value ${index + 1}`}
+                                                                </Typography>
+                                                            }
+                                                        />
+                                                        <Chip
+                                                            sx={{backgroundColor: "#252525", color: "inherit"}}
+                                                            size={"small"}
+                                                            label={
+                                                                <Typography variant="body2">
+                                                                    {connectionState.status !== undefined ? `${connectionState.status}` : `${index + 1}`}
+                                                                </Typography>
+                                                            }
+                                                        />
+                                                        <Typography
+                                                            variant={"body2"}
+                                                            component={"pre"}
+                                                            sx={{
+                                                                margin: 0,
+                                                                whiteSpace: "pre-wrap",
+                                                                wordBreak: "break-word"
+                                                            }}
+                                                        >
+                                                            {connectionState.value}
                                                         </Typography>
-                                                    }
-                                                />
-                                                <Chip
-                                                    sx={{backgroundColor: "#252525", color: "inherit"}}
-                                                    size={"small"}
-                                                    label={
-                                                        <Typography variant="body2">
-                                                            {connectionState.status !== undefined ? `${connectionState.status}` : `${index + 1}`}
-                                                        </Typography>
-                                                    }
-                                                />
-                                                <Typography
-                                                    variant={"body2"}
-                                                    component={"pre"}
-                                                    sx={{
-                                                        margin: 0,
-                                                        whiteSpace: "pre-wrap",
-                                                        wordBreak: "break-word"
-                                                    }}
-                                                >
-                                                    {connectionState.value}
-                                                </Typography>
-                                            </Stack>
-                                        ))
-                                    }
-                                </Stack>
-                                : <Typography>
-                                    No values received for this connection yet.
-                                </Typography>
-                        }
-                        <div ref={endRef}/>
-                    </Box>
-                </Grid>
-                <Grid size={6}>
-                    <Typography paddingBottom={2}>{targetName}</Typography>
-                    <Box>
-                        {
-                            targetValues.length > 0 ? <Stack spacing={1}>
-                                    {
-                                        targetValues.map((connectionState: IValueUpdate, index: number) => (
-                                            <Stack direction={"row"} spacing={1}
-                                                   key={connectionState.messageId ?? connectionState.offset ?? index}>
-                                                <Chip
-                                                    sx={{backgroundColor: "#303030", color: "inherit"}}
-                                                    size={"small"}
-                                                    label={
-                                                        <Typography variant="body2">
-                                                            {dayjs.unix(connectionState.timestamp / 1000).format("HH:mm:ss:SSS")}
-                                                        </Typography>
-                                                    }
-                                                />
-                                                <Chip
-                                                    sx={{backgroundColor: "#252525", color: "inherit"}}
-                                                    size={"small"}
-                                                    label={
-                                                        <Typography variant="body2">
-                                                            {connectionState.communicationPoint !== undefined ? `CP ${connectionState.communicationPoint}` : `Value ${index + 1}`}
-                                                        </Typography>
-                                                    }
-                                                />
-                                                <Chip
-                                                    sx={{backgroundColor: "#252525", color: "inherit"}}
-                                                    size={"small"}
-                                                    label={
-                                                        <Typography variant="body2">
-                                                            {connectionState.status !== undefined ? `${connectionState.status}` : `${index + 1}`}
-                                                        </Typography>
-                                                    }
-                                                />
-                                                <Typography
-                                                    variant={"body2"}
-                                                    component={"pre"}
-                                                    sx={{
-                                                        margin: 0,
-                                                        whiteSpace: "pre-wrap",
-                                                        wordBreak: "break-word"
-                                                    }}
-                                                >
-                                                    {connectionState.value}
-                                                </Typography>
-                                            </Stack>
-                                        ))
-                                    }
-                                </Stack>
-                                : <Typography>
-                                    No values received for this connection yet.
-                                </Typography>
-                        }
-                        <div ref={endRef}/>
-                    </Box>
-                </Grid>
-            </Grid>
+                                                    </Stack>
+                                                ))
+                                            }
+                                        </Stack>
+                                        : <Typography>
+                                            No values received for this connection yet.
+                                        </Typography>
+                                }
+                                <div ref={endRef}/>
+                            </Box>
+                        </Grid>
+                    </Grid>}
+            </Box>
             <Stack
                 direction="row"
                 alignItems="center"
@@ -210,6 +254,7 @@ export const ConnectionPanel = ({window}: IProps): ReactNode => {
                 sx={{
                     px: 2,
                     py: 1,
+                    flexShrink: 0,
                     backgroundColor: "background.paper",
                     borderTop: "1px solid",
                     borderColor: "divider",
